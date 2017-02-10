@@ -1,0 +1,142 @@
+* {
+    margin:0;
+    padding:0;
+    /*color:white;*/
+}
+a {
+    text-decoration: none;
+    color:#e7f4eb;
+}
+body {
+    font-family: Arial,"微软雅黑","宋体";
+    overflow: hidden;
+    font-size:0.7rem;
+    color: #fff;
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
+
+    -webkit-touch-callout: none ; /* prevent callout to copy image, etc when tap to hold */
+    -webkit-user-select: none ; /* prevent copy paste, to allow, change 'none' to 'text' */
+
+}
+ul li {
+    list-style: none;
+}
+input {
+    background-color: transparent;
+    border:0;
+    line-height:0.9rem;
+    font-size:0.6rem;
+    color: #fff;
+}
+button {
+    border:0;
+    background:#eee;
+}
+#all_content {
+    width:100%;
+    height:100%;
+    background:#174359;
+    position: relative;
+    overflow: hidden;
+}
+.amap-logo {
+    right: 0 !important;
+    left: auto !important;
+    display: none;
+}
+.amap-copyright {
+    right: 70px !important;
+    left: auto !important;
+}
+/*模态框*/
+.model_warning {
+    width:100%;
+    height:100%;
+    background:#303637;
+    opacity:0.5;
+    position:absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+}
+.model_content {
+    width:10rem;
+    height:150px;
+    background:#eeeeee;
+    margin:0 3rem;
+    position:absolute;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius:10px;
+    color:#014286;
+}
+.model_contentnot {
+    height:120px;
+}
+.modelPad{
+    padding:10px 1rem;
+}
+.model_bottombtn {
+    border-top:1px solid #003567;
+    width:10rem;
+    position: absolute;
+    bottom: 0;
+
+}
+.model_btnleft {
+    border-right:0.05rem solid #003567;
+}
+.mode_span {
+    width:4.9rem;
+    line-height:30px;
+    display: inline-block;
+    height:30px;
+    color:#014286;
+}
+/*.modeYello_span {*/
+    /*width:4.9rem;*/
+    /*line-height:30px;*/
+    /*display: inline-block;*/
+    /*height:30px;*/
+    /*color:#e4ac01;*/
+/*}*/
+.iconAngry {
+    width:1rem;
+    height:1rem;
+    margin:10px 3.5rem;
+    background:url("../img/sad.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.iconhappy {
+    width:1rem;
+    height:1rem;
+    margin:10px 3.5rem;
+    background:url("../img/happy.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.iconSmile {
+    width:1rem;
+    height:1rem;
+    margin:10px 3.5rem;
+    background:url("../img/happy.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.model_contentspan {
+    width:8rem;
+    text-align: center;
+    display: inline-block;
+}
+.loadiconstyle {
+    width:5rem;
+    margin:0 1.5rem;
+}
+.styleoverhide {
+    overflow: hidden;
+}
+/*.colorY {*/
+    /*color:#e4ac01;*/
+/*}*/

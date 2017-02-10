@@ -1,0 +1,43 @@
+<div class="searchPassBack" ng-style="winHeight">
+    <p class="searchPassTitle">
+        <button class="searchBackBtn" ng-click="searchPassBackBtn()"></button>
+        <span class="searchPassTitleContent">设置新昵称</span>
+    </p>
+    <form name="changeNickForm" novalidate>
+        <p class="searchPasscontent">
+            新昵称：<input class="searchPinputS inputwidth" type="text" ng-model="changenick.newnickname" name="changenicknewnickname" required ng-disabled="changenicknewdis" />
+            <!--<img src="img/check-.png" class="checksearchptrue" ng-class="{'checksearchpnone':checksearchpiconnone}"/>-->
+        </p>
+        <p class="searchPBtnPStyle">
+            <button class="searchPBtnStyle searchPBtnNo" ng-click="searchPassBackBtn()">取消</button>
+            <button class="searchPBtnStyle searchPBtnYes" ng-click="changenickbtn()" ng-disabled="changenickdis">确认</button>
+        </p>
+    </form>
+</div>
+<!--warning模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<div class="toggle model_warning" ng-if="hahaapp.toggle" >
+</div>
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="hahaapp.toggle">
+    <div class="modelPad">
+        <p class="iconhappy"></p>
+        <span class="model_contentspan" ng-bind="submithappy"></span>
+    </div>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>

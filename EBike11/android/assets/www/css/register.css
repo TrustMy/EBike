@@ -1,0 +1,52 @@
+.registerBack {
+    background:#325e76;
+    width:100%;
+}
+.registerlogo {
+    margin:3rem 5rem 1rem;
+    width:6rem;
+}
+.vercodeStyle {
+    /*margin:1rem 0 */
+}
+.registerCode {
+    width:11.3rem;
+    height:1.4rem;
+    margin:0.5rem 2.3rem 1.5rem;
+    border:0.05rem solid #fff;
+    position: relative;
+}
+.registerbtnStyle {
+    background:#fff;
+    border:0.05rem solid #fff;
+    -webkit-border-radius:0.7rem;
+    -moz-border-radius:0.7rem;
+    border-radius:0.7rem;
+    line-height:1.4rem;
+    color:#325e76;
+    width:11.9rem;
+    margin:0 2rem;
+    font-weight: bold;
+}
+.vercodeStyle {
+    width:6.2rem;
+    height:1.4rem;
+    position: absolute;
+    top:0;
+    text-align: center;
+}
+.vercodeBtn {
+    background:#a0a0a0;
+    color:#fff;
+    border-left:0.05rem solid #fff;
+    width:5.1rem;
+    height:1.4rem;
+    position: absolute;
+    right:0;
+    font-size:0.5rem;
+    text-align: center;
+    line-height:1.4rem;
+}
+.inputregisterwidth {
+    width:7rem;
+}

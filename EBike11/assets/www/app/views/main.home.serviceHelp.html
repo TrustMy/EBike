@@ -1,0 +1,52 @@
+<div class="servicehelpback servicehelpbackjianr">
+    <p class="searchPassTitle searchpasstitlejianr">
+        <button class="searchBackBtn searchBackbtnjianr" ng-click="searchPassBackBtn()"></button>
+        <span class="searchPassTitleContent searchpasstitlecontentjianr">帮助和服务</span>
+    </p>
+    <div class="servicehelpdiv">
+        <img src="img/flow.png" class="servicehelpicon">
+        <p class="warderingnumstyle"><span ng-bind="warderingnum"></span></p>
+        <p class="wardercontent">剩余流量</p>
+    </div>
+    <ul>
+        <li class="serviceli servicelijianr">
+            使用说明
+            <button class="servicebtnstyle servicebtnstylejianr">></button>
+        </li>
+        <li class="serviceli servicelijianr">
+            购买服务
+            <button class="servicebtnstyle servicebtnstylejianr">></button>
+        </li>
+        <li class="serviceli servicelijianr">
+            使用说明
+            <span class="servicebtnstyle servicephone">12345678901</span>
+        </li>
+    </ul>
+</div>
+<!--warning模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<div class="toggle model_warning" ng-if="hahaapp.toggle" >
+</div>
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="hahaapp.toggle">
+    <div class="modelPad">
+        <p class="iconhappy"></p>
+        <span class="model_contentspan" ng-bind="submithappy"></span>
+    </div>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>

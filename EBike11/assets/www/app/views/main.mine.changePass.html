@@ -1,0 +1,51 @@
+<div class="searchPassBack" ng-style="winHeight">
+    <p class="searchPassTitle searchpasstitlejianr">
+        <button class="searchBackBtn searchBackbtnjianr" ng-click="searchPassBackBtn()"></button>
+        <span class="searchPassTitleContent searchpasstitlecontentjianr">找回密码</span>
+    </p>
+    <p class="searchPassLogo contentlogostyle contentlogostylejianr"></p>
+    <form name="changePassForm" novalidate>
+        <p class="searchPasscontent searchPasscontentjianr">
+            旧密码：<input class="searchPinputS inputwidth" type="password" ng-model="changeP.oldpass" name="changePoldpass" ng-blur="phonePatStyle(changePassForm.changePoldpass.$valid)" required ng-disabled="changepassoldcontentdis" />
+            <!--<img src="img/check-.png" class="checksearchptrue" ng-class="{'checksearchpnone':checksearchpiconnone}"/>-->
+        </p>
+        <p class="searchPasscontent searchPasscontentjianr">
+            新密码：<input class="searchPinputS inputwidth" type="password" ng-model="changeP.newpass" name="changePnewpass" required ng-disabled="changepassnewcontentdis"/>
+
+        </p>
+        <p class="searchPasscontent searchPasscontentjianr">
+            确认新密码：<input class="searchPinputS inputwidth" type="password" ng-model="changeP.aganewpass" name="changePaganewpass" required ng-disabled="changepassagacontentdis"/>
+        </p>
+        <p class="searchPBtnPStyle searchPBtnPStylejianr">
+            <button class="searchPBtnStyle searchPBtnNo searchPBtnStylejianr" ng-click="searchPassBackBtn()">取消</button>
+            <button class="searchPBtnStyle searchPBtnYes searchPBtnStylejianr" ng-click="changeppassbtn()" ng-disabled="changepasspdis">确认</button>
+        </p>
+    </form>
+</div>
+<!--warning模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<div class="toggle model_warning" ng-if="hahaapp.toggle" >
+</div>
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="hahaapp.toggle">
+    <div class="modelPad">
+        <p class="iconhappy"></p>
+        <span class="model_contentspan" ng-bind="submithappy"></span>
+    </div>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>

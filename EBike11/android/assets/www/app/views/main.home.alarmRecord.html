@@ -1,0 +1,127 @@
+<div class="alarmRecordBack" ng-style="winHeight">
+    <p class="searchPassTitle">
+        <button class="searchBackBtn" ng-click="searchPassBackBtn()"></button>
+        <span class="searchPassTitleContent">报警记录</span>
+    </p>
+    <p class="titlePall">
+        <span class="titleicon alarmrecordiconleft"></span>
+        <button class="titleicon alarmrecordiconright" ng-click="alarmrecorddatebtn()"></button>
+    </p>
+    <div class="alarmrecordcontent">
+        <table>
+            <tr class="alarmtabletitle">
+                <td class="alarmtablefir">时间</td>
+                <td class="alarmtablesed">地址</td>
+                <td class="alarmtablethr">类别</td>
+            </tr>
+            <tr class="alarmtabletr" ng-repeat="info in alarmrecordInfo">
+                <td class="alarmrdtdborder " ng-bind="info.gpstime | date:'yyyy-MM-dd hh:mm'"></td>
+                <td class="alarmrctdsed alarmrdtdborder" ng-bind="info.describe"></td>
+                <td class="alarmrdtdborder colorthr" ng-bind="info.describe"></td>
+            </tr>
+            <tr class="widthcenter" ng-class="{'alarmclick':alarmclick1}" ng-click="alarmrecordload()">
+                <td colspan="3">继续加载</td>
+            </tr>
+            <tr class="widthcenter" ng-class="{'alarmnew':alarmclicknew}" ng-click="alarmrecordloadnew()">
+                <td colspan="3">点击加载</td>
+            </tr>
+            <tr class="widthcenter" ng-class="{'alarmcenter':alarmclick2}">
+                <td  colspan="3">努力加载中...</td>
+            </tr>
+            <tr class="widthcenter" ng-class="{'alarmover':alarmclick3}">
+                <td colspan="3">加载完毕</td>
+            </tr>
+            <tr class="widthcenter" ng-class="{'alarmno':alarmclick4}">
+                <td colspan="3">该时间段无数据</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<!--选择日期的模态框 ng-if="datediv.toggle" ng-if="datediv.toggle"-->
+<div class="toggle model_warning" ng-if="datediv.toggle" >
+</div>
+<div class="datemodel_content" ng-style="modelpositionSt" ng-if="datediv.toggle">
+    <form name="timeForm" novalidate>
+        <div class="datemodel_topdiv">
+            <ul class="startDate_ul Date_ul">
+                <li class="datemodel_title">
+                    开始日期
+                </li>
+                <li class="datemodel_inline">
+                    <input type="button" value="+"  class="addbtnfir datemodel_btn datemodel_inputstyle colore" ng-click="startYearadd()"/>
+                    <input type="text" ng-model="udate.modelstartyear" class="startyearnum datemodel_text datemodel_inputstyle colorf" ng-disabled="dateinputdis"/>
+                    <input type="button" value="-"  class="lessbtnfir datemodel_btn datemodel_inputstyle colore" ng-click="startYearless()"/>
+                </li>
+                <li class="datemodel_inline">
+                    <input type="button" value="+"  class="addbtnsed datemodel_btn datemodel_inputstyle colore" ng-click="startMonthadd()"/>
+                    <input type="text" ng-model="udate.modelstartmonth"  class="startmonthnum datemodel_text datemodel_inputstyle colorf" ng-disabled="dateinputdis"/>
+                    <input type="button" value="-"  class="lessbtnsed datemodel_btn datemodel_inputstyle colore" ng-click="startMonthless()"/>
+                </li>
+                <li class="datemodel_inline">
+                    <input type="button" value="+"  class="addbtnsed datemodel_btn datemodel_inputstyle colore" ng-click="startdayadd()"/>
+                    <input type="text" ng-model="udate.modelstartday"  class="startdaynum datemodel_text datemodel_inputstyle colorf" ng-disabled="dateinputdis"/>
+                    <input type="button" value="-"  class="lessbtnsed datemodel_btn datemodel_inputstyle colore" ng-click="startdayless()"/>
+                </li>
+            </ul>
+            <ul class="Date_ul">
+                <li class="datemodel_title">
+                    结束日期
+                </li>
+                <li class="datemodel_inline">
+                    <input type="button" value="+"  class="addbtnfir addbtn datemodel_btn datemodel_inputstyle colore" ng-click="overYearadd()"/>
+                    <input type="text" ng-model="udate.modeloveryear" class="overyearnum datemodel_text datemodel_inputstyle colorf" ng-disabled="dateinputdis"/>
+                    <input type="button" value="-"  class="lessbtnfir addbtn datemodel_btn datemodel_inputstyle colore" ng-click="overYearless()"/>
+                </li>
+                <li class="datemodel_inline">
+                    <input type="button" value="+"  class="addbtnsed addbtn datemodel_btn datemodel_inputstyle colore" ng-click="overMonthadd()"/>
+                    <input type="text" ng-model="udate.modelovermonth"  class="overmonthnum datemodel_text datemodel_inputstyle colorf" ng-disabled="dateinputdis"/>
+                    <input type="button" value="-"  class="lessbtnsed addbtn datemodel_btn datemodel_inputstyle colore" ng-click="overMonthless()"/>
+                </li>
+                <li class="datemodel_inline">
+                    <input type="button" value="+"  class="addbtnsed addbtn datemodel_btn datemodel_inputstyle colore" ng-click="overdayadd()"/>
+                    <input type="text" ng-model="udate.modeloverday"  class="overdaynum datemodel_text datemodel_inputstyle colorf" ng-disabled="dateinputdis"/>
+                    <input type="button" value="-"  class="lessbtnsed addbtn datemodel_btn datemodel_inputstyle colore" ng-click="overdayless()"/>
+                </li>
+            </ul>
+        </div>
+    </form>
+    <div class="datemodel_btnul">
+        <input class="date_divbtn date_btnpadding" type="button" ng-click="date_yes()" value="确定"/>
+        <input class="date_divbtn" type="button" value="取消" ng-click="dateModelhide()"/>
+    </div>
+
+</div>
+<!--模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>
+<!--地图加载失败模态框-->
+<div class="toggle model_warning" ng-if="initfalseapp.toggle" >
+</div>
+
+<div class="model_content mapwarningheight" ng-style="modelpositionSt" ng-if="initfalseapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan colorY">处理地址信息失败！</span>
+    </div>
+
+    <div class="model_bottombtn">
+        <input type="button" class="model_btnleft mode_span" value="返回登录" ng-click="goSubmitPage()" />
+        <input type="button" class="mode_span" value="返回主页面" ng-click="gomainhomePage()" />
+    </div>
+</div>

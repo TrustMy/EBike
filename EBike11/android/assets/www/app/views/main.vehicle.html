@@ -1,0 +1,69 @@
+<div class="divvehicle" ng-style="winHeight">
+    <button class=" btnmargintop" ></button>
+    <button class="vehicleupdate"></button>
+
+    <img src="img/2.png" class="vehicleicona"/>
+
+    <p class="nicknamestylep">车辆状况：<span class="redcolor">故障</span></p>
+    <table class="trmarginmine tablefontsize colorfffvehicle">
+        <tr class="trlineheight vehicletablerdleft">
+
+            <td class="vehicletable ">
+                中控系统
+            </td>
+            <td class="vehicletable vehicletablerdright">
+                正常
+            </td>
+        </tr>
+        <tr class="trlineheight vehicletablerdleft">
+
+            <td class="vehicletable redcolor">
+                电控系统
+            </td>
+            <td class="vehicletable vehicletablerdright redcolor">
+                调整电路故障
+            </td>
+        </tr>
+        <tr class="trlineheight vehicletablerdleft">
+
+            <td class="vehicletable">
+                无线通信系统
+            </td>
+            <td class="vehicletable vehicletablerdright">
+                正常
+            </td>
+        </tr>
+        <tr class="trlineheight vehicletablerdleft">
+
+            <td class="vehicletable">
+                声光控制系统
+            </td>
+            <td class="vehicletable vehicletablerdright">
+                正常
+            </td>
+        </tr>
+        <tr class="trlineheight vehicletablerdleft">
+            <td class="vehicletable">
+                安防系统
+            </td>
+            <td class="vehicletable vehicletablerdright">
+                正常
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="vehicletable vehicletablerdcenter" >
+                在线维修
+            </td>
+        </tr>
+
+    </table>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>

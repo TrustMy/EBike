@@ -1,0 +1,180 @@
+.mainBack {
+    background:#325e76;
+    width:100%;
+    position: relative;
+}
+.active {
+    background:#00112e;
+}
+.main_footer {
+    height:2.6rem;
+    /*height:12%;*/
+    width:100%;
+    background:#153a45;
+    position: fixed;
+    bottom: 0;
+    z-index: 1111;
+    font-size:0.5rem;
+}
+.main_footer li {
+    float: left;
+    width:5.33rem;
+    height:100%;
+    list-style: none;
+    text-align:center;
+
+}
+.main_footer li a {
+    /*padding-top:0.9rem;*/
+    margin:0.3rem 2rem 0;
+    height:1.2rem;
+    /*line-height:1.5rem;*/
+    display:inline-block;
+    width:1.2rem;
+    text-align:center;
+    /*font-size:0.4rem;*/
+}
+.tabs_left {
+    background:url("../img/home.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+
+.tabs_mid {
+    background:url("../img/test_2.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+
+.tabs_right {
+    background:url("../img/home_user.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+#tab_leftC {
+    margin:0 1.5rem;
+    line-height:0.5rem;
+    width:2.33rem;
+}
+#tab_midC {
+    margin:0 1rem;
+    line-height:0.5rem;
+    width:3.33rem;
+}
+#tab_rightC {
+    margin:0 1.5rem;
+    line-height:0.5rem;
+    width:2.33rem;
+}
+/*.tabs_right {*/
+    /**/
+/*}*/
+/*时间模态框*/
+.model_carname {
+    position: absolute;
+    /*top:-2rem;*/
+    z-index: 1000;
+    background: #030504;
+    opacity: 0.7;
+    width:100%;
+    height:100%;
+
+    /*//text-align: center;*/
+}
+.datemodel_content {
+    background:#285166;
+    border:0.05rem solid #5f6362;
+    /*padding:1% 1rem;*/
+    width:14rem;
+    /*height:32%;*/
+    height:200px;
+    position: absolute;
+    left: 1rem;
+    z-index: 1100;
+    /*top:34%;*/
+}
+.datemodel_topdiv {
+    /*margin:0.3rem 1rem 0;*/
+    margin:5px 0.2rem 0;
+    position:absolute;
+    /*bottom:2.8rem;*/
+}
+.Date_ul {
+    width:6.6rem;
+    /*//padding:0 0.1rem;*/
+    /*height:13%;*/
+    height:140px;
+    display: inline-block;
+
+}
+.startDate_ul {
+    border-right:0.05rem solid #dcdedd;
+}
+.datemodel_title {
+    width:5.8rem;
+    font-size:0.5rem;
+    text-align: center;
+    line-height:1rem;
+
+}
+.datemodel_inline {
+    display:inline-block;
+    width:2rem;
+    background:url("../img/datebg.png") repeat-x;
+    height:110px;
+    -webkit-background-size:contain;
+    background-size:contain;
+
+
+}
+
+.datemodel_inputstyle {
+    width:2rem;
+    /*height:1.3rem;*/
+    height:37px;
+    font-size:0.6rem;
+}
+.colore {
+    background:#eee;
+    font-size:1rem;
+}
+.colorf {
+    background:#fff;
+}
+.datemodel_text {
+    color:#000;
+    font-size:0.6rem;
+    text-align: center;
+    /*background:#f6f6f6;*/
+}
+.datemodel_btn {
+    color:#848484;
+    /*background:#b9b9b9;*/
+
+}
+.datemodel_btnul {
+    width:14rem;
+    /*margin-top:0.3rem;*/
+    margin-top:7px;
+    /*height:1.8rem;*/
+    height:40px;
+    /*padding-top:0.3rem;*/
+    padding:5px 0;
+    background:#91918f;
+    position:absolute;
+    bottom:0rem;
+}
+.date_divbtn {
+    width:5.9rem;
+    /*height:1.5rem;*/
+    height:35px;
+    background:url("../img/datebtnbg.png") repeat-x;
+    -webkit-background-size:contain;
+    background-size:contain;
+    color:#000;
+
+}
+.date_btnpadding {
+    margin:0 0.5rem;
+    display: inline-block;
+}

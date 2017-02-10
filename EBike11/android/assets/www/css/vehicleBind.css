@@ -1,0 +1,18 @@
+.vehiclebindlogo {
+    background:url("../img/link.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+    margin:1.5rem 7rem 1rem;
+}
+.scannedicon {
+    width:1rem;
+    height:1rem;
+    background:url("../img/fullscreen.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+    position: absolute;
+    right:0;
+}
+.devicenumwidth {
+    width:7rem;
+}

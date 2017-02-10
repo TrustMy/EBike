@@ -1,0 +1,275 @@
+<div class="searchPassBack" ng-style="winHeight" ui-view="tab-cartrip">
+    <p class="searchPassTitle searchpasstitlejianr">
+        <button class="searchBackBtn searchBackbtnjianr" ng-click="searchPassBackBtn()"></button>
+        <span class="searchPassTitleContent searchpasstitlecontentjianr">用车信息</span>
+    </p>
+    <div class="cartripContent">
+        <div class="currentcartrip">
+            <div ng-class="{'dontcartrip':nocartrip}">
+                <p class="currentcaricon">
+                </p>
+                <div class="currentdateall">
+                    <span class="currentspan">今天&nbsp;&nbsp;<span ng-bind="currentdate | date:'yyyy-MM-dd'"></span></span>
+                    <!---->
+                    <button ng-click="currentdatebtn()" class="currentupdateicon"></button>
+                    <div class="colcontentn colcontentnjianr">
+                        <!--ui-sref="mains.home.cartripInformation.tripmap"-->
+                        <table ng-repeat="info in todaytripinfo" ng-click="firsttripbtn($index)" >
+                            <tr>
+                                <td class="tdfir" rowspan="2"><span ng-bind="info.starttime"></span><br/>- <br/><span ng-bind="info.endtime"></span></td>
+                                <td class="tdsed">起点：</td>
+                                <td ng-bind="info.startAddresscontent"></td>
+                            </tr>
+                            <tr>
+                                <td class="tdsed">终点：</td>
+                                <td ng-bind="info.endAddresscontent"></td>
+                            </tr>
+
+                        </table>
+                        <table class="todaytabletishistyle">
+                            <tr ng-class="{'clickonloadstoday':clickonloadtoday}" ng-click="clicktodaytripOnload()">
+                                <td>点击加载</td>
+                            </tr>
+                            <tr ng-class="{'cartriploadingstoday':cartriploadingtoday}">
+                                <td>努力加载中...</td>
+                            </tr>
+                            <tr ng-class="{'thelastpagecartripoverstoday':thelastpagecartripovertoday}">
+                                <td>加载完全</td>
+                            </tr>
+                            <tr ng-class="{'clickandaddloadtoday':clickandaddloadstoday}" ng-click="clickAddtodayTriponload()" ng-disabled="todayandloaddis">
+                                <td>点击继续加载</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="sleepcatdiv" ng-class="{'hascartrip':havecartrip}">
+                <img src="img/cat_sleep.png" class="sleepcat"/>
+                <span class="notripspan">今天没有用车...</span>
+            </div>
+        </div>
+        <div class="datecontent datacontentjianr">
+            <p class="searchdateline">
+                <form  name="tripinforForm" novalidate>
+                    <p class="cartrippositionleft">
+                        <label for="appDate">开始日期：</label><br>
+                        <input type="text" ng-model="ostartTime" class="datewidthcj" readonly="readonly" name="appDate" id="appDate" />
+                    </p>
+
+                    <!--<label for="appDate">日期</label>-->
+
+                    <!--<input value="" class="datewidthcj" readonly="readonly" name="appDate" id="appDate" type="text">-->
+                    <!--<button class="dateicon" ng-click="showdatemodelbtn()"></button>-->
+                    <p class="cartrippositionright">
+                        <label for="appDate">结束日期：</label><br>
+                        <!--<span >{{overTime}}</span> -->
+                        <input type="text" ng-model="overTime" class="datewidthcj" readonly="readonly" name="appDate" id="appDateover" />
+                    </p>
+                    <button ng-click="changedatebtnsearch()" class="searchdatebtnstyle bottomtripstyle">搜索</button>
+                    <button ng-click="datetripbtninit()" class="searchdatebtnstyleno bottomtripstyle">取消</button>
+                </form>
+
+            </p>
+            <div class="lastdivheight lastdivheightjianr">
+                <div class="timeline" ng-repeat="info in lastdateinfo" ng-class="{'infoclass':infoclassnone}">
+                    <div class="timeline-date"   >
+                        <!--正常，一天里的第一个，新日期ui-sref="mains.home.cartripInformation.tripmap"-->
+                        <ul ng-if="info.fir" ng-click="cartripmapbtn($index)" >
+                            <h2 class="second" >
+                                <span ng-bind="info.fir.endeventdate"></span>
+                            </h2>
+                            <li>
+                                <h3 >{{info.fir.laststarttime}}<span ng-bind="info.fir.lastendtime"></span></h3>
+                                <dl class="right">
+                                    <table>
+                                        <tr class="reccenttr">
+                                            <td class="tdsed" ng-bind="info.fir.chinesestart"></td>
+                                            <td class="tdthr" ng-bind="info.startpoint"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tdsed" ng-bind="info.fir.chineseend"></td>
+                                            <td class="tdthr" ng-bind="info.endpoint"></td>
+                                        </tr>
+                                    </table>
+                                </dl>
+                            </li>
+
+                        </ul>
+                        <!--正常，一天里的第二个，日期重复ui-sref="mains.home.cartripInformation.tripmap"-->
+                        <ul ng-if="info.sed" ng-click="cartripmapbtn($index)" >
+                            <li>
+                                <h3 >{{info.sed.laststarttime}}<span ng-bind="info.sed.lastendtime"></span></h3>
+                                <dl class="right">
+                                    <table>
+                                        <tr class="reccenttr">
+                                            <td class="tdsed" ng-bind="info.sed.chinesestart"></td>
+                                            <td class="tdthr" ng-bind="info.startpoint"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tdsed" ng-bind="info.sed.chineseend">{{}}</td>
+                                            <td class="tdthr" ng-bind="info.endpoint"></td>
+                                        </tr>
+                                    </table>
+                                </dl>
+                            </li>
+                        </ul>
+                        <!--跨天，一天里的第二个，但是跨天，开始时间和前一个数据的结束时间一样ui-sref="mains.home.cartripInformation.tripmap"-->
+                        <ul ng-if="info.thr" ng-click="cartripmapbtn($index)" >
+                            <li>
+                                <h3 >{{info.thr.lastendtime}}<span ng-bind="info.thr.pointpoint"></span></h3>
+                                <dl class="right">
+                                    <table>
+                                        <tr class="reccenttr">
+                                            <td class="tdsed" ng-bind="info.thr.chineseend"></td>
+                                            <td class="tdthr" ng-bind="info.endpoint"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tdsed" ng-bind="info.thr.chinesestart"></td>
+                                            <td class="tdthr" ng-bind="info.thr.pointpoint"></td>
+                                        </tr>
+                                    </table>
+                                </dl>
+                            </li>
+                            <h2 class="second">
+                                <span ng-bind="info.thr.starteventdate"></span>
+                            </h2>
+                            <li>
+                                <h3 >{{info.thr.pointpoint}}<span ng-bind="info.thr.laststarttime"></span></h3>
+                                <dl class="right">
+                                    <table>
+                                        <tr class="reccenttr">
+                                            <td class="tdsed" ng-bind="info.thr.chineseend"></td>
+                                            <td class="tdthr" ng-bind="info.thr.pointpoint"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tdsed" ng-bind="info.thr.chinesestart"></td>
+                                            <td class="tdthr" ng-bind="info.startpoint"></td>
+                                        </tr>
+                                    </table>
+                                </dl>
+                            </li>
+                        </ul>
+                        <!--占了两个新的一天，一天里的第一个，还跨天 ui-sref="mains.home.cartripInformation.tripmap"-->
+                        <ul ng-if="info.four" ng-click="cartripmapbtn($index)">
+                            <h2 class="second">
+                                <span ng-bind="info.four.endeventdate"></span>
+                            </h2>
+                            <li>
+                                <h3>{{info.four.lastendtime}}<span ng-bind="info.four.pointpoint"></span></h3>
+                                <dl class="right">
+                                    <table>
+                                        <tr>
+                                            <td class="tdsed" ng-bind="info.four.chineseend"></td>
+                                            <td class="tdthr" ng-bind="info.endpoint"></td>
+                                        </tr>
+                                        <tr class="reccenttr">
+                                            <td class="tdsed" ng-bind="info.four.chinesestart"></td>
+                                            <td class="tdthr" ng-bind="info.four.pointpoint"></td>
+                                        </tr>
+                                    </table>
+                                </dl>
+
+                            </li>
+                            <h2 class="second">
+                                <span ng-bind="info.four.starteventdate"></span>
+                            </h2>
+                            <li>
+                                <h3 >{{info.four.pointpoint}}<span ng-bind="info.four.laststarttime"></span></h3>
+                                <dl class="right">
+                                    <table>
+
+                                        <tr>
+                                            <td class="tdsed" ng-bind="info.four.chineseend"></td>
+                                            <td class="tdthr"  ng-bind="info.four.pointpoint"></td>
+                                        </tr>
+                                        <tr class="reccenttr">
+                                            <td class="tdsed" ng-bind="info.four.chinesestart"></td>
+                                            <td class="tdthr" ng-bind="info.startpoint"></td>
+                                        </tr>
+                                    </table>
+                                </dl>
+                            </li>
+                        </ul>
+                    </div>
+
+
+
+                </div>
+                <table class="lastdaytable">
+                    <tr ng-class="{'notripcontents':notripcontent}">
+                        <td class="nocartriptd">该时间段内没有行程</td>
+                    </tr>
+                    <tr ng-class="{'clickonloads':clickonload}" ng-click="clickLasttripOnload()">
+                        <td>点击加载</td>
+                    </tr>
+                    <tr ng-class="{'cartriploadings':cartriploading}">
+                        <td>努力加载中...</td>
+                    </tr>
+                    <tr ng-class="{'thelastpagecartripovers':thelastpagecartripover}">
+                        <td>加载完全</td>
+                    </tr>
+                    <tr ng-class="{'clickandaddload':clickandaddloads}" ng-click="clickAddlastTriponload()" ng-disabled="lastandloadtripdis">
+                        <td>点击继续加载</td>
+                    </tr>
+                </table>
+            <!--<div ng-class="{'lasthasdate':lasthavedate}" class="lastnodatesstyle">-->
+                <!--该时间段没有报警记录！-->
+            <!--</div>-->
+        </div>
+    </div>
+</div>
+    </div>
+
+<!--warning模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<div class="toggle model_warning" ng-if="hahaapp.toggle" >
+</div>
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="hahaapp.toggle">
+    <div class="modelPad">
+        <p class="iconhappy"></p>
+        <span class="model_contentspan" ng-bind="submithappy"></span>
+    </div>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle loadiconxuanzhuan" src="img/Shape4.png"/>
+    </div>
+</div>
+<!--地图加载失败模态框-->
+<div class="toggle model_warning" ng-if="initfalseapp.toggle" >
+</div>
+
+<div class="model_content mapwarningheight" ng-style="modelpositionSt" ng-if="initfalseapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan colorY">处理地址信息失败！</span>
+    </div>
+
+    <div class="model_bottombtn">
+        <input type="button" class="model_btnleft mode_span" value="返回登录" ng-click="goSubmitPage()" />
+        <input type="button" class="mode_span" value="返回主页面" ng-click="gomainhomePage()" />
+    </div>
+</div>
+<!--网络状态的模态框-->
+<div class="toggle model_warning" ng-if="intapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="intapp.toggle">
+    <div class="modelPad">
+        <span ng-bind="intappcontent"></span>
+    </div>
+</div>

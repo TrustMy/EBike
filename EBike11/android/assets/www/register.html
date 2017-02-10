@@ -1,0 +1,55 @@
+<div class="registerBack styleoverhide" ng-style="winHeight">
+    <img src="img/e_bike.png" class="registerlogo" />
+    <form name="registerForm" novalidate>
+        <p class="submituser displayIB">
+            手机号：<input class="inputregisterwidth" type="text" ng-model="reg.account" ng-pattern="regphone" ng-blur="phonePatStyle(registerForm.regaccount.$valid)" name="regaccount" required ng-disabled="regaccountdis"  />
+        </p>
+        <p class="submituser displayIB">
+            密码：<input class="inputregisterwidth" type="password" ng-model="reg.pass" name="regpass" required ng-disabled="regpassdis" />
+        </p>
+        <p class="submituser displayIB">
+            邮箱：<input class="inputregisterwidth" type="email" ng-model="reg.email" name="regemail" required ng-disabled="regemaildis" />
+        </p>
+        <p class="registerCode">
+            <input type="number" class="vercodeStyle" ng-model="reg.verCode" name="regverCode" required ng-disabled="regvercodedis"/>
+            <button class="vercodeBtn" ng-click="getVercode()" ng-disabled="verCodedis"><span ng-bind="vercodeBtnContent"></span></button>
+        </p>
+        <input type="button" ng-click="registerBtn()" class="registerbtnStyle" value="注册" ng-disabled="registerdis">
+
+    </form>
+
+
+</div>
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>
+<!--注册成功模态框-->
+<div class="toggle model_warning" ng-if="regSuccessapp.toggle" >
+</div>
+
+<div class="model_content " ng-style="modelpositionSt" ng-if="regSuccessapp.toggle">
+    <div class="modelPad">
+        <p class="iconSmile"></p>
+        <span class="model_contentspan colorY">注册成功，赶紧绑定爱车吧！</span>
+    </div>
+
+    <div class="model_bottombtn">
+        <input type="button" class="model_btnleft mode_span" value="返回登录" ng-click="gosubmitPage()" />
+        <input type="button" class="mode_span" value="去绑定" ng-click="gobindPage()" />
+    </div>
+</div>

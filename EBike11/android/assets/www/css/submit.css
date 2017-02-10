@@ -1,0 +1,116 @@
+.submitLogo {
+    width: 8rem;
+    margin:2rem 4rem 1rem;
+}
+.submitbike {
+    width:5rem;
+    margin:1rem 5.5rem 1.5rem;
+}
+.submituser {
+
+    height:0.9rem;
+    border:0.05rem solid #fff;
+    -webkit-border-radius:0.7rem;
+    -moz-border-radius:0.7rem;
+    border-radius:0.7rem;
+    padding:0.3rem 0.5rem;
+
+}
+.displayIB {
+    display:inline-block;
+    width:11rem;
+    margin:0.3rem 2rem;
+}
+.submitAccount {
+    padding-left:1rem;
+    height:0.9rem;
+    width:10rem;
+}
+.submitaccountIcon {
+    background:url("../img/iphone.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+
+}
+.submitpassIcon {
+    background:url("../img/locked.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.submitInput {
+    width:7rem;
+}
+.submitbtn {
+
+    color: #fff;
+    height:1.5rem;
+    width:12rem;
+    margin:0.9rem 2rem 1rem;
+    font-size:0.7rem;
+}
+.submitGrey {
+    background:#eee;
+}
+.submitBlue {
+    background:#3b6276;
+
+}
+.checkedHeight {
+    height:0.9rem;
+
+    /*padding:0.2rem 0;*/
+    font-size:0.5rem;
+}
+#submitinputchecked {
+    width:0.7rem;
+    height:0.7rem;
+    float: left;
+    display: inline-block;
+    margin:0 0.8rem 0 2.5rem;
+}
+.submitChecked {
+    background:url("../img/remember.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.submitunChecked {
+    background:url("../img/not_remember.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.checkedspan{
+    display:inline-block;
+    /*float: left;*/
+    line-height:0.9rem;
+}
+.forgetPass {
+    margin-left:4.5rem;
+}
+.submitLineregister {
+    margin:1.5rem 1rem 0 1rem;
+    font-size:0.5rem;
+    height:0.9rem;
+    line-height:0.9rem;
+    position: absolute;
+    bottom:3rem;
+}
+.submitline {
+    width:3rem;
+    height:0.05rem;
+    margin:0.2rem 0;
+    display: inline-block;
+}
+.submitlineLeft {
+     background:url("../img/left.png") no-repeat;
+     -webkit-background-size:contain;
+     background-size:contain;
+
+ }
+.submitlineRight {
+    background:url("../img/right.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.fastRegister {
+    color:#b06e00;
+}

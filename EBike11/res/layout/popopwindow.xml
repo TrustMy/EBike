@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="#50000000"
+    tools:context="com.phonegap.natives.activity.MapActivity">
+
+
+
+  <ImageView
+      android:layout_centerInParent="true"
+      android:id="@+id/loading"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:src="@drawable/shape4"/>
+  <TextView
+      android:id="@+id/popupwindow_tv"
+      android:layout_centerHorizontal="true"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/loading"
+      android:text="正在连接..."/>
+
+
+</RelativeLayout>

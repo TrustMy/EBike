@@ -1,0 +1,89 @@
+<div class="mainContent" ui-view="tab-mine" ng-style="winHeight">
+    <button class=" btnmargintop vehiclebtntopjianr" ng-click="searchPassBackBtn()"></button>
+    <button class="backappbtnstyle vehiclebtntopjianr" ng-click="backappbtn()"></button>
+    <p class="userphonestyle userphonestylejianr">
+        <img src="img/user.png" class="userimgstyle userimgstylejianr"/>
+    </p>
+    <p class="nicknamestylep">张三</p>
+    <table class="trmarginmine tablefontsize">
+        <tr class="trlineheight">
+            <td class="minetablefir">
+                <img src="img/iphone.png" class="tableicon1"/>
+            </td>
+            <td class="minetablesed">
+                手机
+            </td>
+            <td class="minetablethr" ng-click="shouldreturnfalse()">
+                <span ng-bind="mineuserphone"></span>
+            </td>
+        </tr>
+        <tr class="trlineheight">
+            <td class="minetablefir">
+                <img src="img/6.png" class="tableicon1"/>
+            </td>
+            <td class="minetablesed">
+                昵称
+            </td>
+            <td class="minetablethr">
+                <span ng-bind="mineusernick" class="heightlinenickstyle"></span><span class="spanminebtn" ui-sref="mains.mine.changenickname">></span>
+            </td>
+        </tr>
+        <tr class="trlineheight">
+            <td class="minetablefir">
+                <img src="img/email.png" class="tableicon2"/>
+            </td>
+            <td class="minetablesed">
+                电子邮件
+            </td>
+            <td class="minetablethr" ng-click="shouldreturnfalse()">
+                <span ng-bind="mineuseremail"></span>
+            </td>
+        </tr>
+        <tr class="trlineheight">
+            <td class="minetablefir">
+                <img src="img/key_btn.png" class="tableicon3"/>
+            </td>
+            <td class="minetablesed">
+                修改密码
+            </td>
+            <td class="minetablethr">
+                <span class="spanminebtn" ui-sref="mains.mine.changePass">></span>
+            </td>
+        </tr>
+        <tr class="trlineheight">
+            <td class="minetablefir">
+                <img src="img/icloud_down.png" class="tableicon2"/>
+            </td>
+            <td class="minetablesed">
+                车辆解绑
+            </td>
+            <td class="minetablethr">
+                <span ng-bind="mineusertermid" class="heightlinenickstyle"></span><span class="spanminebtn" ui-sref="mains.mine.unbundling">></span>
+            </td>
+        </tr>
+
+    </table>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>
+<div class="toggle model_warning" ng-if="yesOrNo.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="yesOrNo.toggle">
+    <div class="modelPad">
+        <p class="iconSmile"></p>
+        <span class="model_contentspan colorY">确定退出登录？</span>
+    </div>
+
+    <div class="model_bottombtn">
+        <input type="button" class="model_btnleft mode_span" value="确定" ng-click="backappYes()" />
+        <input type="button" class="mode_span" value="取消" ng-click="yesOrnohide()" />
+    </div>
+</div>

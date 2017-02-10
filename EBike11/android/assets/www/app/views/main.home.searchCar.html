@@ -1,0 +1,80 @@
+<div id="tripmapid"  >
+    <!--on-tripmap-dirng-controller="mapcontroller"-->
+</div>
+<p class="searchCarback" ng-click="searchPassBackBtn()"><button class="backiconstyle"></button></p>
+<p class="realtimesecondnum" ng-bind="realcountdownnum"></p>
+<button class="everytimegps searchcarpstyle" ng-class="{'realtimegrey':realtimecolorgrey}" ng-click="searchrealtime()" ng-disabled="realtimedis">
+    <img src="img/5.png"/>
+    <span ng-bind="realtimeword"></span>
+</button>
+<button class="baseStationstylep searchcarpstyle" ng-click="baseStationbtn()" ng-disabled="baseStationdis" ng-class="{'basestationgrey':baseStationGery}">
+    <img src="img/baseStationimg.png" class="basestationimgicon"/>
+    取消基站
+</button>
+<button class="bellstylep searchcarpstyle" ng-click="searchcarbellbtn()" ng-disabled="belldis" ng-class="{'bellcargrey':bellcarGery}">
+    <img src="img/car_bell.png"/>
+    <span ng-bind="bellcontent"></span>
+</button>
+<button class="followmestylep searchcarpstyle" ng-class="{'followgrey':followmegrey}" ng-click="searchcarfollowmebtn()" ng-disabled="followmedis">
+    <img src="img/walk.png"/>
+    跟我走
+</button>
+<!--模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<div class="toggle model_warning" ng-if="hahaapp.toggle" >
+</div>
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="hahaapp.toggle">
+    <div class="modelPad">
+        <p class="iconhappy"></p>
+        <span class="model_contentspan" ng-bind="submithappy"></span>
+    </div>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>
+<div class="toggle model_warning" ng-if="hahaapp.toggle" >
+</div>
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="hahaapp.toggle">
+    <div class="modelPad">
+        <p class="iconhappy"></p>
+        <span class="model_contentspan" ng-bind="submithappy"></span>
+    </div>
+</div>
+<!--地图加载失败模态框-->
+<div class="toggle model_warning" ng-if="initfalseapp.toggle" >
+</div>
+
+<div class="model_content mapwarningheight" ng-style="modelpositionSt" ng-if="initfalseapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan colorY">加载地图失败！</span>
+    </div>
+
+    <div class="model_bottombtn">
+        <input type="button" class="model_btnleft mode_span" value="返回登录" ng-click="goSubmitPage()" />
+        <input type="button" class="mode_span" value="返回主页面" ng-click="gomainhomePage()" />
+    </div>
+</div>
+<!--网络状态的模态框-->
+<div class="toggle model_warning" ng-if="intapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="intapp.toggle">
+    <div class="modelPad">
+        <span ng-bind="intappcontent"></span>
+    </div>
+</div>

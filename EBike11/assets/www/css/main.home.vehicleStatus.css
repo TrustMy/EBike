@@ -1,0 +1,136 @@
+.vehiclestatusback {
+    width: 16rem;
+    position: absolute;
+    top: 0;
+    bottom: 2.6rem;
+    left: 0;
+    right: 0;
+    background: -moz-linear-gradient(top, #aac4b4, #001f2e); /*Mozilla*/
+    background: -webkit-gradient(linear, 0 50%, 100% 50%, from(#aac4b4), to(#001f2e)); /*Old gradient for webkit*/
+    background: -webkit-linear-gradient(top, #aac4b4, #001f2e); /*new gradient for Webkit*/
+    background: -o-linear-gradient(top, #aac4b4, #001f2e); /*Opera11*/
+}
+.vehicleStatuebuttonS {
+    width:1.2rem;
+    height:1.2rem;
+    position: absolute;
+    top:0.7rem;
+
+}
+.vehiclestatueback {
+    left:1rem;
+    background:url("../img/left_1.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.vehiclestatueupdate {
+    right:1rem;
+    background:url("../img/car_refresh.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.vehiclestatuecontent {
+    width:7rem;
+    padding:5rem 4.5rem 1rem;
+    text-align: center;
+    /*position: relative;*/
+}
+.vehiclestatuepointer {
+    width:7rem;
+    height:7rem;
+}
+.elenumstyleicon {
+    width:5.37rem;
+    height:5.1rem;
+    background:url("../img/watch0.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+    position:absolute;
+    left:5.3rem;
+    top:5.8rem;
+}
+.elenumstyle {
+    line-height: 2.3rem;
+    height:2.3rem;
+    font-size:1.0rem;
+}
+.elenumcontent {
+    background:#142b34;
+    width:4.5rem;
+    height:1.3rem;
+    -webkit-border-radius:0.6rem;
+    -moz-border-radius:0.6rem;
+    border-radius:0.6rem;
+    margin:0 auto;
+    line-height:1.3rem;
+}
+.circlethrstyle {
+    width:16rem;
+    height:3.6rem;
+    position: absolute;
+    bottom:1rem;
+
+}
+/*vehiclestatueback*/
+.circlestyle {
+    margin-left:1.5rem;
+    padding-top:1rem;
+    width:3.3rem;
+    height:2.6rem;
+    font-size:0.7rem;
+    line-height:1rem;
+    text-align: center;
+    display: inline-block;
+}
+.elefull {
+     background:url("../img/electricity1.png") no-repeat;
+     -webkit-background-size:contain;
+     background-size:contain;
+ }
+.eleless {
+    background:url("../img/electricity2.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.batteyyesStyle {
+    background:url("../img/electricity_on.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.batteynoStyle {
+    background:url("../img/electricity_off.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.vibrationgoodstyle {
+    background:url("../img/warning_on.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.vibrationgoodstyle {
+    background:url("../img/warning_off.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+@media(min-device-height:751px){
+    .vehiclestatusbackjianr {
+        bottom:2.3rem;
+    }
+    .vehiclestatuecontentjianr {
+        width: 6rem;
+        padding: 4rem 5rem 1rem;
+    }
+    .elenumstyleiconjianr {
+        width: 4.32rem;
+        height: 4.1rem;
+        left: 5.8rem;
+        top: 5rem;
+    }
+    .vehiclestatuepointerjianr {
+        width:6rem;
+        height:6rem;
+    }
+    .circlestylejianr {
+        font-size: 0.55rem;
+    }
+}

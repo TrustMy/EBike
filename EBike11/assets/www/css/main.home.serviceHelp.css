@@ -1,0 +1,77 @@
+.servicehelpback {
+    width:16rem;
+    position: absolute;
+    top:0;
+    bottom:2.6rem;
+    left:0;
+    right:0;
+    background:#eee;
+}
+.servicehelpdiv {
+    padding-top:2rem;
+    width:16rem;
+    height:8.8rem;
+    background:#285166;
+    position: relative;
+}
+.servicehelpicon {
+
+    display: block;
+    width:4rem;
+    margin:0 auto;
+}
+.warderingnumstyle {
+    margin-left:2rem;
+    font-size:1.3rem;
+    color:#e6e6e6;
+    line-height:2.1rem;
+}
+.wardercontent {
+    background:#1f404f;
+    width:5.7rem;
+    height:1.3rem;
+    line-height:1.3rem;
+    font-size:0.7rem;
+    text-align: center;
+    margin-left:1rem;
+    -webkit-border-radius:0.6rem;
+    -moz-border-radius:0.6rem;
+    border-radius:0.6rem;
+    color:#e6e6e6;
+}
+.serviceli {
+    position: relative;
+    padding-left:2rem;
+    border-bottom:0.05rem solid #7d7d7d;
+    width:14rem;
+    line-height:1.5rem;
+    height:1.5rem;
+    font-size:0.7rem;
+    color:#074768;
+}
+.servicebtnstyle {
+    position:absolute;
+    right:2rem;
+    color:#446d74;
+    font-size:1rem;
+    line-height:1.5rem;
+}
+.servicephone {
+    font-size:0.6rem;
+}
+@media(min-device-height:751px){
+    .servicehelpbackjianr {
+        top:0;
+        bottom:2.3rem;
+        left:0;
+        right:0;
+    }
+    .servicelijianr {
+        line-height: 1.3rem;
+        height:1.3rem;
+        font-size: 0.55rem;
+    }
+    .servicebtnstylejianr {
+        line-height:1.2rem;
+    }
+}

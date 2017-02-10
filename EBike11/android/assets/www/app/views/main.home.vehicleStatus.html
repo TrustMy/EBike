@@ -1,0 +1,34 @@
+<div class="vehiclestatusback">
+    <button class="vehicleStatuebuttonS vehiclestatueback" ng-click="searchPassBackBtn()"></button>
+    <button class="vehicleStatuebuttonS vehiclestatueupdate" ng-click="searchPassupdateBtn()"></button>
+    <div class="vehiclestatuecontent">
+        <img src="img/pointer_2.png" class="vehiclestatuepointer" ng-style="pointerstyle"/>
+        <p class="elenumstyleicon" ng-style="fulldegree" ></p>
+        <p ng-bind="elenum" class="elenumstyle"></p>
+        <p class="elenumcontent">电池电量</p>
+    </div>
+    <div class="circlethrstyle">
+        <p class="circlestyle " ng-class="{'elefull':elenumfull,'eleless':elenumless}"><span ng-bind="elestatue"></span></p>
+        <p class="circlestyle " ng-class="{'batteyyesStyle':batteyyes,'batteynoStyle':batteyno}"><span ng-bind="batteystatue"></span></p>
+        <p class="circlestyle " ng-class="{'vibrationgoodstyle':vibrationgood,'vibrationfalsestyle':vibrationfalse}"><span ng-bind="vibrationstatue"></span></p>
+    </div>
+</div>
+<!--warning模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>

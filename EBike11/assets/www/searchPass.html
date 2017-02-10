@@ -1,0 +1,40 @@
+<div class="searchPassBack" ng-style="winHeight">
+    <p class="searchPassTitle searchpasstitlejianr">
+        <button class="searchBackBtn searchBackbtnjianr" ng-click="searchPassBackBtn()"></button>
+        <span class="searchPassTitleContent searchpasstitlecontentjianr">找回密码</span>
+    </p>
+    <p class="searchPassLogo contentlogostyle contentlogostylejianr"></p>
+    <form name="searchPassForm" novalidate>
+        <p class="searchPasscontent searchPasscontentjianr">
+            手机号：<input class="searchPinputS" type="number" ng-model="searchP.account" name="searchPaccount" ng-pattern="regphone" ng-blur="phonePatStyle(searchPassForm.searchPaccount.$valid)" required ng-disabled="searchpaccountdis" />
+        </p>
+        <p class="searchPasscontent searchPasscontentjianr">
+            验证码：<input class="searchPinputS" type="number" ng-model="searchP.verCodeContent" name="searchPverCodeContent" required ng-disabled="searchpvercodedis"/>
+            <button class="searchPverCodeBtn" ng-click="getVercode()" ng-disabled="verCodedis"><span ng-bind="vercodeBtnContent"></span></button>
+        </p>
+        <p class="searchPBtnPStyle searchPBtnPStylejianr">
+            <button class="searchPBtnStyle searchPBtnNo searchPBtnStylejianr" ng-click="backSubmitPage()">取消</button>
+            <button class="searchPBtnStyle searchPBtnYes searchPBtnStylejianr" ng-click="verCodegoNewPassPage()" ng-disabled="searchvercodedis">确认</button>
+        </p>
+    </form>
+
+</div>
+<!--warning模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>

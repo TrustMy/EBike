@@ -1,0 +1,53 @@
+<div ng-style="winHeight">
+    <img class="submitLogo" src="img/welcome.png" />
+    <img src="img/e_bike.png" class="submitbike" />
+    <form name="submitForm" novalidate>
+        <span class="submituser displayIB">
+            <p  class="submitAccount submitaccountIcon">
+                手机号：<input class="submitInput" type="text" ng-model="sub.account" name="subaccount" required ng-disabled="subaccountdis"/>
+            </p>
+
+        </span>
+        <span class="submituser displayIB" >
+            <p class="submitAccount submitpassIcon">
+                密码：<input class="submitInput" type="password" ng-model="sub.upass" name="subpass" required ng-disabled="subpassdis"/>
+            </p>
+
+        </span>
+        <button class="submituser submitbtn " ng-click="submitBtn()" ng-class="{'submitGrey':submitBtngrey,'submitBlue':submitBtnblue}" ng-disabled="submitdis">
+            login&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;登录
+        </button>
+        <p class="checkedHeight">
+            <input type="button" id="submitinputchecked" ng-class="{'submitChecked':remember,'submitunChecked':noRemember}" ng-click="checked_btn()"/>
+            <span class="checkedspan">记住密码</span>
+            <span ng-click="forgetPassbtn()" class="forgetPass checkedspan">忘记密码?</span>
+        </p>
+        <p class="submitLineregister">
+            <span class="submitlineLeft submitline"></span>
+            <span>&nbsp;&nbsp;没有账号？</span>
+            <span class="fastRegister" ng-click="clickRegister()">&nbsp;&nbsp;点击快速注册&nbsp;&nbsp;</span>
+            <span class="submitlineRight submitline"></span>
+        </p>
+
+    </form>
+
+</div>
+<!--模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>

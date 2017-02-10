@@ -1,0 +1,152 @@
+.alarmRecordBack {
+    width:100%;
+    background:#285166;
+    position: relative;
+}
+.titlePall {
+    width:16rem;
+    height:2.2rem;
+    background:#eee;
+    position: relative;
+    color:#000;
+}
+.titleicon {
+    width:1.6rem;
+    height:1.2rem;
+    margin:0.5rem 0;
+    display: inline-block;
+}
+.alarmrecordiconleft {
+    background:url("../img/bell_icon.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+    position:absolute;
+    left:1rem;
+}
+.alarmrecordiconright {
+    background:url("../img/calendar.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+    position:absolute;
+    right:1rem;
+}
+.alarmtabletitle {
+    background:#082f45;
+    height:1.6rem;
+    text-align: center;
+    font-size:0.6rem;
+    color:#9da9b2;
+}
+.alarmtablefir {
+     width:3.4rem;
+    border-right:0.05rem solid #fff;
+ }
+.alarmtablesed {
+    width:8rem;
+    border-right:0.05rem solid #fff;
+}
+.alarmtablethr {
+    width:4.5rem;
+}
+.alarmrecordcontent {
+    position: absolute;
+    top:4.2rem;
+    bottom:2.6rem;
+    left:0;
+    right:0;
+    overflow: auto;
+}
+.alarmtabletr {
+    height:2.2rem;
+    font-size:0.55rem;
+    text-align: center;
+}
+.alarmrctdsed {
+    text-align: left;
+}
+.alarmrdtdborder {
+    border-bottom:0.05rem solid #16384a;
+}
+.colorthr {
+    color:#fda300;
+    font-size:0.6rem;
+}
+.widthcenter {
+    width:16rem;
+    text-align: center;
+    line-height:2rem;
+}
+.alarmclick {
+    display: none;
+}
+.alarmcenter {
+    display: none;
+}
+.alarmover {
+    display: none;
+}
+.alarmno {
+    display:none;
+}
+.alarmnew {
+  display: none;
+}
+.alarmdateyespo{
+    position:absolute;
+    top:0.5rem;
+    right:1rem;
+
+}
+.titledatealarmstyle {
+    width:16rem;
+    font-size:0.6rem;
+    color:#305469;
+    padding:0 1rem;
+    height:1rem;
+    line-height:1rem;
+}
+.titledatebigp {
+    position: absolute;
+    top:2.1rem;
+    left:0rem;
+
+    border-bottom: 0.01rem solid #9fa3a6;
+}
+.titledatebigpbott {
+    position: absolute;
+    top:3.2rem;
+    left:0rem;
+}
+.alarmdateinputstyle {
+    width:6rem;
+    border:0.05rem solid #9fa3a6;
+    height:0.8rem;
+    -webkit-border-radius:0.4rem;
+    -moz-border-radius:0.4rem;
+    border-radius:0.4rem;
+    position:absolute;
+    right:3.5rem;
+    color:#305469;
+    text-align: center;
+}
+@media(min-device-height:751px){
+    .alarmdatayespojianr {
+        font-size: 0.5rem;
+    }
+    .alarmrecordcontentjianr {
+        position: absolute;
+        top:4.2rem;
+        bottom:2.3rem;
+        font-size:0.5rem;
+        left:0;
+        right:0;
+        overflow: auto;
+    }
+    .titlePalljianr {
+        height:2.5rem;
+    }
+}
+.colorthrnorm {
+    color:#fff;
+    font-size: 0.6rem;
+}

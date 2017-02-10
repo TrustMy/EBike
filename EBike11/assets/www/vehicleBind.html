@@ -1,0 +1,43 @@
+<div class="searchPassBack" ng-style="winHeight">
+    <p class="searchPassTitle searchpasstitlejianr">
+        <button class="searchBackBtn searchBackbtnjianr" ng-click="searchPassBackBtn()"></button>
+        <span class="searchPassTitleContent searchpasstitlecontentjianr">车辆绑定</span>
+    </p>
+    <p class="vehiclebindlogo contentlogostyle vehiclebindlogojianr"></p>
+    <form name="vehiclebindForm" novalidate>
+        <p class="searchPasscontent searchPasscontentjianr">
+            手机号：<input class="searchPinputS devicenumwidth" type="number" ng-model="vehiclebind.account" name="vehiclebindaccount" ng-pattern="regphone" ng-blur="phonePatStyle(vehiclebindForm.vehiclebindaccount.$valid)" required ng-disabled="bindphonedis"/>
+        </p>
+        <p class="searchPasscontent searchPasscontentjianr">
+            设备号：<input class="searchPinputS devicenumwidth" type="text" ng-model="vehiclebind.divicenum" name="vehiclebinddivicenum" required ng-disabled="bindvehiclenumdis"/>
+            <button class="scannedicon" ng-click="vehiclenumbtn()"></button>
+        </p>
+        <p class="searchPasscontent searchPasscontentjianr">
+            验证码：<input class="searchPinputS" type="number" ng-model="vehiclebind.verCodeContent" name="vehiclebindverCodeContent" required ng-disabled="bindvercodedis"/>
+            <button class="searchPverCodeBtn" ng-click="getVercode()" ng-disabled="bindverCodedis"><span ng-bind="vercodeBtnContent"></span></button>
+        </p>
+        <p class="searchPBtnPStyle searchPBtnPStylejianr">
+            <button class="searchPBtnStyle searchPBtnNo searchPBtnStylejianr" ng-click="backSubmitPage()">取消</button>
+            <button class="searchPBtnStyle searchPBtnYes searchPBtnStylejianr" ng-click="gomainPage()" ng-disabled="vehiclebinddis">确认</button>
+        </p>
+    </form>
+</div>
+<!--warning模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>

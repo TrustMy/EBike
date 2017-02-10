@@ -1,0 +1,77 @@
+<div class="mainContent" ui-view="tab-home" ng-style="winHeight">
+    <div class="autoChangeall home" lunbo>
+        <div class="picstyle autoPic1">
+            <iframe name="weather_inc" class="weatherstyle" src="http://i.tianqi.com/index.php?c=code&id=2&num=1" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" ng-click="iframereturn()"></iframe>
+        </div>
+
+        <div class="picstyle autoPic2">
+
+        </div>
+        <div class="picstyle autoPic3">
+
+        </div>
+        <div class="autoPointall">
+            <span class="pointstyle"></span>
+            <span class="pointstyle"></span>
+            <span class="pointstyle"></span>
+        </div>
+
+    </div>
+    <div class="homefunctionBtn">
+        <div class="functionBtnStyle" ng-click="fortificationStatus()" ng-disabled="fortificationdis">
+            <p class="functioniconStyle" ng-class="{'normalfbtnYes':colorfffYes,'clickfbtnYes':coloryyyYes,'normalfbtnNo':colorfffNo,'clickfbtnNo':coloryyyNo}"></p>
+            <p >{{orFortification}}</p>
+        </div>
+        <div class="functionBtnStyle" ui-sref="mains.home.cartripInformation" ng-click="changecolorStatus2()">
+            <p class="functioniconStyle" ng-class="{'normalfbtn2':colorfff2,'clickfbtn2':coloryyy2}"></p>
+            <p >用车记录</p>
+        </div>
+        <div class="functionBtnStyle" ui-sref="mains.home.searchCar" ng-click="changecolorStatus3()">
+            <p class="functioniconStyle" ng-class="{'normalfbtn3':colorfff3,'clickfbtn3':coloryyy3}"></p>
+            <p >寻车</p>
+        </div>
+        <div class="positionb">
+            <div class="functionBtnStyle " ui-sref="mains.home.vehicleStatus" ng-click="changecolorStatus4()">
+                <p class="functioniconStyle" ng-class="{'normalfbtn4':colorfff4,'clickfbtn4':coloryyy4}"></p>
+                <p >车辆状态</p>
+            </div>
+            <div class="functionBtnStyle " ui-sref="mains.home.alarmRecord" ng-click="changecolorStatus5()">
+                <p class="functioniconStyle" ng-class="{'normalfbtn5':colorfff5,'clickfbtn5':coloryyy5}"></p>
+                <p >报警记录</p>
+                <p class="alarmcountstyle" ng-class="{'alarmiconcount':alarmiconcountnone}"><span ng-bind="alarmcount"></span></p>
+            </div>
+            <div class="functionBtnStyle " ui-sref="mains.home.serviceHelp" ng-click="changecolorStatus6()">
+                <p class="functioniconStyle" ng-class="{'normalfbtn6':colorfff6,'clickfbtn6':coloryyy6}"></p>
+                <p >帮助和服务</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<div class="toggle model_warning" ng-if="hahaapp.toggle" >
+</div>
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="hahaapp.toggle">
+    <div class="modelPad">
+        <p class="iconhappy"></p>
+        <span class="model_contentspan" ng-bind="submithappy"></span>
+    </div>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>

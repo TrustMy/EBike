@@ -1,0 +1,369 @@
+.cartripContent {
+    width:16rem;
+    height:100%;
+    position: relative;
+    /*top:2rem;*/
+    /*left:0;*/
+    /*right:0;*/
+    /*bottom:0;*/
+}
+.currentcartrip{
+    background:#285166;
+    width:15rem;
+    padding:0 0.5rem;
+    height:30%;
+    position: relative;
+}
+
+.currentdateall {
+    width:12.3rem;
+    height:85%;
+    display: inline-block;
+    position: absolute;
+    top:0.5rem;
+}
+.currentupdateicon {
+    width:1.0rem;
+    height:1.0rem;
+    margin-left:4rem;
+    background:url("../img/car_refresh.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.currentspan {
+    font-size:0.8rem;
+    line-height:1.0rem;
+}
+.colcontent {
+    width:12.3rem;
+    height:80%;
+    display: inline-block;
+    font-size:0.6rem;
+    overflow: auto;
+}
+.tdfir {
+    width:3rem;
+    border-right:0.05rem solid #fff;
+    text-align: center;
+}
+.tdsed {
+    width:2rem;
+    text-align: center;
+}
+.dateicon {
+    width: 1.5rem;
+    margin:0 6.75rem;
+    height:1.5rem;
+    background:url("../img/car_calendar.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.cartrippositionleft {
+    position:absolute;
+    left:0.5rem;
+    top:0;
+}
+.cartrippositionright {
+    position: absolute;
+    top:0;
+    left:4.5rem;
+}
+.datecontent {
+    width:15rem;
+    margin:0.5rem 0.5rem;
+    height:50%;
+    color:#284f67;
+    position: absolute;
+    bottom:2.5rem;
+    left:0;
+    right:0;
+    top:30%;
+}
+.lastdivheight {
+    height:75%;
+    margin-top:5%;
+    overflow-x: hidden;;
+    overflow-y: auto;
+    width:15rem;
+
+}
+.timeline ul{list-style:none outside none;color:#284f67;}
+
+.timeline-date{overflow:hidden;position:relative;}
+
+.right td {
+    font-size:0.6rem;
+}
+.reccenttr {
+    width:11rem;
+}
+.tdthr {
+    width:9rem;
+}
+/*日历*/
+.test1Class > input {
+    border-bottom: 3px solid #1A4987;
+    border-left: transparent;
+    border-right: transparent;
+    border-top: transparent;
+    width:4rem;
+    color:#000;
+}
+.test2Class > input {
+    border-bottom: 3px solid #1A4987;
+    border-left: transparent;
+    border-right: transparent;
+    border-top: transparent;
+    width:4rem;
+    color:#000;
+}
+.mb-datepicker {
+    position:absolute;
+    bottom:-7rem;
+    left:-0.5rem;
+    width:14rem;
+    /*height:12rem;*/
+}
+.test2Class .mb-datepicker {
+    position:absolute;
+    bottom:-7rem;
+    left:-7rem;
+    width:14rem;
+    /*height:12rem;*/
+}
+.mb-datepicker > table {
+    width:14rem;
+}
+.noselect {
+    width:2rem;
+}
+.searchdateline {
+    width:16rem;
+    height:2rem;
+    line-height:1rem;
+}
+.dontcartrip {
+    display:none;
+}
+.hascartrip {
+    display:none;
+}
+.notripspan {
+    color:#fff;
+    font-size:1rem;
+    line-height:1rem;
+    display: inline-block;
+}
+.sleepcat {
+    width:4rem;
+    margin:0rem 1rem 0 0rem;
+}
+.sleepcatdiv {
+    padding:2rem 0 0 1.5rem;
+    height:4rem;
+    width:14.5rem;
+}
+.currentcaricon {
+    display: inline-block;
+    width:2.5rem;
+    height:5rem;
+    margin-top:16%;
+    background:url("../img/e_bike_1.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+
+}
+.lastnodate {
+    display: none;
+}
+.lasthasdate {
+    display: none;
+}
+.lastnodatesstyle  {
+    margin-top:3rem;
+    width:16rem;
+    text-align: center;
+}
+.normaldianlastnodate {
+    display: none;
+}
+.agadianlastnodate {
+    display: none;
+}
+.sbdianlastnodate {
+    display:none;
+}
+.moresbdianlastnodate {
+    display: none;
+}
+.dateyearnone {
+    display:none;
+}
+.lastdaytable {
+
+    width:100%;
+}
+.lastdaytable tr td {
+    line-height:1.6rem;
+    text-align: center;
+}
+.lastdaytable tr td.nocartriptd {
+    line-height: 3rem;
+}
+.notripcontents {
+    display:none;
+}
+.clickonloads {
+    display: none;
+}
+.cartriploadings {
+    display: none;
+}
+.thelastpagecartripovers {
+    display: none;
+}
+.infoclass {
+    display:none;
+}
+.datewidthcj {
+    width:3.5rem;
+    color:#000;
+    -webkit-border-radius:0.3rem;
+    -moz-border-radius:0.3rem;
+    border-radius:0.3rem;
+    border:0.05rem solid #000;
+}
+.searchdatebtnstyle {
+    position: absolute;
+    top:0.5rem;
+    left:9rem;
+}
+.bottomtripstyle {
+    width:2.5rem;
+    height:1rem;
+    color:#fff;
+    background:#174359;
+    -webkit-border-radius:0.3rem;
+    -moz-border-radius:0.3rem;
+    border-radius:0.3rem;
+}
+.searchdatebtnstyleno {
+    position: absolute;
+    top:0.5rem;
+    left:12rem;
+}
+.clickandaddload {
+    display: none;
+}
+.backgroundnoload img.loadiconxuanzhuan {
+    width:2rem;
+    height:2rem;
+    margin:0 3rem;
+    -webkit-animation-name:tyreAnimation;
+    -webkit-animation-duration:9s;
+    -webkit-animation-iteration-count:infinite;
+    -webkit-animation-timing-function:linear;
+
+    -moz-animation-name:tyreAnimation;
+    -moz-animation-duration:9s;
+    -moz-animation-iteration-count:infinite;
+    -moz-animation-timing-function:linear;
+    /*-o-animation-name: none;*/
+    -o-animation-name:tyreAnimation;
+    -o-animation-duration:9s;
+    -o-animation-iteration-count:infinite;
+    -o-animation-timing-function:linear;
+
+    animation-name:tyreAnimation;
+    animation-duration:9s;
+    animation-iteration-count:infinite;
+    animation-timing-function:linear;
+}
+@keyframes tyreAnimation
+{
+    0% {transform: rotate(0deg); }
+    100% {transform: rotate(1800deg); }
+}
+
+@-webkit-keyframes tyreAnimation
+{
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(1800deg); }
+}
+
+@-moz-keyframes tyreAnimation
+{
+    0% { -moz-transform: rotate(0deg); }
+    100% { -moz-transform: rotate(1800deg); }
+}
+
+@-ms-keyframes tyreAnimation
+{
+    0% { -ms-transform: rotate(0deg); }
+    100% { -ms-transform: rotate(1800deg); }
+}
+.clickonloadstoday {
+    display: none;
+}
+.cartriploadingstoday {
+    display: none;
+}
+.thelastpagecartripoverstoday {
+     display: none;
+ }
+.clickandaddloadtoday {
+    display: none;
+}
+.todaytabletishistyle tr td {
+    width:10rem;
+    text-align: center;
+    line-height:2rem;
+}
+.colcontentn {
+    height:85%;
+    overflow-y: auto;
+    font-size: 0.5rem;
+}
+@media(max-device-height:750px){
+    .timeline{background:url("../img/line4.png") repeat-y 66px 0;overflow:auto;position:relative;margin:0px 10px 0px;width:520px;}
+    .timeline-date h2{background:url("../img/icon9.png") no-repeat;height:40px;margin-bottom:20px;margin-left:46px;
+        -webkit-background-size:contain;
+        background-size:contain;}
+    .timeline-date h2 span{color:#999999;display:inline-block;font-size:22px;line-height:2rem;margin-left:3rem;}
+    .timeline-date ul li{background:url("../img/icon7.png") no-repeat 56px 5px;zoom:1;height:4.5rem;line-height:0.9rem;}
+    .timeline-date ul li h3{float:left;text-align:right;font-size:14px;color:#878787;display:block;}
+    .timeline-date ul li h3 span{display:block;color:#ADADAD;font-size:12px;padding-left:15px;}
+    .timeline-date ul li dl{margin-top:-5px;}
+    .timeline-date ul li dl.right{float:left;margin-left:1.5rem;margin-top:-4px;display:block;height:40px;width:10.5rem;}
+    .timeline-date ul li dl span{display:block;font-size:16px;padding:0px 10px 0px 30px;
+        line-height:40px;}
+}
+@media(min-device-height:751px){
+
+    .colcontentnjianr {
+        height:78%;
+    }
+    .datacontentjianr {
+        font-size:0.5rem;
+    }
+    .datacontentjianr button {
+        font-size: 0.5rem;
+    }
+    .timeline{background:url("../img/line4.png") repeat-y 2.2rem 0;overflow:auto;position:relative;margin:0px 0.5rem 0px;width:15rem;}
+    .timeline-date h2{background:url("../img/icon9.png") no-repeat;height:1.5rem;margin-bottom:20px;margin-left:1.5rem;
+        -webkit-background-size:contain;
+        background-size:contain;}
+    .timeline-date h2 span{color:#999999;display:inline-block;font-size:0.8rem;line-height:2rem;margin-left:2.2rem;}
+    .timeline-date ul li{background:url("../img/icon7.png") no-repeat 2rem 5px;zoom:1;height:3.5rem;line-height:0.9rem;}
+    .timeline-date ul li h3{float:left;text-align:right;font-size:0.6rem;color:#878787;display:block;}
+    .timeline-date ul li h3 span{display:block;color:#ADADAD;font-size:0.6rem;padding-left:15px;}
+    .timeline-date ul li dl{margin-top:-5px;}
+    .timeline-date ul li dl.right{float:left;margin-left:1rem;margin-top:-4px;display:block;height:3rem;width:10.5rem;}
+    .timeline-date ul li dl span{display:block;font-size:0.7rem;padding:0px 10px 0px 30px;
+        line-height:40px;}
+    .lastdivheightjianr {
+        height:75%;
+        margin-top:2%;
+    }
+
+}

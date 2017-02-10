@@ -1,0 +1,103 @@
+#tripmapcontainer {
+    /*height:100%;*/
+    width:100%;
+    position: absolute;
+    bottom:2.6rem;
+    top:0;
+    left:0;
+    right:0;
+}
+.searchCarback {
+
+    opacity: 0.4;
+    font-size:1.1rem;
+    display: inline-block;
+    width:1.5rem;
+    height:1.5rem;
+    -webkit-border-radius:0.7rem;
+    -moz-border-radius:0.7rem;
+    border-radius:0.7rem;
+    position: absolute;
+    top:1rem;
+    left:1rem;
+    color:#fff;
+    background:#000;
+}
+.backiconstyle {
+    margin:0.3rem 0.4rem;
+    width:0.7rem;
+    height:0.9rem;
+    background:url("../img/left_1.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.searchcarpstyle {
+    width:3rem;
+    height:3rem;
+    -webkit-border-radius:1.2rem;
+    -moz-border-radius:1.2rem;
+    border-radius:1.2rem;
+    background:#325e76;
+    color:#fff;
+    text-align: center;
+    position:absolute;
+    font-size:0.4rem;
+    overflow: hidden;
+}
+.searchcarpstyle img {
+    margin:0 1.1rem 0.1rem;
+    width:0.8rem;
+    display: inline-block;
+}
+.searchcarpstyle .basestationimgicon {
+    margin:0 1.25rem 0.1rem;
+    width:0.5rem;
+}
+.bellstylep {
+    bottom:7rem;
+    left:1rem;
+}
+.followmestylep {
+    bottom:10rem;
+    right:1rem;
+}
+.everytimegps {
+    bottom:17rem;
+    right:1rem;
+}
+.baseStationstylep {
+    bottom:13.5rem;
+    right:1rem;
+}
+.locationmarkerC {
+    color:#fff;
+    background:#000;
+    opacity: 0.3;
+    padding:0.1rem;
+    width:8.5rem;
+    text-align: center;
+    font-size:0.6rem;
+}
+.mapwarningheight {
+    height:120px;
+}
+.realtimesecondnum {
+    position: absolute;
+    bottom:20.5rem;
+    right:1rem;
+    font-size:1rem;
+    font-weight: bold;
+    color: #fe0000;
+}
+.realtimegrey {
+    background:grey;
+}
+.followgrey {
+    background:grey;
+}
+.bellcargrey {
+    background: grey;
+}
+.basestationgrey {
+    background: grey;
+}

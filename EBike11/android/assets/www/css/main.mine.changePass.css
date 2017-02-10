@@ -1,0 +1,12 @@
+.inputwidth {
+    width:6rem;
+
+}
+.checksearchptrue {
+    position:absolute;
+    right:0;
+    width:1rem;
+}
+.checksearchpnone {
+    display: none;
+}
