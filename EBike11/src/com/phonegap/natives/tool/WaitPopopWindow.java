@@ -26,6 +26,7 @@ public class WaitPopopWindow {
     private PopupWindow popupWindow;
     private TextView tv;
     private String msg ;
+    private boolean isShow = false;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -51,6 +52,7 @@ public class WaitPopopWindow {
 
     public void showPopopWindow (Context context, View v)
     {
+        isShow = true;
         // 一个自定义的布局，作为显示的内容
         View contentView = LayoutInflater.from(context).inflate(
                 R.layout.popopwindow, null);
@@ -119,7 +121,12 @@ public class WaitPopopWindow {
 
     public void stopPopopWindow()
     {
-        popupWindow.dismiss();
+        if(isShow)
+        {
+            popupWindow.dismiss();
+            isShow = false;
+        }
+
     }
 
 

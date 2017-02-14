@@ -29,12 +29,15 @@ public class MenyPopupWindow {
     private ListView mMenuListView;
     private PopupWindow mPopupWindowMenu;
     private Handler handler;
-    public MenyPopupWindow(Activity context,View mMenuLayout, ListView mMenuListView, PopupWindow mPopupWindowMenu,Handler handler) {
+    private MeunPopupWindowAdapter adapter;
+    private int type;
+    public MenyPopupWindow(Activity context,View mMenuLayout, ListView mMenuListView, PopupWindow mPopupWindowMenu,Handler handler,int type) {
         this.mMenuLayout = mMenuLayout;
         this.context = context;
         this.mMenuListView = mMenuListView;
         this.mPopupWindowMenu = mPopupWindowMenu;
         this.handler = handler;
+        this.type = type;
 
     }
 
@@ -52,7 +55,7 @@ public class MenyPopupWindow {
                 {
                     mMenuLayout =  LayoutInflater.inflate(R.layout.item_popupwindow,null);
                     mMenuListView = (ListView) mMenuLayout.findViewById(R.id.id_popupwindow_list);
-                    MeunPopupWindowAdapter adapter = new MeunPopupWindowAdapter(context,handler);
+                    adapter = new MeunPopupWindowAdapter(context,handler,type);
                     mMenuListView.setAdapter(adapter);
 
 
@@ -103,6 +106,13 @@ public class MenyPopupWindow {
             }
         });
     }
+
+
+    public int getItemType()
+    {
+        return adapter.getSelectPosition();
+    }
+
 
 
     public AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {

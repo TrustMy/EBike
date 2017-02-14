@@ -203,9 +203,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                             doFollowMe();
                         }
                     } else {
-//                        if (popopWindow != null) {
-//                            popopWindow.stopPopopWindow();
-//                        }
+                        if (popopWindow != null) {
+                            popopWindow.stopPopopWindow();
+                        }
 //                        Toast.makeText(context, , Toast.LENGTH_SHORT).show();
                         startErrorPopopWindow((String) msg.obj);
 
@@ -435,6 +435,12 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 ////                        Toast.makeText(context, , Toast.LENGTH_SHORT).show();
 //                        errorPopopWindow.setMsg((String) msg.obj);
 //                        errorPopopWindow.showPopopWindow(context,mapView);
+                            if(waitPopopWindow != null)
+                            {
+                                waitPopopWindow.stopPopopWindow();
+                            }
+
+
                         startErrorPopopWindow((String) msg.obj);
                     }
 
@@ -450,7 +456,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
                     gpsHistory.setIsStop(true);
 
-                    Log.i("lhh", "5分钟到了 ");
+                    Log.i("lhh", "5min success! ");
                     //关闭
                     mCvCountdownViewTest.stop();
                     mCvCountdownViewTest.start(ENDTIMES);
@@ -509,8 +515,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     break;
 
                 case 100:
-//                    waitPopopWindow = new WaitPopopWindow();
-//                    waitPopopWindow.showPopopWindow(context, home);
+                    waitPopopWindow = new WaitPopopWindow();
+                    waitPopopWindow.showPopopWindow(context, home);
+                    checkCarStatus();
                     break;
             }
 
@@ -531,7 +538,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
         androidCheckVersion = new AndroidCheckVersion(context);
-
+        androidCheckVersion.checkVersion();
 
         Intent intent = getIntent();
         uid = intent.getIntExtra("uid", 0);
@@ -544,44 +551,26 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         if (termId == null) {
             Toast.makeText(context, "uid异常 请重新进入本页面", Toast.LENGTH_SHORT).show();
         } else {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-
-                if (androidCheckVersion.checkVersion()) {
-                    if (checkIntent()) {
-                        initLocation();
-                    } else {
-                        Toast.makeText(context, "当前网络异常,请检查网络!", Toast.LENGTH_SHORT).show();
-                        aMap.moveCamera(CameraUpdateFactory.zoomTo(3));
-                    }
-                } else {
-
-                    Toast.makeText(context, "你拒绝了定位请求", Toast.LENGTH_SHORT).show();
-
-                }
-            } else {
                 if (checkIntent()) {
                     Toast.makeText(context, "正在定位请稍后!", Toast.LENGTH_SHORT).show();
                     initLocation();
+                    handler.sendEmptyMessageDelayed(100, 300);
 //                    carGPSRequest = new GetRequestClasz(handler, EBikeConstant.CAR_LOCATIOM, MapActivity.this, aMap,isShowCarLocation);
 //                    carGPSRequest.execute(EBikeSever.server_url + EBikeSever.car_location + "?userUid=" + uid);
 
 //                    try {
 //                        getHttpRequest.doGet(EBikeSever.server_url + EBikeSever.car_location + "?userUid=" + uid, EBikeConstant.CAR_LOCATIOM);
-                        handler.sendEmptyMessageDelayed(100, 10);
+
 //
 //
 //                    } catch (IOException e) {
 //                        L.i(e.getMessage());
 //                        e.printStackTrace();
 //                    }
-                    checkCarStatus();
                 } else {
                     Toast.makeText(context, "当前网络异常,请检查网络!", Toast.LENGTH_SHORT).show();
                     aMap.moveCamera(CameraUpdateFactory.zoomTo(3));
                 }
-            }
 //
         }
 
@@ -675,7 +664,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         mMenuList.add(new TestCheckBean(1,"基站定位"));
 
 
-        menyPopupWindow = new MenyPopupWindow(this,mMenuLayout, mMenuListView, mPopupWindowMenu, handler);
+        menyPopupWindow = new MenyPopupWindow(this,mMenuLayout, mMenuListView, mPopupWindowMenu, handler,EBikeConstant.REQUEST_TYPE);
         menyPopupWindow.showPopupWidow( mMenu, getLayoutInflater(), extBtn, rlTopBar, mMenuList);
 
 
@@ -863,28 +852,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
                     } else {
-
-
                         followMeStatus = true;
-
-
-
-//                    alwaysSracking.setClickable(false);
-//                    alwaysSracking.setImageResource(R.drawable.track_2);
-
-
-//                    carGPSRequest = new GetRequestClasz(handler, EBikeConstant.CAR_LOCATIOM, MapActivity.this, aMap,true);//true 代表是路径规划  不用显示车辆坐标
-//                    carGPSRequest.execute(EBikeSever.server_url + EBikeSever.car_location + "?userUid=" + uid);
-//                        try {
-//                            popopWindow.showPopopWindow(context,mapView);
-//
-//                            getHttpRequest.setIsCarLocation(true);
-//                            getHttpRequest.doGet(EBikeSever.server_url + EBikeSever.car_location + "?userUid=" + uid, EBikeConstant.CAR_LOCATIOM);
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-
-
                         try {
                             postHttpRequest.doPostCheckCarLcation(EBikeSever.server_url + EBikeSever.car_location_url, termId,token, EBikeConstant.CAR_LOCATIOM);
                         } catch (IOException e) {
@@ -949,15 +917,6 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     private void startGPSTracking(int num, int types, int seconds) {
-//        carGPSRequest = new GetRequestClasz(handler, types, MapActivity.this, aMap,isShowCarLocation);
-//        carGPSRequest.setGpsHistory(gpsHistory);
-//        carGPSRequest.execute(EBikeSever.server_url + EBikeSever.car_tracking + "?uid=" + uid + "&seconds=" + seconds + "&durationtime=" + num + "&seq=" + seq);
-//
-//        try {
-//            getHttpRequest.doGet(EBikeSever.server_url + EBikeSever.car_tracking + "?uid=" + uid + "&seconds=" + seconds + "&durationtime=" + num + "&seq=" + seq, types);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
         postHttpRequest.doPostStartTracking(EBikeSever.server_url+EBikeSever.car_time_tracking_lcation_url, termId,token,userPhone,appSN,seconds,durationtime,types);
 
@@ -1069,6 +1028,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 //        postRequestClasz.execute(EBikeSever.server_url + EBikeSever.car_status, seq, uid);
         try {
             postHttpRequest.doPostCheckCarStatus(EBikeSever.server_url + EBikeSever.car_status,termId,token,userPhone,appSN,EBikeConstant.CAR_STATUS);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1129,19 +1089,17 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     public void startErrorPopopWindow(String msg) {
-        try {
             synchronized (context)
             {
-                Thread.sleep(100);
-                errorPopopWindow = new ErrorPopopWindow();
+
+
+                if(errorPopopWindow == null)
+                {
+                    errorPopopWindow = new ErrorPopopWindow();
+                }
                 errorPopopWindow.setMsg(msg);
                 errorPopopWindow.showPopopWindow(context, alwaysSracking);
             }
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
     }
 
 

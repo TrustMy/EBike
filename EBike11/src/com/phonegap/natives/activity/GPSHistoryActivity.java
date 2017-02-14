@@ -93,6 +93,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
     private String termId,token;
 
+
     private ImageView ext;
     private Handler handler = new Handler() {
         @Override
@@ -174,6 +175,19 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
                     waitPopopWindow.setMsg("正在加载历史轨迹,请耐心等待!");
                     waitPopopWindow.showPopopWindow(context, extBtn);
                     break;
+
+                case EBikeConstant.REQUEST_TYPE://切换基站或者GPS数据轨迹
+                    if(msg.arg1 == 0)
+                    {
+                        L.i("GPS 数据");
+                        initLocation();
+                    }else
+                    {
+                        L.i("基站 数据");
+                        Toast.makeText(context, "基站接口未开通,请耐心等待!", Toast.LENGTH_SHORT).show();
+                    }
+
+                break;
             }
         }
     };
@@ -282,7 +296,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         mMenuList.add(new TestCheckBean(0,"GPS定位"));
         mMenuList.add(new TestCheckBean(1,"基站定位"));
 
-        menyPopupWindow = new MenyPopupWindow(this,mMenuLayout, mMenuListView, mPopupWindowMenu, handler);
+        menyPopupWindow = new MenyPopupWindow(this,mMenuLayout, mMenuListView, mPopupWindowMenu, handler,EBikeConstant.REQUEST_TYPE);
         menyPopupWindow.showPopupWidow( historyMenu, getLayoutInflater(), extBtn, rlTopBar, mMenuList);
 
 

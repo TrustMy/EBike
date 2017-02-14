@@ -42,6 +42,8 @@ public  class EBikeConstant {
 
     public static  final int GPS_ADDRES = 12;
 
+    public static final int REQUEST_TYPE = 13;
+
 
 
 }

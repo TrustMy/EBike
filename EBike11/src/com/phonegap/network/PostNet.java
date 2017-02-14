@@ -24,6 +24,7 @@ import com.phonegap.natives.locaction.GPSHistory;
 import com.phonegap.natives.tool.CoordinateTransformation;
 import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.L;
+import com.phonegap.natives.tool.ToastUtil;
 
 /**
  * Created by Trust on 17/1/3.
@@ -45,6 +46,8 @@ public class PostNet extends Handler {
     private Error error;
 
     private AMap aMap;
+
+    private boolean isFirst = false;//GPS数据为0时  是否是第一次数据 如果是 不显示 后面都显示
 
     private CoordinateTransformation coordinateTransformation;
 
@@ -186,24 +189,31 @@ public class PostNet extends Handler {
                 if (GPSlatLng != null) {
 //                    L.i("实时追踪,GPS坐标:"+GPSlatLng.latitude+"|"+GPSlatLng.longitude+"|基站坐标:"+MapLatLng.latitude+"|"+MapLatLng.longitude);
 
-                    if (GPSlatLng.longitude != 0.0 && carGPSBean.getContent().getType() ==  0) {
+                    if ( carGPSBean.getContent().getType() ==  0) {
+                        if(GPSlatLng.longitude != 0.0 )
+                        {
+                            gpsHistory.addGPSLocation(GPSlatLng, true, GpsLocation, GpsColor, GpsIcon);
+                        }else
+                        {
+                            ToastUtil.showToast(context,"GPS数据为0.0");
+                        }
 
-                        gpsHistory.addGPSLocation(GPSlatLng, true, GpsLocation, GpsColor, GpsIcon);
+
                         Log.d("MapActivity", "GPSlatLng.longitude != 0.0 && MapLatLng.longitude != 0.0");
-
-
-                    }else if(carGPSBean.getContent().getType() != 0)
+                    }else
                     {
-                        Toast.makeText(context, "未获取到实时追踪GPS数据(Type != 0)", Toast.LENGTH_SHORT).show();
+                        if(isFirst)
+                        {
+//                            Toast.makeText(context, "未获取到实时追踪GPS数据(Type != 0)", Toast.LENGTH_SHORT).show();
+                            ToastUtil.showToast(context,"未获取到实时追踪GPS数据(Type != 0)");
+                        }
+
                     }
-
-
-
-
+                    isFirst = true;
 
             }else
             {
-                Toast.makeText(context,"接收服务器返回的坐标数据超过40s",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context,"接收服务器返回的坐标数据超过40s",Toast.LENGTH_SHORT).show();
             }
         }else
         {
@@ -219,13 +229,16 @@ public class PostNet extends Handler {
         Message message = new Message();
          message.what = type;
 
-
         if (trackingBean.getStatus()) {
-
+            if(isFirst)
+            {
+                isFirst = false;
+            }
             //实时定位开启成功
             message.arg1 = EBikeConstant.HTTP_SUCCESS;
             message.obj = trackingBean;
             handler.sendMessage(message);
+
         }else
         {
 

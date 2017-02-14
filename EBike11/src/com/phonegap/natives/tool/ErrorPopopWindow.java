@@ -90,7 +90,10 @@ public class ErrorPopopWindow {
 //                R.drawable.selectmenu_bg_downward));
 //
 //         设置好参数之后再show
-        popupWindow.showAtLocation(v, Gravity.CENTER,0,0);
+        if(v!= null){
+            popupWindow.showAtLocation(v, Gravity.CENTER,0,0);
+        }
+
     }
 
 

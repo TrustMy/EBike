@@ -28,8 +28,8 @@
             <tr class="alarmtabletr" ng-repeat="info in alarmrecordInfo">
                 <td class="alarmrdtdborder " ng-bind="info.gpstime | date:'yyyy-MM-dd HH:mm:ss'"></td>
                 <td class="alarmrctdsed alarmrdtdborder" ng-bind="info.describe"></td>
-                <td class="alarmrdtdborder colorthr" ng-show="info.isalarmstatus" ng-bind="info.describe"></td>
-                <td class="alarmrdtdborder colorthrnorm" ng-hide="info.isalarmstatus" ng-bind="info.describe"></td>
+                <td class="alarmrdtdborder colorthr" ng-show="info.isalarmstatus" ng-bind="info.alarmstyle"></td>
+                <td class="alarmrdtdborder colorthrnorm" ng-hide="info.isalarmstatus" ng-bind="info.alarmstyle"></td>
             </tr>
             <tr class="widthcenter" ng-class="{'alarmclick':alarmclick1}" ng-click="alarmrecordload()" ng-disabled="alarmandloaddis">
                 <td colspan="3">继续加载</td>

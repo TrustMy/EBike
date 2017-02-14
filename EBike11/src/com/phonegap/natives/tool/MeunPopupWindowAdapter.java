@@ -33,6 +33,8 @@ public class MeunPopupWindowAdapter extends BaseAdapter {
 
     private View view;
 
+    private int type;
+
     private CheckBox cb1,cb2;
     private int num = 1;
     public void setPopupWindow(View popupWindow) {
@@ -40,11 +42,13 @@ public class MeunPopupWindowAdapter extends BaseAdapter {
     }
 
     private int tempPosition = -1;  //记录已经点击的CheckBox的位置
-    public MeunPopupWindowAdapter(Activity mContext, Handler handler) {
+    public MeunPopupWindowAdapter(Activity mContext, Handler handler , int type) {
         this.mContext = mContext;
+        this.type = type;
         this.handler = handler;
     }
 
+    private boolean isFirst = true;
     public void setmList(List<TestCheckBean> mList) {
         this.mList = mList;
     }
@@ -84,6 +88,7 @@ public class MeunPopupWindowAdapter extends BaseAdapter {
         holder.menuTx.setText(mList.get(position).getName());
 //        holder.menuCB.setText();
 
+
         cb1 = (CheckBox) view.findViewById(0);
         cb2 = (CheckBox) view.findViewById(0+1);
         holder.menuCB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -91,7 +96,7 @@ public class MeunPopupWindowAdapter extends BaseAdapter {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 CheckBox tempCheckBox = null;
                 L.i("当前tempPosition:" + tempPosition);
-                Toast.makeText(mContext, "当前tempPosition:" + tempPosition, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "当前tempPosition:" + tempPosition, Toast.LENGTH_SHORT).show();
                 if (isChecked) {
                     if (tempPosition != -1) {
                         //根据id找到上次点击的CheckBox,将它设置为false.
@@ -119,18 +124,37 @@ public class MeunPopupWindowAdapter extends BaseAdapter {
 
                 L.i("点击 tempPosition:"+tempPosition+"|IsChecked"+isChecked);
 //
-//                Message message = new Message();
-//                message.what = 12;//更新实时追踪 基站定位 是否显示状态
-//                message.obj = isChecked;
-//                handler.sendMessage(message);
+
+                if(isChecked && isFirst == false)
+                {
+                    Message message = new Message();
+                    message.what = type;//更新实时追踪 基站定位 是否显示状态
+                    message.arg1 = tempPosition;
+                    handler.sendMessage(message);
+                }
+                if(isFirst)
+                {
+                    isFirst = false;
+                }
 
             }
         });
 
-//        L.i("position:"+position+"|tempPosition:"+tempPosition);
-        if (position == tempPosition)   //比较位置是否一样,一样就设置为选中,否则就设置为未选中.
+        L.i("isFirst:"+isFirst);
+
+            if (position == tempPosition)   //比较位置是否一样,一样就设置为选中,否则就设置为未选中.
+                holder.menuCB.setChecked(true);
+            else holder.menuCB.setChecked(false);
+
+
+
+
+        if(position == 0 && isFirst == true)
+        {
+
             holder.menuCB.setChecked(true);
-        else holder.menuCB.setChecked(false);
+
+        }
 
         return convertView;
     }

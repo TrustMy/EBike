@@ -346,8 +346,7 @@ public class GPSHistory {
     {
 
         MarkerOptions markerOptions =   new MarkerOptions().
-                position(latLng).
-                title(name+":DefaultMarker").icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(context.getResources(),Icon)));
+                position(latLng).icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(context.getResources(),Icon)));
         aMap.addMarker(markerOptions).showInfoWindow();
 
 

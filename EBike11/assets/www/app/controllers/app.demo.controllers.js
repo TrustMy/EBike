@@ -1409,7 +1409,7 @@ angular.module("app.demo.controllers",[])
                 $scope.colorfffNo= false;
                 $scope.coloryyyNo = false;
                 $scope.vehiclesoperationObj = {
-                    termId:$window.sessionStorage.getItem("UtermId"),
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
                     userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
                     appSN:parseInt(Number(new Date().getTime())/1000),
                     lock:true
@@ -1476,7 +1476,7 @@ angular.module("app.demo.controllers",[])
                 $scope.colorfffNo= false;
                 $scope.coloryyyNo =true ;
                 $scope.vehiclesoperationObj = {
-                    termId:$window.sessionStorage.getItem("UtermId"),
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
                     userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
                     appSN:parseInt(Number(new Date().getTime())/1000),
                     lock:false
@@ -4466,6 +4466,14 @@ angular.module("app.demo.controllers",[])
                                 }else {
                                     e.content.alarms[i].isalarmstatus = false;
                                 }
+                                if(e.content.alarms[i].plugout == 1){
+                                    e.content.alarms[i].alarmstyle = "电池拔出";
+                                }else if(e.content.alarms[i].lowVoltage == 1){
+                                    e.content.alarms[i].alarmstyle = "低电压";
+                                }else if(e.content.alarms[i].vibration == 1){
+                                    e.content.alarms[i].alarmstyle = "碰撞报警";
+                                }
+
                             }
                             console.log("here 1",$scope);
                             console.log("看这个"+$scope.alarmrecordInfo);
@@ -4479,6 +4487,7 @@ angular.module("app.demo.controllers",[])
                             $scope.transloc = function(){
                                 var lnglatXY =[e.content.alarms[j].lng,e.content.alarms[j].lat];
                                 e.content.alarms[j].gpstime = new Date(e.content.alarms[j].gpsTime);
+
                                 //$scope.warningadd = registerService.covertAddress(lnglatXY);
                                 console.log(2222222222,lnglatXY);
                                 if(e.content.alarms[j].lat !=0){
@@ -4785,8 +4794,18 @@ angular.module("app.demo.controllers",[])
                         $scope.transloc = function(){
                             var lnglatXY =[e.content.alarms[j].lng,e.content.alarms[j].lat];
                             e.content.alarms[j].gpstime = new Date(e.content.alarms[j].gpsTime)
-
-
+                            if(e.content.alarms[j].plugout == 1){
+                                e.content.alarms[j].alarmstyle = "电池拔出";
+                            }else if(e.content.alarms[j].lowVoltage == 1){
+                                e.content.alarms[j].alarmstyle = "低电压";
+                            }else if(e.content.alarms[j].vibration == 1){
+                                e.content.alarms[j].alarmstyle = "碰撞报警";
+                            }
+                            if(e.content.alarms[j].status == 0){
+                                e.content.alarms[j].isalarmstatus =true ;
+                            }else {
+                                e.content.alarms[j].isalarmstatus = false;
+                            }
                             if(e.content.alarms[j].lat !=0){
 
                                 AMap.convertFrom(lnglatXY,"gps",function(status,result){
@@ -4800,11 +4819,7 @@ angular.module("app.demo.controllers",[])
                                                     }else {
                                                         $scope.addressa = result.regeocodes[0].formattedAddress;
                                                     }
-                                                    if(e.content.alarms[j].status == 0){
-                                                        e.content.alarms[j].isalarmstatus =true ;
-                                                    }else {
-                                                        e.content.alarms[j].isalarmstatus = false;
-                                                    }
+
                                                     e.content.alarms[j].describe = $scope.addressa;
                                                     //$scope.timealarmandpushtime = $timeout(function(){
 
@@ -4823,11 +4838,11 @@ angular.module("app.demo.controllers",[])
 
                                                 } else {
                                                     $scope.addressa = "获取地址失败";
-                                                    if(e.content.alarms[j].status == 0){
-                                                        e.content.alarms[j].isalarmstatus =false ;
-                                                    }else {
-                                                        e.content.alarms[j].isalarmstatus =true ;
-                                                    }
+                                                    //if(e.content.alarms[j].status == 0){
+                                                    //    e.content.alarms[j].isalarmstatus = true;
+                                                    //}else {
+                                                    //    e.content.alarms[j].isalarmstatus = false;
+                                                    //}
                                                     e.content.alarms[j].describe = $scope.addressa;
                                                     //$scope.timealarmandpushtime = $timeout(function(){
 
@@ -4870,9 +4885,9 @@ angular.module("app.demo.controllers",[])
                                 //e.content.alarms[j].describe = "获取地址失败";
                                 $scope.addressa = "获取地址失败";
                                 if(e.content.alarms[j].status == 0){
-                                    e.content.alarms[j].isalarmstatus =false ;
+                                    e.content.alarms[j].isalarmstatus = true;
                                 }else {
-                                    e.content.alarms[j].isalarmstatus =true ;
+                                    e.content.alarms[j].isalarmstatus =false ;
                                 }
                                 e.content.alarms[j].describe = $scope.addressa;
                                 //$scope.timealarmandpushtime = $timeout(function(){
