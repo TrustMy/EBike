@@ -469,6 +469,7 @@ angular.module("app.demo.directions",["app.demo.service"])
                     $interval.cancel(newScope.timerr);
                     console.log("关定时器hover");
                 },function(){
+                    $interval.cancel(newScope.timerr);
                     newScope.timerr = $interval(function(){
                         $("#btn_next").click();
                     },5000);
@@ -484,6 +485,7 @@ angular.module("app.demo.directions",["app.demo.service"])
 
                 }).bind("touchend", function(e){
                     if(e.originalEvent.touches.length <= 1){
+                        $interval.cancel(newScope.timerr);
                         newScope.timerr = $interval(function(){
                             $("#btn_next").click();
                         }, 5000);

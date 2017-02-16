@@ -536,9 +536,16 @@ angular.module("app.demo.controllers",[])
         $scope.vercodeNewpassBtn = function(){
             var searchnewPnewpass = $scope.searchnewPassForm.searchnewPnewpass.$modelValue;
             var searchnewPagapass = $scope.searchnewPassForm.searchnewPagapass.$modelValue;
+            //var regNull=/(^\s*)|(\s*$)/g;
             //这个时候按钮不能再次点击
             //$scope.codeagaPassdis = true;
-            if(searchnewPnewpass == searchnewPagapass){
+            if(searchnewPnewpass.indexOf(" ")!=-1){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "新密码内容中不能有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(searchnewPnewpass == searchnewPagapass){
                 $scope.codeagaPassdis = true;
                 //执行ajax：参数phone， new aga
                 codenewpassObj = {
@@ -704,6 +711,7 @@ angular.module("app.demo.controllers",[])
             var regpass = $scope.registerForm.regpass.$modelValue;
             var regemail = $scope.registerForm.regemail.$modelValue;
             var regverCode = $scope.registerForm.regverCode.$modelValue;
+            //var regNull=/(^\s*)|(\s*$)/g;
             if(!regaccount){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请确认您的手机号！";
@@ -725,6 +733,12 @@ angular.module("app.demo.controllers",[])
             }else if(!regverCode){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请确认您的验证码！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(regpass.indexOf(" ")!=-1){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "密码内容中不能有空格！";
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
@@ -1320,7 +1334,7 @@ angular.module("app.demo.controllers",[])
             "height":$rootScope.windoWHeihgt
         };
         //未处理的报警的个数
-        $rootScope.alarmiconcountnone= false;
+        //$rootScope.alarmiconcountnone= false;
         //$window.sessionStorage.setItem("useralarmcount");
         console.log($rootScope.alarmcount);
         //if($rootScope.alarmcount >0){
@@ -1350,17 +1364,22 @@ angular.module("app.demo.controllers",[])
                 console.log(e);
                 if(e.totleAlarm){
                     //$window.sessionStorage.setItem("useralarmcount", e.AlarmCount);
-                    $rootScope.alarmcount = e.totleAlarm;
+                    if(0<= e.totleAlarm && e.totleAlarm<=99){
+                        $rootScope.alarmcount = e.totleAlarm;
+                    }else {
+                        $rootScope.alarmcount = "99+";
+                    }
+
                 }
                 $scope.timealarmcontenttime = $timeout(function(){
-                    if($rootScope.alarmcount >0){
+                    if($rootScope.alarmcount >0 || $rootScope.alarmcount == "99+"){
                         console.log("icon显示");
                         $rootScope.alarmiconcountnone= false;
                     }else{
                         console.log("icon隐藏");
                         $rootScope.alarmiconcountnone= true;
                     };
-                },20)
+                },20);
 
                 if(e.status == true){
 
@@ -1644,9 +1663,14 @@ angular.module("app.demo.controllers",[])
                         });
                         //Listen notification arrived event, when a notification arrived, the callback function will be called
                         window.baidupush.listenNotificationArrived(function(info){
-                            $rootScope.alarmcount = Number($rootScope.alarmcount);
-                            $rootScope.alarmcount++;
-                            $rootScope.alarmiconcountnone= true;
+                            if(0<=$rootScope.alarmcount && $rootScope.alarmcount<=98){
+                                $rootScope.alarmcount = Number($rootScope.alarmcount);
+                                $rootScope.alarmcount++;
+                            }else if($rootScope.alarmcount>=99) {
+                                $rootScope.alarmcount = "99+";
+                            }
+
+                            $rootScope.alarmiconcountnone= false;
                             //your code here
                             //alert("listenNotificationArrived:" + JSON.stringify(info));
                         });
@@ -4440,8 +4464,8 @@ angular.module("app.demo.controllers",[])
                 $scope.alarmloadtimeoutzhege = $timeout(function(){
                     $scope.loadapp = {"toggle":false};
                     if(e.status == true){
-                        $rootScope.alarmcount = 0;
-                        $rootScope.alarmiconcountnone= true;
+                        //$rootScope.alarmcount = 0;
+                        //$rootScope.alarmiconcountnone= true;
                         if(e.content.currentSize != 0){
                             console.log(e);
                             $scope.alarmrecordPage ++;
@@ -5163,6 +5187,8 @@ angular.module("app.demo.controllers",[])
             var changePoldpass = $scope.changePassForm.changePoldpass.$modelValue;
             var changePnewpass = $scope.changePassForm.changePnewpass.$modelValue;
             var changePaganewpass = $scope.changePassForm.changePaganewpass.$modelValue;
+            //var regNull=/(^\s*)|(\s*$)/g;
+            //var regNull = /^\s*$/;
             //console.log("changePnewpass:"+changePnewpass);
             //console.log("changePaganewpass:"+changePaganewpass);
             if(!changePoldpass){
@@ -5189,7 +5215,15 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(changePnewpass.indexOf(" ")!=-1){
+                console.log("新密码:",changePnewpass)
+                console.log("新密码test:",changePnewpass.indexOf(" "))
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "新密码内容不能有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            } else{
                 $scope.changepassoldcontentdis = true;
                 $scope.changepassnewcontentdis = true;
                 $scope.changepassagacontentdis = true;
@@ -5255,13 +5289,28 @@ angular.module("app.demo.controllers",[])
         };
         $scope.changenickbtn = function(){
             var changenick= $scope.changeNickForm.changenicknewnickname.$modelValue;
+            //var regNull=/(^\s*)|(\s*$)/g;
             if(!changenick){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请输入新昵称！";
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(changenick.length>11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "新昵称的长度不能超过11位！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(changenick.indexOf(" ")!=-1){
+                console.log(changenick.indexOf(" "));
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "新昵称内容不能有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else {
+                console.log(changenick.indexOf(" "));
                 $scope.changenicknewdis = true;
                 $scope.changenickdis = true;
                 var changeNObj = {

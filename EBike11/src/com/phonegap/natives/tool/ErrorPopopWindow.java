@@ -86,9 +86,9 @@ public class ErrorPopopWindow {
 
 //         如果不设置PopupWindow的背景，无论是点击外部区域还是Back键都无法dismiss弹框
 //         我觉得这里是API的一个bug
-//        popupWindow.setBackgroundDrawable(getResources().getDrawable(
-//                R.drawable.selectmenu_bg_downward));
-//
+//        popupWindow.setBackgroundDrawable(context.getResources().getDrawable(
+//                R.drawable.));
+
 //         设置好参数之后再show
         if(v!= null){
             popupWindow.showAtLocation(v, Gravity.CENTER,0,0);

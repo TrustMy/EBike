@@ -42,6 +42,7 @@ import com.phonegap.natives.tool.L;
 import com.phonegap.natives.tool.MenyPopupWindow;
 import com.phonegap.natives.tool.NetWorkeAvailable;
 import com.phonegap.natives.tool.TimeTool;
+import com.phonegap.natives.tool.ToastUtil;
 import com.phonegap.natives.tool.TraceAsset;
 import com.phonegap.natives.tool.WaitPopopWindow;
 
@@ -93,6 +94,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
     private String termId,token;
 
+    private int mapType = 0;//0 是GPS   1是基站
 
     private ImageView ext;
     private Handler handler = new Handler() {
@@ -165,8 +167,9 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
                 case EBikeConstant.ERROR:
                     if (msg.obj != null) {
                         String message = (String) msg.obj;
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-
+//                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        waitPopopWindow.stopPopopWindow();
+                        startErrorPopopWindow(message);
                     }
                     break;
 
@@ -174,17 +177,34 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
                     waitPopopWindow = new WaitPopopWindow();
                     waitPopopWindow.setMsg("正在加载历史轨迹,请耐心等待!");
                     waitPopopWindow.showPopopWindow(context, extBtn);
+                    postHttpRequest.doPostCheckCarHistoryLocation(EBikeSever.server_url+EBikeSever.car_history_location_url,termId,token,startTime,endTime,EBikeConstant.CAR_LOCATION_HISTORICAL);
                     break;
 
                 case EBikeConstant.REQUEST_TYPE://切换基站或者GPS数据轨迹
+                    waitPopopWindow.setMsg("正在加载历史轨迹,请耐心等待!");
+                    waitPopopWindow.showPopopWindow(context, extBtn);
                     if(msg.arg1 == 0)
                     {
                         L.i("GPS 数据");
-                        initLocation();
+
+                        mapType = 0;
+
+//                        if(checkIntent())
+//                        {
+//                            initLocation();
+//                        }else
+//                        {
+//                            ToastUtil.showToast(context,"请检查网络!");
+//                        }
+                        checkCoordinate();
+
                     }else
                     {
+                        mapType = 1;
                         L.i("基站 数据");
                         Toast.makeText(context, "基站接口未开通,请耐心等待!", Toast.LENGTH_SHORT).show();
+//                        checkCoordinate();
+                        waitPopopWindow.stopPopopWindow();
                     }
 
                 break;
@@ -192,6 +212,27 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         }
     };
 
+
+    public void checkCoordinate()
+    {
+        if(carLocationHistorical == null)
+        {
+            if(checkIntent())
+            {
+                initLocation();
+            }else
+            {
+                ToastUtil.showToast(context,"请检查网络!");
+            }
+        }else if(carLocationHistorical.getContent().getGps().size() == 0)
+        {
+            ToastUtil.showToast(context,"本次行程坐标点为空");
+        }else
+        {
+            aMap.clear();
+            guiJiJiuPian(carLocationHistorical);
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -267,7 +308,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
     }
 
     private void initLocation() {
-        postHttpRequest.doPostCheckCarHistoryLocation(EBikeSever.server_url+EBikeSever.car_history_location_url,termId,token,startTime,endTime,EBikeConstant.CAR_LOCATION_HISTORICAL);
+
 //        getHttpRequest = new GetHttpRequest(context, handler, aMap, new GPSHistory(aMap, context,null));
         Toast.makeText(context, "正在获取历史行程,请稍后!", Toast.LENGTH_SHORT).show();
 
@@ -354,6 +395,10 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
     public void guiJiJiuPian(CarLocationHistorical carLocationHistorical) {
         LBSTraceClient mTraceClient = new LBSTraceClient(this.getApplicationContext());
         L.i("guiJiJiuPian  carLocationHistorical.size ():"+carLocationHistorical.getContent().getGps().size());
+       if(latLngs.size() == 0)
+       {
+
+
         for (int i = carLocationHistorical.getContent().getGps().size() -1; i >=0 ; i--) {
             if (carLocationHistorical.getContent().getGps().get(i).getLat() == 0.0) {
                 continue;
@@ -366,7 +411,15 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
             }
 
         }
-        huaLiner(new GPSHistory(aMap,context,null));
+       }
+        if(latLngs.size() != 0)
+        {
+            huaLiner(new GPSHistory(aMap,context,null));
+        }else
+        {
+            ToastUtil.showToast(context,"坐标点为0");
+        }
+
 
 
 
@@ -426,6 +479,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
     @Override
     public void onRequestFailed(int num, String s) {
+        /*
         GPSHistory mHistory = new GPSHistory(aMap, context,null);
         int listSize = 0;
         L.i("onRequestFailed   num:"+num+"| s:"+s);
@@ -453,8 +507,15 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
                                 }
 
-        huaLiner(mHistory);
+        if(latLngs.size() != 0)
+        {
+            huaLiner(mHistory);
+        }else
+        {
+            ToastUtil.showToast(context,"坐标点为空");
+        }
 
+    */
     }
 
     @Override
@@ -467,7 +528,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
     public void onFinished(int i, List<LatLng> list, int i1, int i2) {
         L.i("onFinished  list.size ():"+list.size());
 
-
+        /*
 
         GPSHistory mHistory = new GPSHistory(aMap, context,null);
 
@@ -484,7 +545,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
         huaLiner(mHistory);
 
-
+    */
 
 
     }

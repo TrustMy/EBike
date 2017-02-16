@@ -35,7 +35,12 @@ public class WaitPopopWindow {
                 case 1:
                     if(popupWindow != null)
                     {
-                        popupWindow.dismiss();
+
+
+                            popupWindow.dismiss();
+
+
+
                     }
                 break;
             }

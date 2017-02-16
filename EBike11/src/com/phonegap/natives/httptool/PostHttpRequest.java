@@ -9,6 +9,7 @@ import com.amap.api.maps.AMap;
 import com.phonegap.natives.locaction.GPSHistory;
 import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.L;
+import com.phonegap.natives.tool.ToastUtil;
 import com.phonegap.network.PostNet;
 
 import java.io.IOException;
@@ -129,15 +130,13 @@ public class PostHttpRequest {
             @Override
             public void onFailure(Call call, IOException e) {
                 L.i("post:"+e.getMessage());
-                if(e.getMessage() != null)
-                {
-                    message.what = type;
-                    message.arg1 = EBikeConstant.HTTP_EROOR;
-                    postNet.sendMessage(message);
-                }else
-                {
-                    L.i("e.getMessage()  ==  null");
-                }
+
+                message.what = EBikeConstant.ERROR;
+                message.arg1 = EBikeConstant.HTTP_EROOR;
+                message.arg2 = 100;
+                message.obj = e.toString();
+
+                postNet.sendMessage(message);
 
             }
 
@@ -145,10 +144,26 @@ public class PostHttpRequest {
             public void onResponse(Call call, Response response) throws IOException {
                 message.what = type;
                 String json = response.body().string();
-                L.i("post json :"+json);
-                message.arg1 = EBikeConstant.HTTP_SUCCESS;
-                message.obj = json;
-                postNet.sendMessage(message);
+                L.i("response.code() :"+response.code());
+
+                if(response.code() == 200)
+                {
+                    L.i("post json :"+json);
+                    message.arg1 = EBikeConstant.HTTP_SUCCESS;
+                    message.obj = json;
+                    postNet.sendMessage(message);
+                }else
+                {
+//                    ToastUtil.showToast(context,"错误 返回码:"+response.code());
+                    L.i("错误 返回码:"+response.toString());
+
+                    message.what = EBikeConstant.ERROR;
+                    message.arg1 = EBikeConstant.HTTP_EROOR;
+                    message.arg2 = 100;
+                    message.obj = response.code()+"";
+                    postNet.sendMessage(message);
+                }
+
             }
         });
     }

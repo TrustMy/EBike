@@ -79,10 +79,10 @@ public class GPSHistory {
                 case EBikeConstant.START_LOCATION:
                     if(startName.equals("获取地址失败"))
                     {
-                        addresIcon(latLngs.get(latLngs.size()-1),"起点",R.drawable.my_location_3, (String) msg.obj);
+                        addresIcon(latLngs.get(0),"起点",R.drawable.my_location_3, (String) msg.obj);
                     }else
                     {
-                        addresIcon(latLngs.get(latLngs.size()-1),"起点",R.drawable.my_location_3,startName);
+                        addresIcon(latLngs.get(0),"起点",R.drawable.my_location_3,startName);
                     }
 
 
@@ -98,10 +98,10 @@ public class GPSHistory {
                 case EBikeConstant.END_LOCATION:
                     if(endName.equals("获取地址失败"))
                     {
-                        addresIcon(latLngs.get(0),"终点",R.drawable.car_location_3, (String) msg.obj);
+                        addresIcon(latLngs.get(latLngs.size()-1),"终点",R.drawable.car_location_3, (String) msg.obj);
                     }else
                     {
-                        addresIcon(latLngs.get(0),"终点",R.drawable.car_location_3,endName);
+                        addresIcon(latLngs.get(latLngs.size()-1),"终点",R.drawable.car_location_3,endName);
                     }
 
                     break;
@@ -165,9 +165,12 @@ public class GPSHistory {
          }
 
 
+        if(latLngs.size() != 0)
+        {
+            new GPSAddressName(context,new LatLonPoint(latLngs.get(latLngs.size()-1).latitude,latLngs.get(latLngs.size()-1).longitude),handler,EBikeConstant.START_LOCATION);
+            new GPSAddressName(context,new LatLonPoint(latLngs.get(0).latitude,latLngs.get(0).longitude),handler,EBikeConstant.END_LOCATION);
 
-        new GPSAddressName(context,new LatLonPoint(latLngs.get(0).latitude,latLngs.get(0).longitude),handler,EBikeConstant.START_LOCATION);
-        new GPSAddressName(context,new LatLonPoint(latLngs.get(latLngs.size()-1).latitude,latLngs.get(latLngs.size()-1).longitude),handler,EBikeConstant.END_LOCATION);
+        }
 
 
 

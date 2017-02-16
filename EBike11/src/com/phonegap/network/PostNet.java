@@ -24,6 +24,7 @@ import com.phonegap.natives.locaction.GPSHistory;
 import com.phonegap.natives.tool.CoordinateTransformation;
 import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.L;
+import com.phonegap.natives.tool.TimeTool;
 import com.phonegap.natives.tool.ToastUtil;
 
 /**
@@ -52,8 +53,11 @@ public class PostNet extends Handler {
     private CoordinateTransformation coordinateTransformation;
 
     private GPSHistory gpsHistory;
+
+    private TimeTool timeTool;
     public PostNet (Context context, Handler handler, AMap aMap , GPSHistory gpsHistory)
     {
+        timeTool = new TimeTool();
         this.gpsHistory = gpsHistory;
         this.context = context;
         this.aMap = aMap;
@@ -67,7 +71,12 @@ public class PostNet extends Handler {
         Gson gson = new Gson();
         Message message = new Message();
         res = (String) msg.obj;
-        error = gson.fromJson(res,Error.class);
+        L.i("res:"+res);
+        if(msg.arg2 != 100)
+        {
+            error = gson.fromJson(res,Error.class);
+        }
+
         switch (msg.what)
         {
             case EBikeConstant.CAR_STATUS:
@@ -77,8 +86,8 @@ public class PostNet extends Handler {
                     toDealWithCAR_STATUS(gson,message,res,EBikeConstant.CAR_STATUS);
                 }else
                 {
-                    commitTimeOut(EBikeConstant.CAR_STATUS);
-                    commitTimeOutHandler(EBikeConstant.CAR_STATUS);
+//                    commitTimeOut(EBikeConstant.CAR_STATUS);
+                    commitTimeOutHandler(EBikeConstant.CAR_STATUS, (String) msg.obj);
                 }
             break;
 
@@ -89,9 +98,9 @@ public class PostNet extends Handler {
                     toDealWithBUZZER(gson, message,EBikeConstant.BUZZER);
                 }else
                 {
-                    commitTimeOut(EBikeConstant.BUZZER);
+//                    commitTimeOut(EBikeConstant.BUZZER);
 //                    errorSend(EBikeConstant.BUZZER);
-                    commitTimeOutHandler(EBikeConstant.BUZZER);
+                    commitTimeOutHandler(EBikeConstant.BUZZER,(String) msg.obj);
                 }
 
             break;
@@ -103,7 +112,7 @@ public class PostNet extends Handler {
                 }else
                 {
 //                    commotTimeOut(EBikeConstant.CAR_LOCATIOM);
-                    commitTimeOutHandler(EBikeConstant.CAR_LOCATIOM);
+                    commitTimeOutHandler(EBikeConstant.CAR_LOCATIOM,(String) msg.obj);
                 }
 
                 break;
@@ -117,7 +126,7 @@ public class PostNet extends Handler {
                 }else
                 {
                     //超时
-                    commitTimeOutHandler(EBikeConstant.ALWAYS_TRACKING);
+                    commitTimeOutHandler(EBikeConstant.ALWAYS_TRACKING,(String) msg.obj);
                 }
                 break;
 
@@ -135,7 +144,7 @@ public class PostNet extends Handler {
 //                    commotTimeOut(EBikeConstant.ALWAYS_TRACKING_LINE);
 
 //                    errorSend(EBikeConstant.ALWAYS_TRACKING_LINE);
-                    commitTimeOutHandler(EBikeConstant.ALWAYS_TRACKING_LINE);
+                    commitTimeOutHandler(EBikeConstant.ALWAYS_TRACKING_LINE,(String) msg.obj);
                 }
                 break;
 
@@ -146,9 +155,16 @@ public class PostNet extends Handler {
                 }else
                 {
 //
-                    commitTimeOutHandler(EBikeConstant.CAR_LOCATION_HISTORICAL);
+                    commitTimeOutHandler(EBikeConstant.CAR_LOCATION_HISTORICAL,(String) msg.obj);
                 }
+
             break;
+            case EBikeConstant.ERROR:
+                Message message1 = new Message();
+                message1.what = EBikeConstant.ERROR;
+                message1.obj = msg.obj;
+                handler.sendMessage(message1);
+                break;
 
 
 
@@ -158,6 +174,7 @@ public class PostNet extends Handler {
 
     private void doCarHistoryLocation(Message msg, Gson gson, int type) {
         Gson gson1 = new Gson();
+        L.i("res:"+res);
         CarLocationHistorical carLocationHistorical = gson1.fromJson(res,CarLocationHistorical.class);
 
         L.i("toDealWithCAR_LOCATION_HISTORICAL :"+carLocationHistorical.toString());
@@ -202,14 +219,16 @@ public class PostNet extends Handler {
                         Log.d("MapActivity", "GPSlatLng.longitude != 0.0 && MapLatLng.longitude != 0.0");
                     }else
                     {
+                        L.i("isFirst old:"+isFirst);
                         if(isFirst)
                         {
 //                            Toast.makeText(context, "未获取到实时追踪GPS数据(Type != 0)", Toast.LENGTH_SHORT).show();
                             ToastUtil.showToast(context,"未获取到实时追踪GPS数据(Type != 0)");
                         }
-
+                        isFirst = true;
+                        L.i("isFirst new :"+isFirst);
                     }
-                    isFirst = true;
+
 
             }else
             {
@@ -270,7 +289,7 @@ public class PostNet extends Handler {
                     L.i("转换过后的 坐标  :"+update.latitude);
                     aMap.addMarker(new MarkerOptions().
                             position(update).
-                            title("当前位置:").
+                            title(timeTool.getGPSTime(carGPSBean.getContent().getGpsTime())).
                             snippet("GPS定位")).showInfoWindow();
 
                     aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
@@ -279,12 +298,13 @@ public class PostNet extends Handler {
                             0, //俯仰角0°~45°（垂直与地图时为0）
                             0  ////偏航角 0~360° (正北方为0)
                     )));
-                    message.what = type;
-                    message.arg1 = EBikeConstant.HTTP_SUCCESS;//代表成功;
-                    message.obj = carGPSBean;
-                    handler.sendMessage(message);
+
 
                 }
+                message.what = type;
+                message.arg1 = EBikeConstant.HTTP_SUCCESS;//代表成功;
+                message.obj = carGPSBean;
+                handler.sendMessage(message);
             }else
             {
                 //返回错误信息
@@ -371,12 +391,12 @@ public class PostNet extends Handler {
     }
 
 
-    public void commitTimeOutHandler(int type)
+    public void commitTimeOutHandler(int type , String msg)
     {
         Message message = new Message();
         message.what = type;
         message.arg1 = EBikeConstant.HTTP_EROOR;//失败
-        message.obj = "链接超时!";
+        message.obj = msg;
         handler.sendMessage(message);
     }
 

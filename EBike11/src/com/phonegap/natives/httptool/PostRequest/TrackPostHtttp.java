@@ -13,6 +13,7 @@ import com.phonegap.natives.locaction.GPSHistory;
 import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.EBikeSever;
 import com.phonegap.natives.tool.L;
+import com.phonegap.natives.tool.ToastUtil;
 import com.phonegap.network.PostNet;
 
 import java.io.DataOutputStream;
@@ -46,8 +47,8 @@ public class TrackPostHtttp extends AsyncTask {
             url = new URL(EBikeSever.server_url+EBikeSever.car_location_url);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
-            connection.setConnectTimeout(4000);
-            connection.setReadTimeout(4000);
+            connection.setConnectTimeout(3000);
+            connection.setReadTimeout(3000);
 
             connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
 
@@ -59,7 +60,8 @@ public class TrackPostHtttp extends AsyncTask {
             DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
             outputStream.writeBytes(json);
             connection.connect();
-            if(connection.getResponseCode()==200){//响应成功
+            if(connection.getResponseCode()==200){
+                //响应成功
                 stream = connection.getInputStream();
                 String jsons = StringUtils.getStringByInputStream(stream,"utf-8");
                 L.i("TrackPostHtttp"+jsons);
@@ -77,7 +79,7 @@ public class TrackPostHtttp extends AsyncTask {
                 }
                 }else
             {
-                Toast.makeText(context,"json为null", Toast.LENGTH_SHORT).show();
+                ToastUtil.showToast(context,"错误码:"+connection.getResponseCode());
             }
 
 
@@ -88,6 +90,7 @@ public class TrackPostHtttp extends AsyncTask {
             message = new Message();
             message.what = EBikeConstant.ALWAYS_TRACKING_LINE;
             message.arg1 = EBikeConstant.HTTP_EROOR;
+            message.arg2 = 100;
             message.obj = "连接超时!";
             postGet.sendMessage(message);
             e.printStackTrace();
@@ -97,6 +100,7 @@ public class TrackPostHtttp extends AsyncTask {
             message = new Message();
             message.what = EBikeConstant.ALWAYS_TRACKING_LINE;
             message.arg1 = EBikeConstant.HTTP_EROOR;
+            message.arg2 = 100;
             message.obj = "连接超时!";
             postGet.sendMessage(message);
             e.printStackTrace();

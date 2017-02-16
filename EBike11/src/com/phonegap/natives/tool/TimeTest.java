@@ -30,7 +30,7 @@ public class TimeTest {
 
         timer = new Timer();
         timer.schedule(timeClasa,0,5*1000);
-        Log.i("lhh","点击开始");
+        L.i("timeTools  success!");
     }
     public void stopTime()
     {

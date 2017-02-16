@@ -8,11 +8,6 @@ import java.util.List;
 public class CarLocationHistorical {
 
 
-    /**
-     * content : {"totalElements":2,"gps":[{"gpsTime":1483665365000,"engine":4,"station":65530,"block":12349,"lng":121.987654,"acc":1,"termId":350000000000001,"course":180,"voltage":23.1,"fix":1,"alt":25.3,"gpsSpeed":45.2,"rssi":19,"lat":31.012345},{"gpsTime":1483665355000,"engine":4,"station":65530,"block":12349,"lng":121.987654,"acc":1,"termId":350000000000001,"course":180,"voltage":23.1,"fix":1,"alt":25.3,"gpsSpeed":45.2,"rssi":19,"lat":31.012345}]}
-     * status : true
-     */
-
     private ContentBean content;
     private boolean status;
 
@@ -33,10 +28,7 @@ public class CarLocationHistorical {
     }
 
     public static class ContentBean {
-        /**
-         * totalElements : 2
-         * gps : [{"gpsTime":1483665365000,"engine":4,"station":65530,"block":12349,"lng":121.987654,"acc":1,"termId":350000000000001,"course":180,"voltage":23.1,"fix":1,"alt":25.3,"gpsSpeed":45.2,"rssi":19,"lat":31.012345},{"gpsTime":1483665355000,"engine":4,"station":65530,"block":12349,"lng":121.987654,"acc":1,"termId":350000000000001,"course":180,"voltage":23.1,"fix":1,"alt":25.3,"gpsSpeed":45.2,"rssi":19,"lat":31.012345}]
-         */
+
 
         private int totalElements;
         private List<GpsBean> gps;
@@ -58,31 +50,18 @@ public class CarLocationHistorical {
         }
 
         public static class GpsBean {
-            /**
-             * gpsTime : 1483665365000
-             * engine : 4
-             * station : 65530
-             * block : 12349
-             * lng : 121.987654
-             * acc : 1
-             * termId : 350000000000001
-             * course : 180
-             * voltage : 23.1
-             * fix : 1
-             * alt : 25.3
-             * gpsSpeed : 45.2
-             * rssi : 19
-             * lat : 31.012345
-             */
+
 
             private long gpsTime;
             private int engine;
             private int station;
             private int block;
             private double lng;
+            private int type;
             private int acc;
             private long termId;
             private int course;
+            private String address;
             private double voltage;
             private int fix;
             private double alt;
@@ -110,6 +89,10 @@ public class CarLocationHistorical {
                 this.lng = lng;
             }
 
+            public void setType(int type) {
+                this.type = type;
+            }
+
             public void setAcc(int acc) {
                 this.acc = acc;
             }
@@ -120,6 +103,10 @@ public class CarLocationHistorical {
 
             public void setCourse(int course) {
                 this.course = course;
+            }
+
+            public void setAddress(String address) {
+                this.address = address;
             }
 
             public void setVoltage(double voltage) {
@@ -166,6 +153,10 @@ public class CarLocationHistorical {
                 return lng;
             }
 
+            public int getType() {
+                return type;
+            }
+
             public int getAcc() {
                 return acc;
             }
@@ -176,6 +167,10 @@ public class CarLocationHistorical {
 
             public int getCourse() {
                 return course;
+            }
+
+            public String getAddress() {
+                return address;
             }
 
             public double getVoltage() {
