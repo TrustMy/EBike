@@ -58,6 +58,8 @@ public class PostNet extends Handler {
     private GPSHistory gpsHistory;
 
     private TimeTool timeTool;
+
+    private String dataType;
     public PostNet (Context context, Handler handler, AMap aMap , GPSHistory gpsHistory)
     {
         timeTool = new TimeTool();
@@ -295,12 +297,19 @@ public class PostNet extends Handler {
                 {
 //                    aMap.clear();
 
+                    if(carGPSBean.getContent().getType() == 0)
+                    {
+                        dataType = "GPS定位:";
+                    }else
+                    {
+                        dataType = "基站坐标:";
+                    }
 
                     LatLng update = coordinateTransformation.transformation(desLatLng);
                     L.i("转换过后的 坐标  :"+update.latitude);
                     aMap.addMarker(new MarkerOptions().
                             position(update).
-                            title(timeTool.getGPSTime(carGPSBean.getContent().getGpsTime())+":车辆位置")).showInfoWindow();
+                            title(dataType).snippet(timeTool.getGPSTime(carGPSBean.getContent().getGpsTime()))).showInfoWindow();
 
                     aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
                             new LatLng(update.latitude,update.longitude),//新的中心点坐标

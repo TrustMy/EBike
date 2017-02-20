@@ -209,9 +209,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                         }
 
                     } else {
-                        if (popopWindow != null) {
-                            popopWindow.stopPopopWindow();
-                        }
+                        stopPopupWindow();
 //                        Toast.makeText(context, , Toast.LENGTH_SHORT).show();
                         startErrorPopopWindow((String) msg.obj);
 
@@ -240,17 +238,13 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                             buzzerStatus = true;
                         }
 
-                        if (popopWindow != null) {
-                            popopWindow.stopPopopWindow();
-                        }
+                        stopPopupWindow();
                     } else {
 //                        errorPopopWindow = new ErrorPopopWindow();
 ////                        Toast.makeText(context,(String)msg.obj, Toast.LENGTH_SHORT).show();
 //                        errorPopopWindow.setMsg((String)msg.obj);
 //                        errorPopopWindow.showPopopWindow(context,mapView);
-                        if (popopWindow != null) {
-                            popopWindow.stopPopopWindow();
-                        }
+                        stopPopupWindow();
                         startErrorPopopWindow((String) msg.obj);
                     }
 
@@ -285,7 +279,11 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                                     TrackGPSNum = 0;
 //
 
-                                    timeTest.stopTime();
+                                    if(timeTest != null)
+                                    {
+                                        timeTest.stopTime();
+                                    }
+
 //                                    gpsHistory.hiddenMarker();
 //
                                     //lwaysTrackingLine http request All is Close!
@@ -347,9 +345,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
                         }
 //                        Toast.makeText(context,(String)msg.obj, Toast.LENGTH_SHORT).show();
-                        if (popopWindow != null) {
-                            popopWindow.stopPopopWindow();
-                        }
+                        stopPopupWindow();
 
 
                     }
@@ -388,9 +384,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 //                            startErrorPopopWindow((String) msg.obj);
 
                         }
-                        if (popopWindow != null) {
-                            popopWindow.stopPopopWindow();
-                        }
+                        stopPopupWindow();
                     } else {
                         Toast.makeText(context, "当前网络异常,请检查网络!", Toast.LENGTH_SHORT).show();
                     }
@@ -403,10 +397,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                         if (msg.obj != null) {
                             String message = (String) msg.obj;
                             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                            if (popopWindow != null) {
-                                popopWindow.stopPopopWindow();
-
-                            }
+                            stopPopupWindow();
                             errorPopopWindow = new ErrorPopopWindow();
                             errorPopopWindow.setMsg(message);
                             errorPopopWindow.showPopopWindow(context, mapView);
@@ -537,6 +528,17 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
         }
     };
+
+    private void stopPopupWindow() {
+        if (popopWindow != null) {
+            popopWindow.stopPopopWindow();
+        }
+
+        if(waitPopopWindow != null )
+        {
+            waitPopopWindow.stopPopopWindow();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -842,9 +844,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     name = "followMe";
 
 
+
                     aMap.clear();
 
-
+                    popopWindow.showPopopWindow(context, mapView);
                         followMeStatus = true;
                         try {
                             postHttpRequest.doPostCheckCarLcation(EBikeSever.server_url + EBikeSever.car_location_url, termId,token, EBikeConstant.CAR_LOCATIOM);
@@ -883,7 +886,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
             if (endLat.getLongitude() != 0.0) {
 
-
+                popopWindow.stopPopopWindow();
+                Toast.makeText(context, "数据Type:" + carGPSBean.getContent().getType(), Toast.LENGTH_SHORT).show();
                 initRoutePlanning(startLat, endLat, popopWindow);
 
 
@@ -918,6 +922,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
     private void initRoutePlanning(LatLonPoint startLat, LatLonPoint endLat, WaitPopopWindow popupWindow) {
+
         gpsRoutePlanning = new GPSRoutePlanning(context, startLat, endLat, aMap, popupWindow);
     }
 
@@ -987,9 +992,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 Log.e("AmapErr", errText);
 //                Toast.makeText(context, "失败原因:" + errText, Toast.LENGTH_SHORT).show();
                 Toast.makeText(context,"定位失败,请检查手机网络或GPS信号!",Toast.LENGTH_SHORT).show();
-                if (popopWindow != null) {
-                    popopWindow.stopPopopWindow();
-                }
+                stopPopupWindow();
             }
         }
     }
