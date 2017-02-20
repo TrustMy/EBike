@@ -81,6 +81,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     private ImageButton followMe;
     private ImageButton netWork;
     private ImageButton extBtn;
+    private ImageButton carLocation;
 
     private boolean buzzerStatus = false, trackStatus = false, followMeStatus = false, netWorkStatus = false;
     private static ImageView loading;
@@ -219,13 +220,11 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                         }
 
                     }
-                    if (waitPopopWindow != null) {
-                        waitPopopWindow.stopPopopWindow();
-                    }
+                    stopPopupWindow();
 
 
                     break;
-
+                /*
                 case EBikeConstant.BUZZER:
 
                     if (msg.arg1 == EBikeConstant.HTTP_SUCCESS) {
@@ -250,7 +249,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
                     break;
-
+                    */
                 case EBikeConstant.ALWAYS_TRACKING:
                     synchronized (this) {
 
@@ -295,7 +294,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                                     followMe.setClickable(true);
                                     followMe.setImageResource(R.drawable.walk);
 
-
+                                    /*
                                     openBuzzer.setClickable(true);
                                     if(buzzerStatus)
                                     {
@@ -305,35 +304,37 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                                         openBuzzer.setImageResource(R.drawable.bell_1);
                                     }
 
-
+                                       */
 
 
                                 } else {
-                                    //开始
+                                            //开始
 
-                                    L.i("  start success");
-                                    trackStatus = true;
-                                    mCvCountdownViewTest.start(TIMES);
-                                    mCvCountdownViewTest.setVisibility(View.VISIBLE);
-
-
-                                    alwaysSracking.setImageResource(R.drawable.track_4);
+                                            L.i("  start success");
+                                            trackStatus = true;
+                                            mCvCountdownViewTest.start(TIMES);
+                                            mCvCountdownViewTest.setVisibility(View.VISIBLE);
 
 
-                                    followMe.setClickable(false);
-                                    followMe.setImageResource(R.drawable.walk_2);
+                                            alwaysSracking.setImageResource(R.drawable.track_4);
 
-                                    timeTest = new TimeTest(0, context, handler);
-                                    timeTest.startTime();
 
-                                    openBuzzer.setClickable(false);
-                                    if(buzzerStatus)
-                                    {
-                                        openBuzzer.setImageResource(R.drawable.bell_4);
-                                    }else
-                                    {
-                                        openBuzzer.setImageResource(R.drawable.bell_2);
-                                    }
+                                            followMe.setClickable(false);
+                                            followMe.setImageResource(R.drawable.walk_2);
+
+                                            timeTest = new TimeTest(0, context, handler);
+                                            timeTest.startTime();
+
+                                    /*
+                                            openBuzzer.setClickable(false);
+                                            if(buzzerStatus)
+                                            {
+                                                openBuzzer.setImageResource(R.drawable.bell_4);
+                                            }else
+                                            {
+                                                openBuzzer.setImageResource(R.drawable.bell_2);
+                                            }
+                                            */
 
                                 }
 
@@ -449,11 +450,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
                     }
 
-                    try {
-                        postHttpRequest.doPostCheckCarLcation(EBikeSever.server_url + EBikeSever.car_location_url, termId,token, EBikeConstant.CAR_LOCATIOM);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+
 
                     break;
 
@@ -488,7 +485,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     durationtime = EBikeConstant.STOP_ALWAYS_TRACKING;
                     followMe.setClickable(true);
                     followMe.setImageResource(R.drawable.walk);
-
+                    /*
                    if(buzzerStatus)
                    {
                        openBuzzer.setImageResource(R.drawable.bell_3);
@@ -497,7 +494,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                        openBuzzer.setImageResource(R.drawable.bell_1);
                    }
                     openBuzzer.setClickable(true);
-
+                    */
 
 
                     break;
@@ -522,7 +519,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 case 100:
                     waitPopopWindow = new WaitPopopWindow();
                     waitPopopWindow.showPopopWindow(context, home);
-                    checkCarStatus();
+//                    checkCarStatus();
+                    startCarLocation();
                     break;
             }
 
@@ -641,15 +639,17 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 //        setMapCustomStyleFile(this);
 
         alwaysSracking = (ImageButton) findViewById(R.id.alwaysSracking);
-        openBuzzer = (ImageButton) findViewById(R.id.openBuzzer);
+//        openBuzzer = (ImageButton) findViewById(R.id.openBuzzer);
         followMe = (ImageButton) findViewById(R.id.followMe);
 //        netWork = (ImageButton) findViewById(R.id.network);
         extBtn = (ImageButton) findViewById(R.id.mapactivity_ext);
         home = (RelativeLayout) findViewById(R.id.home);
+        carLocation = (ImageButton) findViewById(R.id.car_location);
 
 
         alwaysSracking.setOnClickListener(this);
-        openBuzzer.setOnClickListener(this);
+        carLocation.setOnClickListener(this);
+//        openBuzzer.setOnClickListener(this);
         followMe.setOnClickListener(this);
 //        netWork.setOnClickListener(this);
 
@@ -809,7 +809,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
                     break;
-
+                /*
                 case R.id.openBuzzer:
 
 
@@ -839,7 +839,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
                     break;
-
+                */
                 case R.id.followMe:
                     name = "followMe";
 
@@ -857,6 +857,12 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
 
+
+                    break;
+
+                case R.id.car_location:
+                    popopWindow.showPopopWindow(context, mapView);
+                    startCarLocation();
 
                     break;
 
@@ -1138,6 +1144,16 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
         aMap.showMapText(false);
 
+    }
+
+
+    public void startCarLocation()
+    {
+        try {
+            postHttpRequest.doPostCheckCarLcation(EBikeSever.server_url + EBikeSever.car_location_url, termId,token, EBikeConstant.CAR_LOCATIOM);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

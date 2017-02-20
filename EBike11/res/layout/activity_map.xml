@@ -50,10 +50,10 @@
 
 
        <ImageButton
-           android:id="@+id/openBuzzer"
+           android:id="@+id/car_location"
            android:layout_width="match_parent"
            android:layout_height="0dp"
-           android:src="@drawable/click_buzzer"
+           android:src="@drawable/click_car_location"
            android:layout_weight="1"
            android:background="#00000000" />
 

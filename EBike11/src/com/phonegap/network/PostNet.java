@@ -43,7 +43,7 @@ public class PostNet extends Handler {
 
     private String GpsLocation = "GpsLocation";
 
-    private int GpsIcon = R.drawable.bike;
+    private int GpsIcon = R.drawable.battery_car;
 
     private int GpsColor = Color.parseColor("#ff0000");
 
@@ -305,6 +305,7 @@ public class PostNet extends Handler {
                         dataType = "基站坐标:";
                     }
 
+                    aMap.clear();
                     LatLng update = coordinateTransformation.transformation(desLatLng);
                     L.i("转换过后的 坐标  :"+update.latitude);
                     aMap.addMarker(new MarkerOptions().
