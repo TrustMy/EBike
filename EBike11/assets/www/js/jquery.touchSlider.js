@@ -53,6 +53,8 @@
 		}, settings);
 		
 		var opts = [];
+		//var thisTouching = false;
+		//var thistouchnum = 1;
 		opts = $.extend({}, $.fn.touchSlider.defaults, settings);
 		
 		return this.each(function () {
@@ -84,12 +86,12 @@
 			this.init();
 			
 			$(this)
-			.bind("touchstart", this.touchstart)
-			.bind("touchmove", this.touchmove)
-			.bind("touchend", this.touchend)
-			.bind("dragstart", this.touchstart)
-			.bind("drag", this.touchmove)
-			.bind("dragend", this.touchend)
+				.unbind("touchstart").bind("touchstart", this.touchstart)
+				.unbind("touchmove").bind("touchmove", this.touchmove)
+				.unbind("touchend").bind("touchend", this.touchend)
+				.unbind("dragstart").bind("dragstart", this.touchstart)
+				.unbind("drag").bind("drag", this.touchmove)
+				.unbind("dragend").bind("dragend", this.touchend)
 			
 			$(window).bind("orientationchange resize", function () {
 				_this.resize(_this);
@@ -207,73 +209,91 @@
 			this.counter();
 		},
 		
-		touchstart : function (e) { 
+		touchstart : function (e) {
+
 			if((e.type == "touchstart" && e.originalEvent.touches.length <= 1) || e.type == "dragstart") {
-				this._startX = e.pageX || e.originalEvent.touches[0].pageX;
-				this._startY = e.pageY || e.originalEvent.touches[0].pageY;
-				this._scroll = false;
-				
-				this._start = [];
-				for(var i=0; i<this._len; ++i) {
-					this._start[i] = this._pos[i];
-				}
+				//if(thisTouching == false){
+				//	thisTouching = true;
+				//	thistouchnum = 1;
+					this._startX = e.pageX || e.originalEvent.touches[0].pageX;
+					this._startY = e.pageY || e.originalEvent.touches[0].pageY;
+					this._scroll = false;
+
+					this._start = [];
+					for(var i=0; i<this._len; ++i) {
+						this._start[i] = this._pos[i];
+					}
+				//}else {
+				//	thistouchnum = 2;
+				//}
+
 			}
+
 		},
 		
-		touchmove : function (e) { 
+		touchmove : function (e) {
+
 			if((e.type == "touchmove" && e.originalEvent.touches.length <= 1) || e.type == "drag") {
-				this._left = (e.pageX || e.originalEvent.touches[0].pageX) - this._startX;
-				this._top = (e.pageY || e.originalEvent.touches[0].pageY) - this._startY;
-				var w = this._left < 0 ? this._left * -1 : this._left;
-				var h = this._top < 0 ? this._top * -1 : this._top;
-				
-				if (w < h || this._scroll) {
-					this._left = 0;
-					this._drag = false;
-					this._scroll = true;
-				} else {
-					e.preventDefault();
-					this._drag = true;
-					this._scroll = false;
-					this.position(e);
-				}
-				
-				for(var i=0; i<this._len; ++i) {
-					var tmp = this._start[i] + this._left;
-					
-					if(this.opts.supportsCssTransitions && this.opts.transition) {
-						var trans = "translate3d(" + tmp + "px,0,0)";
-						this._list.eq(i).css({
-							"left" : "",
-							"-moz-transition" : "0ms",
-							"-moz-transform" : trans,
-							"-ms-transition" : "0ms",
-							"-ms-transform" : trans,
-							"-webkit-transition" : "0ms",
-							"-webkit-transform" : trans,
-							"transition" : "0ms",
-							"transform" : trans
-						});
+
+					this._left = (e.pageX || e.originalEvent.touches[0].pageX) - this._startX;
+					this._top = (e.pageY || e.originalEvent.touches[0].pageY) - this._startY;
+					var w = this._left < 0 ? this._left * -1 : this._left;
+					var h = this._top < 0 ? this._top * -1 : this._top;
+
+					if (w < h || this._scroll) {
+						this._left = 0;
+						this._drag = false;
+						this._scroll = true;
 					} else {
-						this._list.eq(i).css("left", tmp + "px");
+						e.preventDefault();
+						this._drag = true;
+						this._scroll = false;
+						this.position(e);
 					}
-					
-					this._pos[i] = tmp;
+
+					for (var i = 0; i < this._len; ++i) {
+						var tmp = this._start[i] + this._left;
+
+						if (this.opts.supportsCssTransitions && this.opts.transition) {
+							var trans = "translate3d(" + tmp + "px,0,0)";
+							this._list.eq(i).css({
+								"left": "",
+								"-moz-transition": "0ms",
+								"-moz-transform": trans,
+								"-ms-transition": "0ms",
+								"-ms-transform": trans,
+								"-webkit-transition": "0ms",
+								"-webkit-transform": trans,
+								"transition": "0ms",
+								"transform": trans
+							});
+						} else {
+							this._list.eq(i).css("left", tmp + "px");
+						}
+
+						this._pos[i] = tmp;
+					}
 				}
-			}
+
+
+
 		},
 		
 		touchend : function (e) {
-			if((e.type == "touchend" && e.originalEvent.touches.length <= 1) || e.type == "dragend") {
-				if(this._scroll) {
+
+
+			if ((e.type == "touchend" && e.originalEvent.touches.length <= 1) || e.type == "dragend") {
+
+					if (this._scroll) {
+						this._drag = false;
+						this._scroll = false;
+						return false;
+					}
+
+					this.animate(this.direction());
 					this._drag = false;
 					this._scroll = false;
-					return false;
-				}
-				
-				this.animate(this.direction());
-				this._drag = false;
-				this._scroll = false;
+				//}
 			}
 		},
 		

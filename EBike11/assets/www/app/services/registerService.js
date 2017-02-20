@@ -3,14 +3,11 @@
  */
 angular.module("app.demo.service",[])
     .service('registerService', function ($http,$q) {
-        //var baseUrl = 'http://192.168.1.140:8080';
-        //var baseUrl = 'http://192.168.1.63:8080';
-        //http://192.168.1.140:8080
         //var baseUrl = 'http://192.168.1.111:18080/bsWebServer-1.0/';
         //var baseUrl = 'http://192.168.1.160:7888/EBWebServer-0.0.1';
         //var baseUrl = 'http://180.168.194.98:7888/EBWebServer-0.0.1';
         var baseUrl = 'http://180.168.194.98:7888/EBWebServer-2.0';
-//        var baseUrl = 'http://192.168.1.134:8080';
+        //var baseUrl = 'http://192.168.1.134:8080';
         //var baseUrl = 'http://192.168.1.4:8080';
         //var url="http://192.168.1.31:8080/";180.168.194.98 7888
         var mapping = {
@@ -27,12 +24,11 @@ angular.module("app.demo.service",[])
                 verCode:"code"
             },
             usersconfirmVercode:{
-                account:"cellphone",
-                verCodeContent:"code"
+                account:"cp",
+                verCodeContent:"code",
+                newpass:"pwd"
             }
-
         };
-
         var service = {};
         var userS = new baseService($http, $q, baseUrl, 'usersSub','usersReg',"usersconfirmVercode",mapping);
 

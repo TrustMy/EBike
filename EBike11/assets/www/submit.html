@@ -4,7 +4,7 @@
     <form name="submitForm" novalidate>
         <span class="submituser displayIB submituserjianr">
             <p  class="submitAccount submitaccountIcon submituserjianr">
-                手机号：<input class="submitInput" type="text" ng-model="sub.account" name="subaccount" required ng-disabled="subaccountdis"/>
+                手机号：<input class="submitInput" type="text" ng-pattern="regphone" ng-model="sub.account" name="subaccount" required ng-disabled="subaccountdis" ng-blur="subphonePatStyle(submitForm.subaccount.$valid)" />
             </p>
 
         </span>

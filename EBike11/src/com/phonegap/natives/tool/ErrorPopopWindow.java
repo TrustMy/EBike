@@ -23,7 +23,7 @@ import com.phonegap.ebike.R;
 public class ErrorPopopWindow {
     private Context context;
     private PopupWindow popupWindow;
-
+    private boolean isShow = false;
     String msg;
 
     public void setMsg(String msg) {
@@ -32,57 +32,54 @@ public class ErrorPopopWindow {
 
     public synchronized void showPopopWindow (Context context, View v)
     {
-        // 一个自定义的布局，作为显示的内容
-        View contentView = LayoutInflater.from(context).inflate(
-                R.layout.warning_popopwindow, null);
-        // 设置按钮的点击事件
+        if (!isShow) {
+            isShow = true;
+            // 一个自定义的布局，作为显示的内容
+            View contentView = LayoutInflater.from(context).inflate(
+                    R.layout.warning_popopwindow, null);
+            // 设置按钮的点击事件
 
 
-        popupWindow = new PopupWindow(contentView,
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
+            popupWindow = new PopupWindow(contentView,
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
 
-        popupWindow.setTouchable(true);
-
-
+            popupWindow.setTouchable(true);
 
 
-        popupWindow.setTouchInterceptor(new View.OnTouchListener() {
+            popupWindow.setTouchInterceptor(new View.OnTouchListener() {
 
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
 
-                Log.i("mengdd", "onTouch : ");
-                popupWindow.dismiss();
+                    Log.i("mengdd", "onTouch : ");
+                    popupWindow.dismiss();
 
-                return false;
-                // 这里如果返回true的话，touch事件将被拦截
-                // 拦截后 PopupWindow的onTouchEvent不被调用，这样点击外部区域无法dismiss
+                    return false;
+                    // 这里如果返回true的话，touch事件将被拦截
+                    // 拦截后 PopupWindow的onTouchEvent不被调用，这样点击外部区域无法dismiss
+                }
+            });
+
+
+            Animation rotateAnimation = AnimationUtils.loadAnimation(context, R.anim.animators);
+            LinearInterpolator lir = new LinearInterpolator();
+            rotateAnimation.setInterpolator(lir);
+            rotateAnimation.setRepeatCount(1000);
+
+
+            TextView textView = (TextView) contentView.findViewById(R.id.warning_tv);
+            if (msg != null && !msg.equals("")) {
+                textView.setText(msg);
             }
-        });
+            Button choose = (Button) contentView.findViewById(R.id.choose);
 
+            choose.setOnClickListener(new View.OnClickListener() {
 
-        Animation rotateAnimation = AnimationUtils.loadAnimation(context,R.anim.animators);
-        LinearInterpolator lir = new LinearInterpolator();
-        rotateAnimation.setInterpolator(lir);
-        rotateAnimation.setRepeatCount(1000);
-
-
-
-
-         TextView textView   = (TextView) contentView.findViewById(R.id.warning_tv);
-        if(msg != null && !msg.equals(""))
-        {
-            textView.setText(msg);
-        }
-        Button choose = (Button) contentView.findViewById(R.id.choose);
-
-        choose.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
-            }
-        });
+                @Override
+                public void onClick(View v) {
+                    popupWindow.dismiss();
+                }
+            });
 
 //         如果不设置PopupWindow的背景，无论是点击外部区域还是Back键都无法dismiss弹框
 //         我觉得这里是API的一个bug
@@ -90,16 +87,17 @@ public class ErrorPopopWindow {
 //                R.drawable.));
 
 //         设置好参数之后再show
-        if(v!= null){
-            popupWindow.showAtLocation(v, Gravity.CENTER,0,0);
+            if (v != null) {
+                popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+            }
         }
-
     }
 
 
 
     public void stopPopopWindow()
     {
+        isShow = false;
         popupWindow.dismiss();
     }
 

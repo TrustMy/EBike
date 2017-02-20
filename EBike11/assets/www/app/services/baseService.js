@@ -127,15 +127,15 @@ baseService.prototype.registers = function(obj) {
 //验证短信验证码是否正确
 baseService.prototype.confirmvercodes = function(obj) {
     var that= this;
-    obj = that.columnToData(obj,that.mapping[that.usersconfirmVercode]);
-    console.log("注册的参数"+JSON.stringify(obj));
+    //obj = that.columnToData(obj,that.mapping[that.usersconfirmVercode]);
+    console.log("忘记的参数"+JSON.stringify(obj));
     var q = that.$q.defer();
-    that.$http.post(that.baseUrl+'/rest/user/messageTest/',obj,congfigsed)
+    that.$http.post(that.baseUrl+'/register/setNewPwd/',obj,congfigsed)
         .then(function (e) {
-            console.log('注册成功');
+            console.log('忘记密码成功');
             q.resolve(e.data);
         },function (err) {
-            console.log('注册失败');
+            console.log('忘记密码失败');
             q.reject(err)
         });
 

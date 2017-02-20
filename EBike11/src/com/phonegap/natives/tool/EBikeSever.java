@@ -43,6 +43,8 @@ public class EBikeSever {
 
     public static final String car_buzzer = "rest/cmd/buzzer/";
 
+    public static final String update_server = "http://139.196.229.233/ebike/update/ebikeUpdate.xml";//更新APP
+
 
 
 

@@ -134,7 +134,7 @@ public class PostHttpRequest {
                 message.what = EBikeConstant.ERROR;
                 message.arg1 = EBikeConstant.HTTP_EROOR;
                 message.arg2 = 100;
-                message.obj = e.toString();
+                message.obj = "网络连接超时!";
 
                 postNet.sendMessage(message);
 
@@ -142,13 +142,15 @@ public class PostHttpRequest {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                message.what = type;
+
                 String json = response.body().string();
                 L.i("response.code() :"+response.code());
 
                 if(response.code() == 200)
                 {
                     L.i("post json :"+json);
+                    Message message = new Message();
+                    message.what = type;
                     message.arg1 = EBikeConstant.HTTP_SUCCESS;
                     message.obj = json;
                     postNet.sendMessage(message);
@@ -156,7 +158,8 @@ public class PostHttpRequest {
                 {
 //                    ToastUtil.showToast(context,"错误 返回码:"+response.code());
                     L.i("错误 返回码:"+response.toString());
-
+                    Message message = new Message();
+                    message.what = type;
                     message.what = EBikeConstant.ERROR;
                     message.arg1 = EBikeConstant.HTTP_EROOR;
                     message.arg2 = 100;

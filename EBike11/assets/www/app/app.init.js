@@ -18,11 +18,13 @@ angular.module("myApp",["ui.router","app.demo.controllers","app.demo.service","a
             url:"/codenewpass",
             templateUrl:"verCodeNewPass.html",
             controller:"verCodeNewPassController"
-        }).state("vehiclebind",{
+        })
+            .state("vehiclebind",{
             url:"/vehiclebind",
             templateUrl:"vehicleBind.html",
             controller:"vehiclebindController"
-        }).state("mains",{
+        })
+            .state("mains",{
             url:"/mains",
             templateUrl:"mains.html",
             controller:"mainsController"

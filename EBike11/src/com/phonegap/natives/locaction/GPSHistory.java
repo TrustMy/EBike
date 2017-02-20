@@ -22,6 +22,7 @@ import com.phonegap.ebike.R;
 import com.phonegap.natives.activity.MapActivity;
 import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.L;
+import com.phonegap.natives.tool.TimeTool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,8 @@ public class GPSHistory {
 
 //    private List<LatLng> cacheMap = new ArrayList<LatLng>();
     private Context context;
+
+    private TimeTool timeTool;
     private   RegeocodeQuery query;
     private static  String  name;
     private  List<BitmapDescriptor> texTuresList;
@@ -128,7 +131,7 @@ public class GPSHistory {
         this.mapActivity = mapActivity;
         initLiner();
 
-
+        timeTool = new TimeTool();
 
         texTuresList = new ArrayList<BitmapDescriptor>();
         texTuresList.add(BitmapDescriptorFactory.fromResource(R.drawable.map_alr));
@@ -179,7 +182,7 @@ public class GPSHistory {
 
 
 
-    public void  addGPSLocation(LatLng latLng,boolean status,String name ,int color,int icon)
+    public void  addGPSLocation(LatLng latLng,boolean status,long name ,int color,int icon)
     {
 
 
@@ -263,7 +266,7 @@ public class GPSHistory {
 
     }
 
-    public void  addMapLocation(LatLng latLng,boolean status,String name ,int color,int icon)
+    public void  addMapLocation(LatLng latLng,boolean status,long name ,int color,int icon)
     {
         if(latLng != null && isStop == false)
         {
@@ -345,11 +348,11 @@ public class GPSHistory {
 
 
 
-    public void GpsIcon ( LatLng latLng , int Icon,String name)
+    public void GpsIcon ( LatLng latLng , int Icon,long name)
     {
 
         MarkerOptions markerOptions =   new MarkerOptions().
-                position(latLng).icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(context.getResources(),Icon)));
+                position(latLng).title(timeTool.getGPSTime(name)).icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(context.getResources(),Icon)));
         aMap.addMarker(markerOptions).showInfoWindow();
 
 

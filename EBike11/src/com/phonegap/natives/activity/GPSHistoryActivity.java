@@ -181,8 +181,12 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
                     break;
 
                 case EBikeConstant.REQUEST_TYPE://切换基站或者GPS数据轨迹
-                    waitPopopWindow.setMsg("正在加载历史轨迹,请耐心等待!");
-                    waitPopopWindow.showPopopWindow(context, extBtn);
+                    if(waitPopopWindow != null)
+                    {
+                        waitPopopWindow.setMsg("正在加载历史轨迹,请耐心等待!");
+                        waitPopopWindow.showPopopWindow(context, extBtn);
+                    }
+
                     if(msg.arg1 == 0)
                     {
                         L.i("GPS 数据");
@@ -204,7 +208,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
                         L.i("基站 数据");
                         Toast.makeText(context, "基站接口未开通,请耐心等待!", Toast.LENGTH_SHORT).show();
 //                        checkCoordinate();
-                        waitPopopWindow.stopPopopWindow();
+                        stopPopopuwindow();
                     }
 
                 break;
@@ -215,24 +219,44 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
     public void checkCoordinate()
     {
-        if(carLocationHistorical == null)
+
+        if(checkIntent())
         {
-            if(checkIntent())
+
+            if(carLocationHistorical == null)
             {
                 initLocation();
+            }else if(carLocationHistorical.getContent().getGps().size() == 0)
+            {
+                ToastUtil.showToast(context,"本次行程坐标点为空");
+                stopPopopuwindow();
             }else
             {
-                ToastUtil.showToast(context,"请检查网络!");
+                aMap.clear();
+                guiJiJiuPian(carLocationHistorical);
             }
-        }else if(carLocationHistorical.getContent().getGps().size() == 0)
-        {
-            ToastUtil.showToast(context,"本次行程坐标点为空");
+
+
+
+
         }else
         {
-            aMap.clear();
-            guiJiJiuPian(carLocationHistorical);
+            ToastUtil.showToast(context,"请检查当前网络!");
+            stopPopopuwindow();
+        }
+
+
+
+    }
+
+    public void stopPopopuwindow()
+    {
+        if(waitPopopWindow != null)
+        {
+            waitPopopWindow.stopPopopWindow();
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -400,7 +424,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
 
         for (int i = carLocationHistorical.getContent().getGps().size() -1; i >=0 ; i--) {
-            if (carLocationHistorical.getContent().getGps().get(i).getLat() == 0.0) {
+            if (carLocationHistorical.getContent().getGps().get(i).getLat() == 0.0 || carLocationHistorical.getContent().getGps().get(i).getType() != 0) {
                 continue;
             }else
             {
@@ -417,6 +441,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
             huaLiner(new GPSHistory(aMap,context,null));
         }else
         {
+            stopPopopuwindow();
             ToastUtil.showToast(context,"坐标点为0");
         }
 

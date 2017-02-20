@@ -140,17 +140,20 @@ angular.module("app.demo.controllers",[])
         };
         $scope.oinit();
         //验证手机验证码
-        //$scope.regphone = '[0-9]{11}';
-        ////验证手机号码的格式
-        //$scope.subphonePatStyle = function(isValid){
-        //    if(isValid){
-        //        console.log("手机号码格式正确");
-        //    }else{
-        //        console.log("手机号码格式错误");
-        //        $scope.subapp= {"toggle":true};
-        //        $scope.submitWarning = "手机号码格式错误！";
-        //    }
-        //};
+        $scope.regphone = '[0-9]{11}';
+        //验证手机号码的格式
+        $scope.subphonePatStyle = function(isValid){
+            if(isValid){
+                console.log("手机号码格式正确");
+            }else{
+                console.log("手机号码格式错误");
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码格式错误！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000)
+            }
+        };
         //点击登录
         $scope.submitBtn = function(){
             var uname = $scope.submitForm.subaccount.$modelValue;
@@ -379,6 +382,7 @@ angular.module("app.demo.controllers",[])
         $scope.vercodeBtnContent = "点击获取验证码";
         //手机验证码的正则表达式
         $scope.regphone = '[0-9]{11}';
+        $scope.searchPcondepat= '[0-9]{6}';
         //验证手机号码的格式
         $scope.phonePatStyle = function(isValid){
             //var regaccount = $scope.registerForm.regaccount.$modelValue;
@@ -394,6 +398,7 @@ angular.module("app.demo.controllers",[])
             }
         };
         //点击获取验证码
+        $scope.passnew = {"toggle":false};
         $scope.getVercode = function(){
             //$Http
             var regaccount = $scope.searchPassForm.searchPaccount.$modelValue;
@@ -407,16 +412,16 @@ angular.module("app.demo.controllers",[])
             }else{
                 $scope.verCodedis = true;//不能再次点击，直到ajax结束
                 var verCodeObj = {
-                    "cellphone":regaccount,
-                    "time":registerService.getcurrentTime()
+                    "cp":Number(regaccount)
                 };
-                var verCodeUrl = "/rest/user/getMessage/";
+                var verCodeUrl = "/register/applySmsCode/";
                 $scope.loadapp = {"toggle":true};
                 registerService.commonUser(verCodeObj,verCodeUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     //当status正确的时候，
                     if(e.status == true){
-                        var s = 300;
+                        $scope.passnew = {"toggle":true};
+                        var s = 60;
                         $scope.vercodeBtnContent = s+"秒" ;
                         var regVertimer = $interval(function(){
                             s--;
@@ -462,6 +467,8 @@ angular.module("app.demo.controllers",[])
         $scope.verCodegoNewPassPage = function(){
             var regaccount = $scope.searchPassForm.searchPaccount.$modelValue;
             var searchPverCodeContent = $scope.searchPassForm.searchPverCodeContent.$modelValue;
+            var searchPnewpassm = $scope.searchPassForm.searchPnewpass.$modelValue;
+            var searchPagapassm = $scope.searchPassForm.searchPagapass.$modelValue;
             if(!regaccount){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请确认您的手机号！";
@@ -469,25 +476,71 @@ angular.module("app.demo.controllers",[])
                     $scope.subapp= {"toggle":false};
                 },2000);
             }else if(!searchPverCodeContent){
+                console.log("验证码的值："+searchPverCodeContent);
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请确认您的验证码！";
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }
+            else if(!searchPnewpassm){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的新密码！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(!searchPagapassm){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请输入确认密码！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(searchPnewpassm != searchPagapassm){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "两次输入密码不一致！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(searchPnewpassm.indexOf(" ")!=-1){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "新密码内容不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            } else{
                 $scope.searchpaccountdis = true;
                 $scope.searchpvercodedis = true;
                 $scope.searchvercodedis = true;
+                $scope.searchPnewdis= true;
+                $scope.searchPolddis= true;
                 $scope.loadapp = {"toggle":true};
-                registerService.confirmvercodes($scope.searchP).then(function(e){
+                $scope.searchPobj = {
+                    cp:Number(regaccount),
+                    code:searchPverCodeContent,
+                    pwd:$.md5(searchPnewpassm)
+                }
+                registerService.confirmvercodes($scope.searchPobj).then(function(e){
+                    console.log(e);
                     $scope.searchpaccountdis = false;
                     $scope.searchpvercodedis = false;
                     $scope.loadapp = {"toggle":false};
                     $scope.searchvercodedis = false;
+                    $scope.searchPnewdis= false;
+                    $scope.searchPolddis= false;
                     if(e.status == true){
                         //对话保存手机号码
-                        $window.sessionStorage.setItem("cellPhone",regaccount);
-                        $state.go("codenewpass");
+                        //$window.sessionStorage.setItem("cellPhone",regaccount);
+
+
+                        $scope.hahaapp= {"toggle":true};
+                        $scope.submithappy = "恭喜您，设置新密码成功！";
+                        $timeout(function(){
+                            $scope.hahaapp= {"toggle":false};
+                            $state.go("submits");
+                            $scope.passnew = {"toggle":false};
+
+                        },2000);
+
                         //$interval.cancel(regVertimer);
                     }else{
                         $scope.subapp= {"toggle":true};
@@ -499,6 +552,8 @@ angular.module("app.demo.controllers",[])
                 },function(err){
                     $scope.searchpaccountdis = false;
                     $scope.searchpvercodedis = false;
+                    $scope.searchPnewdis= false;
+                    $scope.searchPolddis= false;
                     $scope.loadapp = {"toggle":false};
                     $scope.searchvercodedis = false;
                     $scope.subapp= {"toggle":true};
@@ -508,99 +563,98 @@ angular.module("app.demo.controllers",[])
                     },2000);
                 })
             }
-
-
         }
     })
     //找回密码,输入新密码页面
-    .controller("verCodeNewPassController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window){
-        //返回按钮
-        $scope.searchPassBackBtn = function(){
-            window.history.go(-1);
-        };
+    //.controller("verCodeNewPassController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window){
+    //    //返回按钮
+    //    //$scope.searchPassBackBtn = function(){
+    //    //    window.history.go(-1);
+    //    //};
+    //    //
+    //    //$scope.searchnewpnewdis = false;
+    //    //$scope.searchnewpolddis = false;
+    //    ////$scope.windoWHeihgt = ($(window).height())*1+"px";
+    //    //$scope.winHeight = {
+    //    //    "height":$rootScope.windoWHeihgt
+    //    //};
+    //    //$scope._topnot=(parseFloat($rootScope.windoWHeihgt) - 120)/2 +"px";
+    //    ////console.log($scope._top);
+    //    //
+    //    //$scope.modelpositionStnot = {
+    //    //    "top":$scope._topnot
+    //    //};
+    //    //$scope.codeagaPassdis = false;
+    //    //点击确定
+    //    $scope.vercodeNewpassBtn = function(){
+    //        var searchnewPnewpass = $scope.searchnewPassForm.searchnewPnewpass.$modelValue;
+    //        var searchnewPagapass = $scope.searchnewPassForm.searchnewPagapass.$modelValue;
+    //        //var regNull=/(^\s*)|(\s*$)/g;
+    //        //这个时候按钮不能再次点击
+    //        //$scope.codeagaPassdis = true;
+    //        if(searchnewPnewpass.indexOf(" ")!=-1){
+    //            $scope.subapp= {"toggle":true};
+    //            $scope.submitWarning = "新密码内容中不能有空格！";
+    //            $timeout(function(){
+    //                $scope.subapp= {"toggle":false};
+    //            },2000);
+    //        }else if(searchnewPnewpass == searchnewPagapass){
+    //            $scope.codeagaPassdis = true;
+    //            //执行ajax：参数phone， new aga
+    //            codenewpassObj = {
+    //                "cellphone":$window.sessionStorage.getItem("cellPhone"),
+    //                "npwd":searchnewPnewpass
+    //            };
+    //            codenewpassUrl = "/rest/user/forgotPW/";
+    //            //console.log($window.sessionStorage.getItem("cellPhone"));
+    //            $scope.loadapp = {"toggle":true};
+    //            $scope.searchnewpnewdis = true;
+    //            $scope.searchnewpolddis = true;
+    //            registerService.commonUser(codenewpassObj,codenewpassUrl).then(function(e){
+    //                $scope.searchnewpnewdis = false;
+    //                $scope.searchnewpolddis = false;
+    //                $scope.loadapp = {"toggle":false};
+    //                $scope.codeagaPassdis = false;
+    //                if(e.status == true){
+    //                    $scope.subapp= {"toggle":true};
+    //                    $scope.submitWarning = "新密码设置成功！";
+    //                    $timeout(function(){
+    //                        $scope.subapp= {"toggle":false};
+    //                        $state.go("submits");
+    //                    },2000);
+    //                }else{
+    //                    $scope.subapp= {"toggle":true};
+    //                    $scope.submitWarning = e.err+"！";
+    //                    $timeout(function(){
+    //                        $scope.subapp= {"toggle":false};
+    //                    },2000);
+    //                }
+    //            },function(err){
+    //                $scope.searchnewpnewdis = false;
+    //                $scope.searchnewpolddis = false;
+    //                $scope.loadapp = {"toggle":false};
+    //                $scope.codeagaPassdis = false;
+    //                $scope.subapp= {"toggle":true};
+    //                $scope.submitWarning = "网络连接失败！";
+    //                $timeout(function(){
+    //                    $scope.subapp= {"toggle":false};
+    //                },2000);
+    //            });
+    //
+    //            //$http执行结束后，，
+    //            //
+    //        }else{
+    //            //$scope.codeagaPassdis = false;
+    //            //弹出模态框
+    //            $scope.subapp= {"toggle":true};
+    //            $scope.submitWarning = "两次密码输入不一致！";
+    //            $timeout(function(){
+    //                $scope.subapp= {"toggle":false};
+    //            },2000);
+    //        }
+    //    }
+    //})
 
-        $scope.searchnewpnewdis = false;
-        $scope.searchnewpolddis = false;
-        //$scope.windoWHeihgt = ($(window).height())*1+"px";
-        $scope.winHeight = {
-            "height":$rootScope.windoWHeihgt
-        };
-        $scope._topnot=(parseFloat($rootScope.windoWHeihgt) - 120)/2 +"px";
-        //console.log($scope._top);
-
-        $scope.modelpositionStnot = {
-            "top":$scope._topnot
-        };
-        $scope.codeagaPassdis = false;
-        //点击确定
-        $scope.vercodeNewpassBtn = function(){
-            var searchnewPnewpass = $scope.searchnewPassForm.searchnewPnewpass.$modelValue;
-            var searchnewPagapass = $scope.searchnewPassForm.searchnewPagapass.$modelValue;
-            //var regNull=/(^\s*)|(\s*$)/g;
-            //这个时候按钮不能再次点击
-            //$scope.codeagaPassdis = true;
-            if(searchnewPnewpass.indexOf(" ")!=-1){
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "新密码内容中不能有空格！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-            }else if(searchnewPnewpass == searchnewPagapass){
-                $scope.codeagaPassdis = true;
-                //执行ajax：参数phone， new aga
-                codenewpassObj = {
-                    "cellphone":$window.sessionStorage.getItem("cellPhone"),
-                    "npwd":searchnewPnewpass
-                };
-                codenewpassUrl = "/rest/user/forgotPW/";
-                //console.log($window.sessionStorage.getItem("cellPhone"));
-                $scope.loadapp = {"toggle":true};
-                $scope.searchnewpnewdis = true;
-                $scope.searchnewpolddis = true;
-                registerService.commonUser(codenewpassObj,codenewpassUrl).then(function(e){
-                    $scope.searchnewpnewdis = false;
-                    $scope.searchnewpolddis = false;
-                    $scope.loadapp = {"toggle":false};
-                    $scope.codeagaPassdis = false;
-                    if(e.status == true){
-                        $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = "新密码设置成功！";
-                        $timeout(function(){
-                            $scope.subapp= {"toggle":false};
-                            $state.go("submits");
-                        },2000);
-                    }else{
-                        $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.err+"！";
-                        $timeout(function(){
-                            $scope.subapp= {"toggle":false};
-                        },2000);
-                    }
-                },function(err){
-                    $scope.searchnewpnewdis = false;
-                    $scope.searchnewpolddis = false;
-                    $scope.loadapp = {"toggle":false};
-                    $scope.codeagaPassdis = false;
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                });
-
-                //$http执行结束后，，
-                //
-            }else{
-                //$scope.codeagaPassdis = false;
-                //弹出模态框
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "两次密码输入不一致！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-            }
-        }
-    })
     //注册
     .controller("registercontroller",function($scope,$rootScope,$state,registerService,$interval,$timeout){
         //背景的高度
@@ -630,6 +684,7 @@ angular.module("app.demo.controllers",[])
         $scope.vercodeBtnContent = "获取验证码";
         //验证手机验证码
         $scope.regphone = '[0-9]{11}';
+        $scope.searchPcondepat = '[0-9]{6}';
         //验证手机号码的格式
         $scope.phonePatStyle = function(isValid){
             //var regaccount = $scope.registerForm.regaccount.$modelValue;
@@ -705,6 +760,65 @@ angular.module("app.demo.controllers",[])
         //    }
         //};
         //点击注册
+        $scope.getVercode = function(){
+            //$Http
+            var regaccount = $scope.registerForm.regaccount.$modelValue;
+            console.log(regaccount);
+            if(!regaccount){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的手机号！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else{
+                $scope.verCodedis = true;//不能再次点击，直到ajax结束
+                var verCodeObj = {
+                    "cp":Number(regaccount)
+                };
+                var verCodeUrl = "/register/applySmsCode/";
+                $scope.loadapp = {"toggle":true};
+                registerService.commonUser(verCodeObj,verCodeUrl).then(function(e){
+                    $scope.loadapp = {"toggle":false};
+                    //当status正确的时候，
+                    if(e.status == true){
+                        $scope.passnew = {"toggle":true};
+                        var s = 60;
+                        $scope.vercodeBtnContent = s+"秒" ;
+                        var regVertimer = $interval(function(){
+                            s--;
+                            if(s>0){
+                                $scope.vercodeBtnContent = s+"秒" ;
+                                //console.log(s);
+                            }else{
+                                $scope.verCodedis = false;
+                                $scope.vercodeBtnContent = "重新获取" ;
+                                $interval.cancel(regVertimer);
+                                //console.log(s);
+                            }
+                        },2000)
+                    }else{
+                        $scope.verCodedis = false;
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                        console.log(e.err);
+                    }
+
+                },function(err){
+                    $scope.loadapp = {"toggle":false};
+                    $scope.verCodedis = false;
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = "网络连接失败！";
+                    $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                });
+
+
+            }
+        };
         $scope.registerdis = false;
         $scope.registerBtn = function(){
             var regaccount = $scope.registerForm.regaccount.$modelValue;
@@ -724,13 +838,15 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else if(!regemail){
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "请确认您的邮箱！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-            }else if(!regverCode){
+            }
+            //else if(!regemail){
+            //    $scope.subapp= {"toggle":true};
+            //    $scope.submitWarning = "请确认您的邮箱！";
+            //    $timeout(function(){
+            //        $scope.subapp= {"toggle":false};
+            //    },2000);
+            //}
+            else if(!regverCode){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请确认您的验证码！";
                 $timeout(function(){
@@ -753,8 +869,9 @@ angular.module("app.demo.controllers",[])
                 $scope.regObj = {
                     cp:Number(regaccount),
                     pw:$.md5(regpass),
-                    phoneType:0,
-                    nickName:"用户",
+                    phoneType:3,
+                    //nickName:"用户",
+                    code:regverCode,
                     email:regemail
                 };
                 registerService.registers($scope.regObj).then(function(e){
@@ -1094,149 +1211,6 @@ angular.module("app.demo.controllers",[])
         $scope.modelpositionSt = {
             "top":$scope._top
         };
-        //$rootScope.maploadfun = function(obj,centerpoint){
-        //    new AMap.Map(obj,{
-        //        zoom:20,
-        //        center: centerpoint
-        //    });
-        //};
-        //$scope.udate = {'modelstartyear':registerService.getdateYear()+"年",'modelstartmonth':registerService.getdateMonth()+'月','modelstartday':registerService.getdateday()+'日','modeloveryear':registerService.getdateYear()+"年",'modelovermonth':registerService.getdateMonth()+'月','modeloverday':registerService.getdateday()+'日'};
-        //加年
-        //$scope.startYearadd = function(){
-        //    var numstarty = parseInt($(".startyearnum").val()) ;
-        //    numstarty++;
-        //    //parseInt($(".startmonthnum").val())>=registerService.getdateMonth() || parseInt($(".startdaynum").val()) >=registerService.getdateday()
-        //
-        //        if((numstarty-1) == registerService.getdateYear()){
-        //            numstarty--;
-        //            //console.log("第二个")
-        //
-        //    }
-        //    $(".startyearnum").val(numstarty+"年");
-        //}
-        ////减年
-        //$scope.startYearless = function(){
-        //    var numstarty = parseInt($(".startyearnum").val()) ;
-        //    numstarty--;
-        //    $(".startyearnum").val(numstarty+"年");
-        //};
-        ////减月
-        //$scope.startMonthless = function(){
-        //    var numstartm = parseInt($(".startmonthnum").val()) ;
-        //    numstartm--;
-        //    if(numstartm==0){
-        //        numstartm = 1;
-        //    }
-        //    $(".startmonthnum").val(registerService.autoaddZero(numstartm)+"月");
-        //};
-        ////加月
-        //$scope.startMonthadd = function(){
-        //    var numstartm = parseInt($(".startmonthnum").val()) ;
-        //    numstartm++;
-        //    if(numstartm==13){
-        //        numstartm = 12;
-        //    //&& parseInt($(".startdaynum").val()) ==registerService.getdateday()
-        //    }else if(parseInt($(".startyearnum").val()) ==registerService.getdateYear()  ){
-        //        if((numstartm-1) == registerService.getdateMonth()){
-        //            numstartm--;
-        //            //console.log("第二个")
-        //        }
-        //    }
-        //    $(".startmonthnum").val(registerService.autoaddZero(numstartm)+"月");
-        //}
-        ////减日
-        //$scope.startdayless = function(){
-        //    var numstartm = parseInt($(".startdaynum").val()) ;
-        //    numstartm--;
-        //    if(numstartm==0){
-        //        numstartm = 1;
-        //    }
-        //    $(".startdaynum").val(registerService.autoaddZero(numstartm)+"日");
-        //};
-        ////加日
-        //$scope.startdayadd = function(){
-        //    var numstartm = parseInt($(".startdaynum").val()) ;
-        //    numstartm++;
-        //    if(numstartm==32){
-        //        numstartm = 31;
-        //    }else if(parseInt($(".startmonthnum").val())== registerService.getdateMonth() && parseInt($(".startyearnum").val()) ==registerService.getdateYear()){
-        //        if((numstartm-1) == registerService.getdateday()){
-        //            numstartm--;
-        //            //console.log("第二个")
-        //        }
-        //    }
-        //    $(".startdaynum").val(registerService.autoaddZero(numstartm)+"日");
-        //}
-        ////加年
-        //$scope.overYearadd = function(){
-        //    var numstarty = parseInt($(".overyearnum").val()) ;
-        //    numstarty++;
-        //    //if(parseInt($(".overmonthnum").val())==registerService.getdateMonth() && parseInt($(".overdaynum").val())==registerService.getdateday()){
-        //        if((numstarty-1) == registerService.getdateYear()){
-        //            numstarty--;
-        //            //console.log("第二个")
-        //        }
-        //    //}
-        //    $(".overyearnum").val(numstarty+"年");
-        //}
-        ////减年
-        //$scope.overYearless = function(){
-        //    var numstarty = parseInt($(".overyearnum").val()) ;
-        //    numstarty--;
-        //    $(".overyearnum").val(numstarty+"年");
-        //};
-        ////减月
-        //$scope.overMonthless = function(){
-        //    var numstartm = parseInt($(".overmonthnum").val()) ;
-        //    numstartm--;
-        //    if(numstartm==0){
-        //        numstartm = 1;
-        //    }
-        //    $(".overmonthnum").val(registerService.autoaddZero(numstartm) +"月");
-        //};
-        ////加月
-        //$scope.overMonthadd = function(){
-        //    var numstartm = parseInt($(".overmonthnum").val()) ;
-        //    numstartm++;
-        //    if(numstartm== 13){
-        //        numstartm= 12;
-        //    }
-        //    //parseInt($(".overdaynum").val())==registerService.getdateday() &&
-        //    if(parseInt($(".overyearnum").val()) == registerService.getdateYear()){
-        //        if((numstartm-1) == registerService.getdateMonth()){
-        //            numstartm--;
-        //            //console.log("第二个")
-        //        }
-        //        //console.log("第一个");
-        //
-        //    }
-        //    $(".overmonthnum").val(registerService.autoaddZero(numstartm) +"月");
-        //};
-        ////减日
-        //$scope.overdayless = function(){
-        //    var numstartm = parseInt($(".overdaynum").val()) ;
-        //    numstartm--;
-        //    if(numstartm == 0){
-        //        numstartm = 1;
-        //    }
-        //    $(".overdaynum").val(registerService.autoaddZero(numstartm) +"日");
-        //};
-        ////加日
-        //$scope.overdayadd = function(){
-        //    var numstartm = parseInt($(".overdaynum").val()) ;
-        //    numstartm++;
-        //    if(numstartm== 32){
-        //        numstartm= 31;
-        //    }
-        //    if(parseInt($(".overyearnum").val()) == registerService.getdateYear() && parseInt($(".overmonthnum").val())== registerService.getdateMonth()){
-        //        if((numstartm-1) == registerService.getdateday()){
-        //            numstartm--;
-        //            //console.log("第二个")
-        //        }
-        //    }
-        //    $(".overdaynum").val(registerService.autoaddZero(numstartm) +"日");
-        //};
-
 
     })
     //home页面
@@ -1362,6 +1336,7 @@ angular.module("app.demo.controllers",[])
                 $scope.loadapp = {"toggle":false};
                 $scope.fortificationdis = false;
                 console.log(e);
+                console.log("报警数"+e.totleAlarm);
                 if(e.totleAlarm){
                     //$window.sessionStorage.setItem("useralarmcount", e.AlarmCount);
                     if(0<= e.totleAlarm && e.totleAlarm<=99){
@@ -1370,7 +1345,10 @@ angular.module("app.demo.controllers",[])
                         $rootScope.alarmcount = "99+";
                     }
 
+                }else {
+                    $rootScope.alarmcount = 0;
                 }
+                console.log("$rootScope.alarmcount:"+$rootScope.alarmcount)
                 $scope.timealarmcontenttime = $timeout(function(){
                     if($rootScope.alarmcount >0 || $rootScope.alarmcount == "99+"){
                         console.log("icon显示");
@@ -1588,7 +1566,7 @@ angular.module("app.demo.controllers",[])
                 $scope.searchcarhomedis = false;
             },1000);
             intent();
-        }
+        };
         $scope.changecolorStatus4 = function(){
             $rootScope.colorfff4 = false;
             $rootScope.coloryyy4 =true ;
@@ -1625,13 +1603,13 @@ angular.module("app.demo.controllers",[])
                             // alert("startWork:" + JSON.stringify(info));
                             if(info.data.errorCode == 0){
                                 var pushinfoObj = {
-                                    uid:$window.sessionStorage.getItem("Uid"),
-                                    channelid:info.data.channelId,
-                                    type:info.data.deviceType
+                                    cp:Number($window.sessionStorage.getItem("Ucp")),
+                                    pushId:info.data.channelId+"",
+                                    phoneType:Number(info.data.deviceType)
                                     //channelid:3795525986954054108,
                                     //type:3
                                 };
-                                var pushinfoUrl = "/rest/user/messagePush/";
+                                var pushinfoUrl = "/rest/user/registerPushId/";
                                 registerService.commonUser(pushinfoObj,pushinfoUrl).then(function(e){
                                     console.log(e);
                                     if(e.status==true){
@@ -4431,6 +4409,106 @@ angular.module("app.demo.controllers",[])
         $scope.modelpositionSt = {
             "top":$scope._top
         };
+        //if($rootScope.alarmcount == 0){
+        //    $scope.alarmallstatusmodel= "全部标记为已读";
+        //    $scope.allalarmblur = true;
+        //}else if($rootScope.alarmcount > 0){
+        //标记为已读的按钮
+        $scope.alarmallstatusmodel= "全部标记为已读";
+        $scope.allalarmblur = true;
+        $scope.allstatusalarmdis= false;
+        //}
+        $scope.allastatusalarmbtn = function(){
+            $scope.allstatusalarmdis= true;
+            $scope.allalarmblur = false;
+            var allstatusalarmobj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                status:1
+            };
+            var allstatusalarmUrl = "/rest/alarms/updateAll/";
+            $scope.loadapp = {"toggle":true};
+            registerService.commonUser(allstatusalarmobj,allstatusalarmUrl).then(function(e){
+
+                $scope.allstatusalarmdis=false ;
+                $scope.allalarmblur = true;
+                if(e.status == true){
+                    for(var i = 0;i<$scope.alarmrecordInfo.length;i++){
+                        var contentalarming = $scope.alarmrecordInfo;
+                        contentalarming[i].isalarmstatus = false;
+                         $scope.alarmrecordInfo = contentalarming;
+
+                            $scope.alarmrecordInfo = contentalarming;
+                        console.log("已经标记了");
+                        if(i==$scope.alarmrecordInfo.length-1){
+                            $scope.loadapp = {"toggle":false};
+                        }
+
+                    }
+                }else if(e.status == false) {
+                    $scope.loadapp = {"toggle":false};
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = e.err+"！";
+                    $scope.timealarmtimeerr = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                }
+            },function(err){
+                $scope.loadapp = {"toggle":false};
+                $scope.allstatusalarmdis=false ;
+                $scope.allalarmblur = true;
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "网络连接失败！";
+                $scope.timealarmtimeerr = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            })
+        };
+        $scope.allnoalarmblur = true;
+        $scope.allnoastatusalarmbtn = function(){
+            $scope.allnostatusalarmdis= true;
+            $scope.allnoalarmblur = false;
+            var allstatusalarmobj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                status:0
+            };
+            var allstatusalarmUrl = "/rest/alarms/updateAll/";
+            $scope.loadapp = {"toggle":true};
+            registerService.commonUser(allstatusalarmobj,allstatusalarmUrl).then(function(e){
+
+                $scope.allnostatusalarmdis=false ;
+                $scope.allnoalarmblur = true;
+                if(e.status == true){
+                    for(var i = 0;i<$scope.alarmrecordInfo.length;i++){
+                        var contentalarming = $scope.alarmrecordInfo;
+                        contentalarming[i].isalarmstatus = true;
+                        $scope.alarmrecordInfo = contentalarming;
+
+                        $scope.alarmrecordInfo = contentalarming;
+                        console.log("已经标记了");
+                        if(i==$scope.alarmrecordInfo.length-1){
+                            $scope.loadapp = {"toggle":false};
+                        }
+
+                    }
+                }else if(e.status == false) {
+                    $scope.loadapp = {"toggle":false};
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = e.err+"！";
+                    $scope.timealarmtimeerr = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                }
+            },function(err){
+                $scope.loadapp = {"toggle":false};
+                $scope.allnostatusalarmdis=false ;
+                $scope.allnoalarmblur = true;
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "网络连接失败！";
+                $scope.timealarmtimeerr = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            })
+        }
         //$scope.windoWHeihgt = ($(window).height())*1+"px";
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt

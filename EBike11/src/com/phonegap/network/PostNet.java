@@ -27,6 +27,9 @@ import com.phonegap.natives.tool.L;
 import com.phonegap.natives.tool.TimeTool;
 import com.phonegap.natives.tool.ToastUtil;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Trust on 17/1/3.
  */
@@ -72,9 +75,21 @@ public class PostNet extends Handler {
         Message message = new Message();
         res = (String) msg.obj;
         L.i("res:"+res);
-        if(msg.arg2 != 100)
+
+        boolean isJson = true;
+        try {
+            new JSONObject(res);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            isJson = false;
+        }
+
+        if(msg.arg2 != 100 && isJson == true)
         {
             error = gson.fromJson(res,Error.class);
+        }else
+        {
+            L.i("服务器返回的不是json :"+res);
         }
 
         switch (msg.what)
@@ -209,7 +224,7 @@ public class PostNet extends Handler {
                     if ( carGPSBean.getContent().getType() ==  0) {
                         if(GPSlatLng.longitude != 0.0 )
                         {
-                            gpsHistory.addGPSLocation(GPSlatLng, true, GpsLocation, GpsColor, GpsIcon);
+                            gpsHistory.addGPSLocation(GPSlatLng, true, carGPSBean.getContent().getGpsTime(), GpsColor, GpsIcon);
                         }else
                         {
                             ToastUtil.showToast(context,"GPS数据为0.0");
@@ -219,14 +234,10 @@ public class PostNet extends Handler {
                         Log.d("MapActivity", "GPSlatLng.longitude != 0.0 && MapLatLng.longitude != 0.0");
                     }else
                     {
-                        L.i("isFirst old:"+isFirst);
-                        if(isFirst)
-                        {
+
 //                            Toast.makeText(context, "未获取到实时追踪GPS数据(Type != 0)", Toast.LENGTH_SHORT).show();
                             ToastUtil.showToast(context,"未获取到实时追踪GPS数据(Type != 0)");
-                        }
-                        isFirst = true;
-                        L.i("isFirst new :"+isFirst);
+
                     }
 
 
@@ -289,8 +300,7 @@ public class PostNet extends Handler {
                     L.i("转换过后的 坐标  :"+update.latitude);
                     aMap.addMarker(new MarkerOptions().
                             position(update).
-                            title(timeTool.getGPSTime(carGPSBean.getContent().getGpsTime())).
-                            snippet("GPS定位")).showInfoWindow();
+                            title(timeTool.getGPSTime(carGPSBean.getContent().getGpsTime())+":车辆位置")).showInfoWindow();
 
                     aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
                             new LatLng(update.latitude,update.longitude),//新的中心点坐标

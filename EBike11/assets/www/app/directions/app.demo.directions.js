@@ -44,7 +44,7 @@ angular.module("app.demo.directions",["app.demo.service"])
     //        }
     //    };
     //})
-    .directive('lunbo', ["registerService","$location","$interval",function (registerService,$location,$interval) {
+    .directive('lunbo', ["registerService","$location","$interval","$timeout",function (registerService,$location,$interval,$timeout) {
         return{
             restrict:'EA',
             link: function (scope, element, attr) {
@@ -477,13 +477,14 @@ angular.module("app.demo.directions",["app.demo.service"])
                 });
 
                 $(".main_image").bind("touchstart",function(e){
-                    if(e.originalEvent.touches.length <= 1){
+                    //if(e.originalEvent.touches.length <= 1){
                         //clearInterval(newScope.timerr);
                         $interval.cancel(newScope.timerr);
                         console.log("关定时器touchstart");
-                    }
+                    //}
 
                 }).bind("touchend", function(e){
+
                     if(e.originalEvent.touches.length <= 1){
                         $interval.cancel(newScope.timerr);
                         newScope.timerr = $interval(function(){
@@ -509,6 +510,7 @@ angular.module("app.demo.directions",["app.demo.service"])
                     //alert("点击了搜索");
                     if($(".changelocationtext").val()){
                         homeweatherinit();
+                        console.log(22222222);
                     }
                     $(".changelocationinput").css({"display":"none"});
 
@@ -521,88 +523,189 @@ angular.module("app.demo.directions",["app.demo.service"])
                     $(".changelocationinput").css({"display":"none"});
                 });
                 //$(".weatherlocationstyle").text("获取中");
-                $(".weathererrstyle").text("获取中！");
+
                 function homeweatherinit(){
-                    var cityUrl = 'http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js';
-                    $.getScript(cityUrl, function (script, textStatus, jqXHR) {
-                        // 获取城市
-                        if(window.localStorage.getItem("weathercity")){
-                            if($(".changelocationtext").val()){
-                                citytq = $(".changelocationtext").val();
-                                window.localStorage.setItem("weathercity",citytq);
-                            }else {
-                                citytq = window.localStorage.getItem("weathercity");
-                            }
-                        }else{
-                            if(remote_ip_info.city){
-                                var citytq = remote_ip_info.city;
-                                window.localStorage.setItem("weathercity",citytq);
-                            }else {
-                                var citytq = "北京"
-                                window.localStorage.setItem("weathercity",citytq);
-                            }
-                        }
+                //
 
-
-
-                        //        citytq = "大理";
-                        var url = "http://php.weather.sina.com.cn/iframe/index/w_cl.php?code=js&city=" + citytq + "&day=0&dfc=3";
+                        var cityUrl = 'http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js';
+                        //$.getScript(cityUrl, function (script, textStatus, jqXHR) {
+                        //    // 获取城市
+                        //    if(window.localStorage.getItem("weathercity")){
+                        //        if($(".changelocationtext").val()){
+                        //            citytq = $(".changelocationtext").val();
+                        //            window.localStorage.setItem("weathercity",citytq);
+                        //        }else {
+                        //            citytq = window.localStorage.getItem("weathercity");
+                        //        }
+                        //    }else{
+                        //        if(remote_ip_info.city){
+                        //            var citytq = remote_ip_info.city;
+                        //            window.localStorage.setItem("weathercity",citytq);
+                        //        }else {
+                        //            var citytq = "北京";
+                        //            window.localStorage.setItem("weathercity",citytq);
+                        //        }
+                        //    }
+                        //
+                        //
+                        //
+                        //    //        citytq = "大理";
+                        //
+                        //
+                        //    var url = "http://php.weather.sina.com.cn/iframe/index/w_cl.php?code=js&city=" + citytq + "&day=0&dfc=3";
+                        //    $.ajax({
+                        //        url: url,
+                        //        dataType: "script",
+                        //        //scriptCharset: "gbk",
+                        //        success: function (data) {
+                        //            console.log(data);
+                        //            try {
+                        //                var _w = window.SWther.w[citytq][0];
+                        //                $(".weatherlocationstyle").text(citytq);
+                        //
+                        //                console.log(_w);
+                        //                var _f = _w.f1 + "_0.png";
+                        //                if (new Date().getHours() > 17) {
+                        //                    _f = _w.f2 + "_1.png";
+                        //                }
+                        //                var img = "<img class='weathericonaaastyle' src='http://i2.sinaimg.cn/dy/main/weather/weatherplugin/wthIco/20_20/" + _f
+                        //                    + "' />";
+                        //                //var tq = "今日天气 :　" + citytq + " " + img + " " + _w.s1 + " " + _w.t1 + "℃～" + _w.t2 + "℃ " + _w.d1 + _w.p1 + "级";
+                        //                //$('#weather').html(tq);
+                        //                $("#weathericon").html(img);
+                        //                $(".weathercontentt").html(_w.t1+"～"+_w.t2+"℃");
+                        //                $(".weatherweathercontent").text(_w.s1);
+                        //                $(".weathercontentwind").html(_w.d1 + _w.p1 + "级");
+                        //                $(".weathererrstyle").css({"display":"none"});
+                        //                $(".changelocationtext").val("");
+                        //            }catch (err){
+                        //                $(".weatherlocationstyle").text(citytq);
+                        //                $("#weathericon").html("");
+                        //                $(".weathercontentt").html("");
+                        //                $(".weatherweathercontent").text("");
+                        //                $(".weathercontentwind").html("");
+                        //                $(".weathererrstyle").css({"display":"block"});
+                        //                $(".weathererrstyle").text("查询不到该地址的天气信息，请您重新确认！");
+                        //                $(".changelocationtext").val("");
+                        //            }
+                        //            //if(window.SWther.w[citytq][0]){
+                        //
+                        //            //}else {
+                        //
+                        //            //}
+                        //
+                        //            //scope.weatherinfos1 = _w.s1;
+                        //            //scope.weatherwind= _w.d1 + _w.p1 + "级";
+                        //        },
+                        //        error:function(XMLHttpRequest, textStatus, errorThrown){
+                        //            console.log("天气报错了");
+                        //            console.log(XMLHttpRequest, textStatus, errorThrown);
+                        //            $(".weatherlocationstyle").text(citytq);
+                        //            $("#weathericon").html("");
+                        //            $(".weathercontentt").html("");
+                        //            $(".weatherweathercontent").text("");
+                        //            $(".weathercontentwind").html("");
+                        //            $(".changelocationtext").val("");
+                        //            $(".weathererrstyle").css({"display":"block"});
+                        //            $(".weathererrstyle").text(textStatus);
+                        //        }
+                        //    });
+                        //});
                         $.ajax({
-                            url: url,
-                            dataType: "script",
-                            scriptCharset: "gbk",
-                            success: function (data) {
-                                console.log(data);
-                                try {
-                                    var _w = window.SWther.w[citytq][0];
-                                    $(".weatherlocationstyle").text(citytq);
-
-                                    console.log(_w);
-                                    var _f = _w.f1 + "_0.png";
-                                    if (new Date().getHours() > 17) {
-                                        _f = _w.f2 + "_1.png";
+                            url:cityUrl,
+                            dataType:"script",
+                            success:function (script, textStatus, jqXHR) {
+                                // 获取城市
+                                if(window.localStorage.getItem("weathercity")){
+                                    if($(".changelocationtext").val()){
+                                        citytq = $(".changelocationtext").val();
+                                        window.localStorage.setItem("weathercity",citytq);
+                                    }else {
+                                        citytq = window.localStorage.getItem("weathercity");
                                     }
-                                    var img = "<img class='weathericonaaastyle' src='http://i2.sinaimg.cn/dy/main/weather/weatherplugin/wthIco/20_20/" + _f
-                                        + "' />";
-                                    //var tq = "今日天气 :　" + citytq + " " + img + " " + _w.s1 + " " + _w.t1 + "℃～" + _w.t2 + "℃ " + _w.d1 + _w.p1 + "级";
-                                    //$('#weather').html(tq);
-                                    $("#weathericon").html(img);
-                                    $(".weathercontentt").html(_w.t1+"～"+_w.t2+"℃");
-                                    $(".weatherweathercontent").text(_w.s1);
-                                    $(".weathercontentwind").html(_w.d1 + _w.p1 + "级");
-                                    $(".weathererrstyle").css({"display":"none"});
-                                    $(".changelocationtext").val("");
-                                }catch (err){
-                                    $(".weatherlocationstyle").text(citytq);
-                                    $("#weathericon").html("");
-                                    $(".weathercontentt").html("");
-                                    $(".weatherweathercontent").text("");
-                                    $(".weathercontentwind").html("");
-                                    $(".weathererrstyle").css({"display":"block"});
-                                    $(".weathererrstyle").text("查询不到该地址的天气信息，请您重新确认！");
-                                    $(".changelocationtext").val("");
+                                }else{
+                                    if(remote_ip_info.city){
+                                        var citytq = remote_ip_info.city;
+                                        window.localStorage.setItem("weathercity",citytq);
+                                    }else {
+                                        var citytq = "北京";
+                                        window.localStorage.setItem("weathercity",citytq);
+                                    }
                                 }
-                                //if(window.SWther.w[citytq][0]){
 
-                                //}else {
 
-                                //}
 
-                                //scope.weatherinfos1 = _w.s1;
-                                //scope.weatherwind= _w.d1 + _w.p1 + "级";
+                                //        citytq = "大理";
+
+                                $(".weathererrstyle").text("获取中！");
+                                var url = "http://php.weather.sina.com.cn/iframe/index/w_cl.php?code=js&city=" + citytq + "&day=0&dfc=3";
+                                $.ajax({
+                                    url: url,
+                                    dataType: "script",
+                                    scriptCharset: "gbk",
+                                    success: function (data) {
+                                        console.log(data);
+                                        try {
+                                            var _w = window.SWther.w[citytq][0];
+                                            $(".weatherlocationstyle").text(citytq);
+
+                                            console.log(_w);
+                                            var _f = _w.f1 + "_0.png";
+                                            if (new Date().getHours() > 17) {
+                                                _f = _w.f2 + "_1.png";
+                                            }
+                                            var img = "<img class='weathericonaaastyle' src='http://i2.sinaimg.cn/dy/main/weather/weatherplugin/wthIco/20_20/" + _f
+                                                + "' />";
+                                            //var tq = "今日天气 :　" + citytq + " " + img + " " + _w.s1 + " " + _w.t1 + "℃～" + _w.t2 + "℃ " + _w.d1 + _w.p1 + "级";
+                                            //$('#weather').html(tq);
+                                            $("#weathericon").html(img);
+                                            $(".weathercontentt").html(_w.t1+"～"+_w.t2+"℃");
+                                            $(".weatherweathercontent").text(_w.s1);
+                                            $(".weathercontentwind").html(_w.d1 + _w.p1 + "级");
+                                            $(".weathererrstyle").css({"display":"none"});
+                                            $(".changelocationtext").val("");
+                                        }catch (err){
+                                            $(".weatherlocationstyle").text(citytq);
+                                            $("#weathericon").html("");
+                                            $(".weathercontentt").html("");
+                                            $(".weatherweathercontent").text("");
+                                            $(".weathercontentwind").html("");
+                                            $(".weathererrstyle").css({"display":"block"});
+                                            $(".weathererrstyle").text("查询不到该地址的天气信息，请您重新确认！");
+                                            $(".changelocationtext").val("");
+                                        }
+                                    },
+                                    error:function(XMLHttpRequest, textStatus, errorThrown){
+                                        console.log("天气报错了");
+                                        console.log(XMLHttpRequest, textStatus, errorThrown);
+                                        $(".weatherlocationstyle").text(citytq);
+                                        $("#weathericon").html("");
+                                        $(".weathercontentt").html("");
+                                        $(".weatherweathercontent").text("");
+                                        $(".weathercontentwind").html("");
+                                        $(".changelocationtext").val("");
+                                        $(".weathererrstyle").css({"display":"block"});
+                                        $(".weathererrstyle").text(err);
+                                    },
+                                    complete: function(XMLHttpRequest, textStatus) {
+                                        console.log(111,2222,XMLHttpRequest, textStatus);
+                                    }
+                                });
                             },
                             error:function(err){
+                                citytq = $(".changelocationtext").val();
+                                window.localStorage.setItem("weathercity",citytq);
                                 $(".weatherlocationstyle").text(citytq);
                                 $("#weathericon").html("");
                                 $(".weathercontentt").html("");
                                 $(".weatherweathercontent").text("");
                                 $(".weathercontentwind").html("");
-                                $(".changelocationtext").val("");
                                 $(".weathererrstyle").css({"display":"block"});
-                                $(".weathererrstyle").text(err);
+                                $(".weathererrstyle").text("网络连接失败！");
+                                $(".changelocationtext").val("");
                             }
-                        });
-                    });
+                        })
+
                 };
 
                 //scope.$on('$stateChangeStart',
@@ -619,6 +722,93 @@ angular.module("app.demo.directions",["app.demo.service"])
                 //        //}
                 //
                 //    });
+                //function homeweatherinit(){
+                //    var cityUrl = 'http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js';
+                //    $.ajax({
+                //
+                //        url:cityUrl,
+                //
+                //        success:function (script, textStatus, jqXHR) {
+                //        // 获取城市
+                //        if(window.localStorage.getItem("weathercity")){
+                //            if($(".changelocationtext").val()){
+                //                citytq = $(".changelocationtext").val();
+                //                window.localStorage.setItem("weathercity",citytq);
+                //            }else {
+                //                citytq = window.localStorage.getItem("weathercity");
+                //            }
+                //        }else{
+                //            if(remote_ip_info.city){
+                //                var citytq = remote_ip_info.city;
+                //                window.localStorage.setItem("weathercity",citytq);
+                //            }else {
+                //                var citytq = "北京"
+                //                window.localStorage.setItem("weathercity",citytq);
+                //            }
+                //        }
+                //
+                //
+                //
+                //        //        citytq = "大理";
+                //        var url = "http://php.weather.sina.com.cn/iframe/index/w_cl.php?code=js&city=" + citytq + "&day=0&dfc=3";
+                //        $.ajax({
+                //            url: url,
+                //            dataType: "script",
+                //            scriptCharset: "gbk",
+                //            success: function (data) {
+                //                console.log(data);
+                //                try {
+                //                    var _w = window.SWther.w[citytq][0];
+                //                    $(".weatherlocationstyle").text(citytq);
+                //
+                //                    console.log(_w);
+                //                    var _f = _w.f1 + "_0.png";
+                //                    if (new Date().getHours() > 17) {
+                //                        _f = _w.f2 + "_1.png";
+                //                    }
+                //                    var img = "<img width='56px' src='http://i2.sinaimg.cn/dy/main/weather/weatherplugin/wthIco/20_20/" + _f
+                //                        + "' />";
+                //                    //var tq = "今日天气 :　" + citytq + " " + img + " " + _w.s1 + " " + _w.t1 + "℃～" + _w.t2 + "℃ " + _w.d1 + _w.p1 + "级";
+                //                    //$('#weather').html(tq);
+                //                    $("#weathericon").html(img);
+                //                    $(".weathercontentt").html(_w.t1+"～"+_w.t2+"℃");
+                //                    $(".weatherweathercontent").text(_w.s1);
+                //                    $(".weathercontentwind").html(_w.d1 + _w.p1 + "级");
+                //                    $(".weathererrstyle").css({"display":"none"});
+                //                    $(".changelocationtext").val("");
+                //                }catch (err){
+                //                    $(".weatherlocationstyle").text(citytq);
+                //                    $("#weathericon").html("");
+                //                    $(".weathercontentt").html("");
+                //                    $(".weatherweathercontent").text("");
+                //                    $(".weathercontentwind").html("");
+                //                    $(".weathererrstyle").css({"display":"block"});
+                //                    $(".weathererrstyle").text("查询不到该地址的天气信息，请您重新确认！");
+                //                    $(".changelocationtext").val("");
+                //                }
+                //                //if(window.SWther.w[citytq][0]){
+                //
+                //                //}else {
+                //
+                //                //}
+                //
+                //                //scope.weatherinfos1 = _w.s1;
+                //                //scope.weatherwind= _w.d1 + _w.p1 + "级";
+                //            },
+                //            error:function(err){
+                //                $(".weatherlocationstyle").text(citytq);
+                //                $("#weathericon").html("");
+                //                $(".weathercontentt").html("");
+                //                $(".weatherweathercontent").text("");
+                //                $(".weathercontentwind").html("");
+                //                $(".changelocationtext").val("");
+                //                $(".weathererrstyle").css({"display":"block"});
+                //                $(".weathererrstyle").text(err);
+                //            }
+                //        });
+                //    }
+                //    });
+                //};
                 if($location.path() == "/mains/home"){
                     homeweatherinit();
                     console.log("当前路由对的");

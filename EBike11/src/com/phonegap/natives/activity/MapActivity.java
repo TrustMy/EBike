@@ -427,9 +427,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     break;
 
                 case EBikeConstant.CAR_STATUS:
+
                     Log.d("MapActivity", "蜂鸣器状态 :" + msg.arg2);
                     if (msg.arg1 == EBikeConstant.HTTP_SUCCESS) {
-
 
 //                        Toast.makeText(context, "status +arg2 :"+msg.arg2, Toast.LENGTH_SHORT).show();
                         if (msg.arg2 == EBikeConstant.CLOSE_BUZZER) {
@@ -452,10 +452,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
                         Log.i("lhh", "handleMessage: "+(String) msg.obj);
 
-                        if(!((String) msg.obj).equals("TOKEN不匹配，请重新登录"))
-                        {
+
                             startErrorPopopWindow((String) msg.obj);
-                        }
+
 
                     }
 
