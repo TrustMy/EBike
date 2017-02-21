@@ -6,14 +6,14 @@
     <p class="vehiclebindlogo contentlogostyle vehiclebindlogojianr"></p>
     <form name="vehiclebindForm" novalidate>
         <p class="searchPasscontent searchPasscontentjianr">
-            手机号：<input class="searchPinputS devicenumwidth bindvehicleaccountval" type="number" ng-model="vehiclebind.account" name="vehiclebindaccount" ng-pattern="regphone" ng-blur="phonePatStyle(vehiclebindForm.vehiclebindaccount.$valid)" required ng-disabled="bindphonedis"/>
+            手机号：<input class="searchPinputS devicenumwidth bindvehicleaccountval" type="text" ng-model="vehiclebind.account" name="vehiclebindaccount" ng-pattern="regphone" ng-blur="phonePatStyle(vehiclebindForm.vehiclebindaccount.$valid)" required ng-disabled="bindphonedis"/>
         </p>
         <p class="searchPasscontent searchPasscontentjianr">
             设备号：<input class="searchPinputS devicenumwidth" type="text" ng-model="vehiclebind.divicenum" name="vehiclebinddivicenum" required ng-disabled="bindvehiclenumdis"/>
             <button class="scannedicon" ng-click="vehiclenumbtn()"></button>
         </p>
         <p class="searchPasscontent searchPasscontentjianr">
-            验证码：<input class="searchPinputS" type="number" ng-model="vehiclebind.verCodeContent" name="vehiclebindverCodeContent" required ng-disabled="bindvercodedis"/>
+            验证码：<input class="searchPinputS bindvehiclecodea" type="text" ng-model="vehiclebind.verCodeContent" name="vehiclebindverCodeContent" required ng-disabled="bindvercodedis" ng-pattern="bindvehiclepattcode"/>
             <button class="searchPverCodeBtn" ng-click="getVercode()" ng-disabled="bindverCodedis"><span ng-bind="vercodeBtnContent"></span></button>
         </p>
         <p class="searchPBtnPStyle searchPBtnPStylejianr">

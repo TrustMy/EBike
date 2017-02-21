@@ -511,6 +511,7 @@ angular.module("app.demo.controllers",[])
         //获取验证码页面，点击确认按钮
         $scope.verCodegoNewPassPage = function(){
             var rrrr = $(".searchiaccoutpow").val();
+            var searchpinputcodeval = $(".searchpinputcodeclass").val();
             var regaccount = $scope.searchPassForm.searchPaccount.$modelValue;
             var searchPverCodeContent = $scope.searchPassForm.searchPverCodeContent.$modelValue;
             var searchPnewpassm = $scope.searchPassForm.searchPnewpass.$modelValue;
@@ -559,6 +560,12 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
+            }else if(searchpinputcodeval.length != 6){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "验证码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
             }
             else{
                 $scope.searchpaccountdis = true;
@@ -569,7 +576,7 @@ angular.module("app.demo.controllers",[])
                 $scope.loadapp = {"toggle":true};
                 $scope.searchPobj = {
                     cp:Number(regaccount),
-                    code:searchPverCodeContent,
+                    code:Number(searchPverCodeContent),
                     pwd:$.md5(searchPnewpassm)
                 }
                 registerService.confirmvercodes($scope.searchPobj).then(function(e){
@@ -885,6 +892,7 @@ angular.module("app.demo.controllers",[])
         $scope.registerdis = false;
         $scope.registerBtn = function(){
             var regaccountval = $(".inputregisteraccountr").val();
+            var regcodeval = $(".registercodeclassa").val();
             var regaccount = $scope.registerForm.regaccount.$modelValue;
             var regpass = $scope.registerForm.regpass.$modelValue;
             var regemail = $scope.registerForm.regemail.$modelValue;
@@ -928,6 +936,12 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
+            }else if(regcodeval.length != 6){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "验证码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
             }
             else{
                 console.log("可以注册");
@@ -942,7 +956,7 @@ angular.module("app.demo.controllers",[])
                     pw:$.md5(regpass),
                     phoneType:3,
                     //nickName:"用户",
-                    code:regverCode,
+                    code:Number(regverCode),
                     email:regemail
                 };
                 registerService.registers($scope.regObj).then(function(e){
@@ -1025,6 +1039,7 @@ angular.module("app.demo.controllers",[])
         $scope.bindverCodedis= false;
         //手机验证码的正则表达式
         $scope.regphone = "[0-9]{11}";
+        $scope.bindvehiclepattcode = "[0-9]{6}";
         //验证手机号码的格式
         $scope.phonePatStyle = function(isValid){
             //var regaccount = $scope.registerForm.regaccount.$modelValue;
@@ -1089,16 +1104,15 @@ angular.module("app.demo.controllers",[])
             else{
                 $scope.bindverCodedis = true;//不能再次点击，直到ajax结束
                 var verCodeObj = {
-                    "cellphone":vehiclebindaccount,
-                    "time":registerService.getcurrentTime()
+                    "cp":Number(vehiclebindaccount)
                 };
-                var verCodeUrl = "/rest/user/getMessage/";
+                var verCodeUrl = "/register/applySmsCode/";
                 $scope.loadapp = {"toggle":true};
                 registerService.commonUser(verCodeObj,verCodeUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     //当status正确的时候，
                     if(e.status == true){
-                        var s = 300;
+                        var s = 60;
                         $scope.vercodeBtnContent = s+"秒" ;
                         var regVertimer = $interval(function(){
                             s--;
@@ -1136,6 +1150,7 @@ angular.module("app.demo.controllers",[])
             }
         };
         $scope.gomainPage = function(){
+            var bindvehiclecodeval = $(".bindvehiclecodea").val();
             var vehicleaccountval = $(".bindvehicleaccountval").val();
             var vehiclebindaccount = $scope.vehiclebindForm.vehiclebindaccount.$modelValue;
             var vehiclebinddivicenum = $scope.vehiclebindForm.vehiclebinddivicenum.$modelValue;
@@ -1158,9 +1173,15 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else if(vehicleaccountval){
+            }else if(vehicleaccountval.length != 11){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(bindvehiclecodeval.length != 6){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "验证码前后不能含有空格！";
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
@@ -5611,6 +5632,7 @@ angular.module("app.demo.controllers",[])
         $scope.unbundverCodedis = false;
         $scope.unbundlingdis= false;
         $scope.unbundlingphone = "[0-9]{11}";
+        $scope.unbindingvehiclecodepatt= "[0-9]{6}";
         //验证手机号码的格式
         $scope.phonePatStyle = function(isValid){
             //var regaccount = $scope.registerForm.regaccount.$modelValue;
@@ -5647,16 +5669,16 @@ angular.module("app.demo.controllers",[])
             else{
                 $scope.unbundverCodedis = true;//不能再次点击，直到ajax结束
                 var unbundverCodeObj = {
-                    "cellphone":unbundlingaccount,
-                    "time":registerService.getcurrentTime()
+                    "cp":Number(unbundlingaccount)
+
                 };
-                var unbundverCodeUrl = "/rest/user/getMessage/";
+                var unbundverCodeUrl = "/register/applySmsCode/";
                 $scope.loadapp = {"toggle":true};
                 registerService.commonUser(unbundverCodeObj,unbundverCodeUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     //当status正确的时候，
                     if(e.status == true){
-                        var s = 300;
+                        var s = 60;
                         $scope.unbundvercodeBtnContent = s+"秒" ;
                         var regVertimer = $interval(function(){
                             s--;
@@ -5695,6 +5717,7 @@ angular.module("app.demo.controllers",[])
         };
         //点击确定
         $scope.gounbundyes= function(){
+            var unbindcodevalval = $(".unbindvehiclecodevala").val();
             var unbundaccountval = $(".unbindaccountval").val();
             var unbundlingaccount = $scope.unbundlingForm.unbundlingaccount.$modelValue;
             var unbundlingcode = $scope.unbundlingForm.unbundlingverCodeContent.$modelValue;
@@ -5713,6 +5736,12 @@ angular.module("app.demo.controllers",[])
             }else if(unbundaccountval.length != 11){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(unbindcodevalval.length != 6){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "验证码前后不能含有空格！";
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);

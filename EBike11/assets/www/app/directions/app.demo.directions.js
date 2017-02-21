@@ -526,7 +526,8 @@ angular.module("app.demo.directions",["app.demo.service"])
 
                 function homeweatherinit(){
                 //
-
+                        var inputcitylength = $(".changelocationtext").val();
+                    if(inputcitylength.length<=8){
                         var cityUrl = 'http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js';
                         //$.getScript(cityUrl, function (script, textStatus, jqXHR) {
                         //    // 获取城市
@@ -705,6 +706,17 @@ angular.module("app.demo.directions",["app.demo.service"])
                                 $(".changelocationtext").val("");
                             }
                         })
+                    }else {
+                        //$(".weatherlocationstyle").text(citytq);
+                        $("#weathericon").html("");
+                        $(".weathercontentt").html("");
+                        $(".weatherweathercontent").text("");
+                        $(".weathercontentwind").html("");
+                        $(".weathererrstyle").css({"display":"block"});
+                        $(".weathererrstyle").text("地址长度大于8位，请您重新确认！");
+                        $(".changelocationtext").val("");
+                    }
+
 
                 };
 

@@ -6,10 +6,10 @@
     <p class="searchPassLogo contentlogostyle contentlogostylejianr"></p>
     <form name="searchPassForm" novalidate>
         <p class="searchPasscontent searchPasscontentjianr">
-            手机号：<input class="searchPinputS searchiaccoutpow" type="number" ng-model="searchP.account" name="searchPaccount" ng-pattern="regphone" ng-blur="phonePatStyle(searchPassForm.searchPaccount.$valid)" required ng-disabled="searchpaccountdis" />
+            手机号：<input class="searchPinputS searchiaccoutpow" type="text" ng-model="searchP.account" name="searchPaccount" ng-pattern="regphone" ng-blur="phonePatStyle(searchPassForm.searchPaccount.$valid)" required ng-disabled="searchpaccountdis" />
         </p>
         <p class="searchPasscontent searchPasscontentjianr">
-            验证码：<input class="searchPinputS" type="number" ng-model="searchP.verCodeContent" ng-pattern="searchPcondepat" name="searchPverCodeContent" required ng-disabled="searchpvercodedis"/>
+            验证码：<input class="searchPinputS searchpinputcodeclass" type="text" ng-model="searchP.verCodeContent" ng-pattern="searchPcondepat" name="searchPverCodeContent" required ng-disabled="searchpvercodedis"/>
             <button class="searchPverCodeBtn" ng-click="getVercode()" ng-disabled="verCodedis"><span ng-bind="vercodeBtnContent"></span></button>
         </p>
         <p class="searchPasscontent searchPasscontentjianr" ng-if="passnew.toggle">
