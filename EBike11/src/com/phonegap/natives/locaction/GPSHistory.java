@@ -24,8 +24,11 @@ import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.L;
 import com.phonegap.natives.tool.TimeTool;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.crypto.KeyGenerator;
 
 /**
  * Created by Trust on 2016/12/18.
@@ -382,7 +385,7 @@ public class GPSHistory {
 
     }
 
-public   String getName ()
+    public   String getName ()
 {
     return name;
 }
@@ -395,5 +398,7 @@ public   String getName ()
     {
         new GPSAddressName(context,new LatLonPoint(latLng.latitude,latLng.longitude),handler,EBikeConstant.GPS_ADDRES);
     }
+
+
 
 }

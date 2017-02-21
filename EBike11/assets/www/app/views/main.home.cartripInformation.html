@@ -1,4 +1,4 @@
-<div class="searchPassBack" ng-style="winHeight" ui-view="tab-cartrip">
+<div class="searchPassBack" ng-style="winHeight">
     <p class="searchPassTitle searchpasstitlejianr">
         <button class="searchBackBtn searchBackbtnjianr" ng-click="searchPassBackBtn()"></button>
         <span class="searchPassTitleContent searchpasstitlecontentjianr">用车信息</span>
@@ -51,11 +51,12 @@
             </div>
         </div>
         <div class="datecontent datacontentjianr">
-            <p class="searchdateline">
-                <form  name="tripinforForm" novalidate>
+            <form name="tripinforForm" novalidate>
+                <p class="searchdateline">
+
                     <p class="cartrippositionleft">
                         <label for="appDate">开始日期：</label><br>
-                        <input type="text" ng-model="ostartTime" class="datewidthcj" readonly="readonly" name="appDate" id="appDate" />
+                        <input type="text" ng-model="ostartTimes" class="datewidthcj" readonly="readonly" name="appDate" id="appDate" ng-click="starttripclick()"/>
                     </p>
 
                     <!--<label for="appDate">日期</label>-->
@@ -65,13 +66,14 @@
                     <p class="cartrippositionright">
                         <label for="appDate">结束日期：</label><br>
                         <!--<span >{{overTime}}</span> -->
-                        <input type="text" ng-model="overTime" class="datewidthcj" readonly="readonly" name="appDate" id="appDateover" />
+                        <input type="text" ng-model="overTimes" class="datewidthcj" readonly="readonly" name="appDate" id="appDateover" />
                     </p>
                     <button ng-click="changedatebtnsearch()" class="searchdatebtnstyle bottomtripstyle">搜索</button>
                     <button ng-click="datetripbtninit()" class="searchdatebtnstyleno bottomtripstyle">取消</button>
-                </form>
 
-            </p>
+
+                </p>
+            </form>
             <div class="lastdivheight lastdivheightjianr">
                 <div class="timeline" ng-repeat="info in lastdateinfo" ng-class="{'infoclass':infoclassnone}">
                     <div class="timeline-date"   >

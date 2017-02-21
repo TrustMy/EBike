@@ -6,7 +6,7 @@
     <p class="vehiclebindlogo contentlogostyle vehiclebindlogojianr"></p>
     <form name="vehiclebindForm" novalidate>
         <p class="searchPasscontent searchPasscontentjianr">
-            手机号：<input class="searchPinputS devicenumwidth" type="number" ng-model="vehiclebind.account" name="vehiclebindaccount" ng-pattern="regphone" ng-blur="phonePatStyle(vehiclebindForm.vehiclebindaccount.$valid)" required ng-disabled="bindphonedis"/>
+            手机号：<input class="searchPinputS devicenumwidth bindvehicleaccountval" type="number" ng-model="vehiclebind.account" name="vehiclebindaccount" ng-pattern="regphone" ng-blur="phonePatStyle(vehiclebindForm.vehiclebindaccount.$valid)" required ng-disabled="bindphonedis"/>
         </p>
         <p class="searchPasscontent searchPasscontentjianr">
             设备号：<input class="searchPinputS devicenumwidth" type="text" ng-model="vehiclebind.divicenum" name="vehiclebinddivicenum" required ng-disabled="bindvehiclenumdis"/>

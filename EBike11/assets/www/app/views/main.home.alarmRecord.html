@@ -5,18 +5,21 @@
         <button ng-click="alarmdateyesbtn()" class="alarmdateyespo bottomtripstyle alarmdatayespojianr">搜索</button>
     </p>
     <p class="titlePall titlePalljianr">
-        <p class="titledatebigp titledatealarmstyle">
-            <label for="appDate">开始日期：</label>
-            <input type="text" ng-model="oalarmstartTime" class="alarmdateinputstyle" readonly="readonly" name="appDate" id="appDate" />
-            <button class="alarmallstatusmodelstyle" ng-class="{'allstatusalarmblue':allalarmblur}" ng-disabled="allstatusalarmdis" ng-click="allastatusalarmbtn()">全部标记为已读</button>
-        </p>
-        <p class="titledatebigpbott titledatealarmstyle">
-            <label for="appDate">结束日期：</label>
-            <!--<span >{{overTime}}</span> -->
-            <input type="text" ng-model="alarmoverTime" class="alarmdateinputstyle" readonly="readonly" name="appDate" id="appDateover" />
-            <button class="alarmallstatusmodelstyle" ng-class="{'allstatusnoalarmblue':allnoalarmblur}" ng-disabled="allnostatusalarmdis" ng-click="allnoastatusalarmbtn()">全部标记为未读</button>
+        <form name="alarmdateform" novalidate>
+            <p class="titledatebigp titledatealarmstyle">
+                <label for="appDate">开始日期：</label>
+                <input type="text" ng-model="oalarmstartTime" class="alarmdateinputstyle" readonly="readonly" name="appDate" id="appDate" />
+                <button class="alarmallstatusmodelstyle" ng-class="{'allstatusalarmblue':allalarmblur}" ng-disabled="allstatusalarmdis" ng-click="allastatusalarmbtn()">全部标记为已读</button>
+            </p>
+            <p class="titledatebigpbott titledatealarmstyle">
+                <label for="appDate">结束日期：</label>
+                <!--<span >{{overTime}}</span> -->
+                <input type="text" ng-model="alarmoverTime" class="alarmdateinputstyle" readonly="readonly" name="appDate" id="appDateover" />
+                <button class="alarmallstatusmodelstyle" ng-class="{'allstatusnoalarmblue':allnoalarmblur}" ng-disabled="allnostatusalarmdis" ng-click="allnoastatusalarmbtn()">全部标记为未读</button>
 
-        </p>
+            </p>
+        </form>
+
         <!--<span class="titleicon alarmrecordiconleft"></span>-->
         <!--<button class="titleicon alarmrecordiconright" ng-click="alarmrecorddatebtn()"></button>-->
     </p>

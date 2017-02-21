@@ -139,12 +139,16 @@ angular.module("app.demo.controllers",[])
             }
         };
         $scope.oinit();
-        //验证手机验证码
-        $scope.regphone = '[0-9]{11}';
+        //验证手机验证码/(^\s*)|(\s*$)/g
+        $scope.regphone = "[0-9]{11}";
         //验证手机号码的格式
         $scope.subphonePatStyle = function(isValid){
+            //var uname = $scope.submitForm.subaccount.$modelValue;
+            //var s = uname;
+            //console.log(uname.length);
             if(isValid){
-                console.log("手机号码格式正确");
+                //console.log("手机号码格式正确",uname);
+                console.log("成功")
             }else{
                 console.log("手机号码格式错误");
                 $scope.subapp= {"toggle":true};
@@ -153,11 +157,22 @@ angular.module("app.demo.controllers",[])
                     $scope.subapp= {"toggle":false};
                 },2000)
             }
+
+            //$scope.regphone = /\\s/;
+            //if($scope.regphone.test(=====)){
+            //
+            //}
         };
+
         //点击登录
         $scope.submitBtn = function(){
+            var sss = $(".accountinputclass").val();
+            console.log(sss.length);
+
             var uname = $scope.submitForm.subaccount.$modelValue;
             var upass = $scope.submitForm.subpass.$modelValue;
+            //var parteenyan = "^[0-9]{11}";
+            //var sssss = uname;
             console.log(uname);
             $scope.submitdis = true;
             $scope.submitBtnblue = false;
@@ -199,7 +214,20 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000)
-            }else{
+            }
+            else if(sss.length != 11){
+                //console.log(/(^\s*)|(\s*$)/g.test(uname));
+                $scope.submitdis = false;
+                $scope.submitBtnblue = true;
+                $scope.submitBtngrey = false;
+
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000)
+            }
+            else{
                 //$state.go("submits");
 
                 $timeout(function(){
@@ -381,7 +409,7 @@ angular.module("app.demo.controllers",[])
         };
         $scope.vercodeBtnContent = "点击获取验证码";
         //手机验证码的正则表达式
-        $scope.regphone = '[0-9]{11}';
+        $scope.regphone = "[0-9]{11}";
         $scope.searchPcondepat= '[0-9]{6}';
         //验证手机号码的格式
         $scope.phonePatStyle = function(isValid){
@@ -398,9 +426,12 @@ angular.module("app.demo.controllers",[])
             }
         };
         //点击获取验证码
+        //var parteenyan = /(^\s*)|(\s*$)/g;
+        //parteenyan.test(regaccount
         $scope.passnew = {"toggle":false};
         $scope.getVercode = function(){
             //$Http
+            var rrrr = $(".searchiaccoutpow").val();
             var regaccount = $scope.searchPassForm.searchPaccount.$modelValue;
             console.log(regaccount);
             if(!regaccount){
@@ -409,7 +440,21 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(rrrr.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            //else if(parteenyan.test(regaccount)){
+            //    $scope.subapp= {"toggle":true};
+            //    $scope.submitWarning = "手机号码不能含有空格！";
+            //    $timeout(function(){
+            //        $scope.subapp= {"toggle":false};
+            //    },2000);
+            //}
+            else{
                 $scope.verCodedis = true;//不能再次点击，直到ajax结束
                 var verCodeObj = {
                     "cp":Number(regaccount)
@@ -465,6 +510,7 @@ angular.module("app.demo.controllers",[])
         $scope.searchvercodedis = false;
         //获取验证码页面，点击确认按钮
         $scope.verCodegoNewPassPage = function(){
+            var rrrr = $(".searchiaccoutpow").val();
             var regaccount = $scope.searchPassForm.searchPaccount.$modelValue;
             var searchPverCodeContent = $scope.searchPassForm.searchPverCodeContent.$modelValue;
             var searchPnewpassm = $scope.searchPassForm.searchPnewpass.$modelValue;
@@ -507,7 +553,14 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            } else{
+            }else if(rrrr.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
                 $scope.searchpaccountdis = true;
                 $scope.searchpvercodedis = true;
                 $scope.searchvercodedis = true;
@@ -683,8 +736,10 @@ angular.module("app.demo.controllers",[])
         //获取验证码的文字
         $scope.vercodeBtnContent = "获取验证码";
         //验证手机验证码
-        $scope.regphone = '[0-9]{11}';
+        $scope.regphone = "[0-9]{11}";
         $scope.searchPcondepat = '[0-9]{6}';
+        //var parteenyan = /(^\s*)|(\s*$)/g;
+        //parteenyan.test(regaccount)
         //验证手机号码的格式
         $scope.phonePatStyle = function(isValid){
             //var regaccount = $scope.registerForm.regaccount.$modelValue;
@@ -762,6 +817,7 @@ angular.module("app.demo.controllers",[])
         //点击注册
         $scope.getVercode = function(){
             //$Http
+            var regaccountval = $(".inputregisteraccountr").val();
             var regaccount = $scope.registerForm.regaccount.$modelValue;
             console.log(regaccount);
             if(!regaccount){
@@ -770,7 +826,14 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(regaccountval.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
                 $scope.verCodedis = true;//不能再次点击，直到ajax结束
                 var verCodeObj = {
                     "cp":Number(regaccount)
@@ -821,6 +884,7 @@ angular.module("app.demo.controllers",[])
         };
         $scope.registerdis = false;
         $scope.registerBtn = function(){
+            var regaccountval = $(".inputregisteraccountr").val();
             var regaccount = $scope.registerForm.regaccount.$modelValue;
             var regpass = $scope.registerForm.regpass.$modelValue;
             var regemail = $scope.registerForm.regemail.$modelValue;
@@ -858,7 +922,14 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(regaccountval.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
                 console.log("可以注册");
                 $scope.regaccountdis = true;
                 $scope.regpassdis = true;
@@ -953,7 +1024,7 @@ angular.module("app.demo.controllers",[])
         $scope.vehiclebinddis = false;
         $scope.bindverCodedis= false;
         //手机验证码的正则表达式
-        $scope.regphone = '[0-9]{11}';
+        $scope.regphone = "[0-9]{11}";
         //验证手机号码的格式
         $scope.phonePatStyle = function(isValid){
             //var regaccount = $scope.registerForm.regaccount.$modelValue;
@@ -999,6 +1070,7 @@ angular.module("app.demo.controllers",[])
         //点击获取验证码
         $scope.getVercode = function(){
             //$Http
+            var vehicleaccountval = $(".bindvehicleaccountval").val();
             var vehiclebindaccount = $scope.vehiclebindForm.vehiclebindaccount.$modelValue;
             console.log(vehiclebindaccount);
             if(!vehiclebindaccount){
@@ -1007,7 +1079,14 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(vehicleaccountval.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
                 $scope.bindverCodedis = true;//不能再次点击，直到ajax结束
                 var verCodeObj = {
                     "cellphone":vehiclebindaccount,
@@ -1057,6 +1136,7 @@ angular.module("app.demo.controllers",[])
             }
         };
         $scope.gomainPage = function(){
+            var vehicleaccountval = $(".bindvehicleaccountval").val();
             var vehiclebindaccount = $scope.vehiclebindForm.vehiclebindaccount.$modelValue;
             var vehiclebinddivicenum = $scope.vehiclebindForm.vehiclebinddivicenum.$modelValue;
             var vehiclebindverCodeContent = $scope.vehiclebindForm.vehiclebindverCodeContent.$modelValue;
@@ -1078,7 +1158,14 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(vehicleaccountval){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
                 $scope.bindphonedis = true;
                 $scope.bindvehiclenumdis = true;
                 $scope.bindvercodedis = true;
@@ -1795,6 +1882,35 @@ angular.module("app.demo.controllers",[])
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
+
+
+        $scope.$watch("ostartTimes",  function(newValue, oldValue) {
+            console.log(22226626266,newValue, oldValue);
+            console.log("出现吧");
+            if (newValue === oldValue){
+                //return;
+            }else {
+                $scope.lastdateinfo = null;
+                $scope.notripcontent = true;//无行程
+                $scope.clickonload = false;//点击加载
+                $scope.cartriploading = true;//加载中
+                $scope.thelastpagecartripover =true ;//加载完全
+                $scope.clickandaddloads = true;//继续加载
+            }
+        });
+        $scope.$watch('overTimes',  function(newValue, oldValue) {
+            console.log("出现吧");
+            if (newValue === oldValue){
+                //return;
+            }else {
+                $scope.lastdateinfo = null;
+                $scope.notripcontent = true;//无行程
+                $scope.clickonload = false;//点击加载
+                $scope.cartriploading = true;//加载中
+                $scope.thelastpagecartripover =true ;//加载完全
+                $scope.clickandaddloads = true;//继续加载
+            }
+        });
         //console.log(registerService.getcurrentTime);
         $scope.currentdate = new Date();
         //当天的行程
@@ -2416,8 +2532,8 @@ angular.module("app.demo.controllers",[])
         }
         //前一天的行程
         console.log(registerService.getTime());
-        $scope.ostartTime = registerService.getdatestr(-2);
-        $scope.overTime = registerService.getdatestr(-1);
+        $scope.ostartTimes = registerService.getdatestr(-2);
+        $scope.overTimes = registerService.getdatestr(-1);
         //$scope.lasthavedate = true;
         //$scope.lastdontdate = false;
         //四种样式
@@ -2427,8 +2543,8 @@ angular.module("app.demo.controllers",[])
         $scope.sbdianlastdontdate = true;
         $scope.moresbdianlastdontdate = true;
         //$scope.dateyeardisnone = true;
-        $scope.ajaxstarttime = $scope.ostartTime.replace('-','/').replace('-','/');
-        $scope.ajaxendtime = $scope.overTime.replace('-','/').replace('-','/');
+        $scope.ajaxstarttime = $scope.ostartTimes.replace('-','/').replace('-','/');
+        $scope.ajaxendtime = $scope.overTimes.replace('-','/').replace('-','/');
         console.log($scope.ajaxstarttime);
         //初始的时候table这块，，四种样式
         $scope.notripcontent = true;//无行程
@@ -3256,8 +3372,8 @@ angular.module("app.demo.controllers",[])
         $scope.datetripbtninit = function(){
             $("#appDate").val(registerService.getdatestr(-2));
             $("#appDateover").val(registerService.getdatestr(-1));
-            $scope.ajaxstarttime = $scope.ostartTime.replace('-','/').replace('-','/');
-            $scope.ajaxendtime = $scope.overTime.replace('-','/').replace('-','/');
+            $scope.ajaxstarttime = $scope.ostartTimes.replace('-','/').replace('-','/');
+            $scope.ajaxendtime = $scope.overTimes.replace('-','/').replace('-','/');
             $scope.lastdatepage=0;
             $scope.timelastnulltimedatefir = $timeout(function(){
                 //$scope.dituiditui = true;
@@ -3278,14 +3394,7 @@ angular.module("app.demo.controllers",[])
                 $scope.lastdate();
             },2);
         };
-        $scope.clickLasttripOnload = function(){
-            //$scope.timelastnulltimedatefirbtn = $timeout(function(){
-            //
-            //    $scope.lastdateinfo = null;
-            //    $scope.lastdate();
-            //},2);
-            $scope.changedatebtnsearch();
-        }
+
         $scope.changedatebtnsearch = function(){
             $scope.coverostarttime = $("#appDate").val().replace('-','').replace('-','');
             $scope.coverovertime = $("#appDateover").val().replace('-','').replace('-','');
@@ -3336,6 +3445,14 @@ angular.module("app.demo.controllers",[])
             }
 
         }
+        $scope.clickLasttripOnload = function(){
+            //$scope.timelastnulltimedatefirbtn = $timeout(function(){
+            //
+            //    $scope.lastdateinfo = null;
+            //    $scope.lastdate();
+            //},2);
+            $scope.changedatebtnsearch();
+        };
         //$scope.dateModelhide = function(){
         //    $scope.datediv = {toggle:false};
         //    console.log(1);
@@ -4351,6 +4468,23 @@ angular.module("app.demo.controllers",[])
             $scope.to();
             //console.log($rootScope.endlat,$rootScope.endlng,$rootScope.startlat,$rootScope.staratlng);
         };
+
+        //if("\v"=="v") {
+        //    $(".datewidthcj").onpropertychange = webChange;
+        //}else{
+        //    $(".datewidthcj").bind("input",webChange);
+        //}
+        //function webChange(){
+        //    //if(element.value){document.getElementById("test").innerHTML = element.value};
+        //    console.log("js监听事件");
+        //    $scope.lastdateinfo = null;
+        //    $scope.notripcontent = true;//无行程
+        //    $scope.clickonload = false;//点击加载
+        //    $scope.cartriploading = true;//加载中
+        //    $scope.thelastpagecartripover =true ;//加载完全
+        //    $scope.clickandaddloads = true;//继续加载
+        //}
+
         //监听路由的变化
         $scope.$on('$stateChangeStart',
 
@@ -4377,7 +4511,7 @@ angular.module("app.demo.controllers",[])
             registerService.datecommon();
         },200);
         $scope.$on('$destroy',function(){
-            console.log($scope.timerr)
+            console.log($scope.timerr);
             $interval.cancel($scope.timerr);
             console.log("关闭定时器,先出来");
             console.log($scope.timerr);
@@ -4394,6 +4528,38 @@ angular.module("app.demo.controllers",[])
         $scope.modelpositionStnot = {
             "top":$scope._topnot
         };
+        $scope.$watch('oalarmstartTime',  function(newValue, oldValue) {
+            console.log(22222222,newValue, oldValue)
+            if (newValue === oldValue){
+                return;
+            }else {
+                $scope.alarmrecordInfo = null;
+                $scope.alarmclick1=true ;
+                $scope.alarmclick2= true;
+                $scope.alarmclicknew =false ;
+                $scope.alarmclick3= true;
+                $scope.alarmclick4 = true;
+            }
+        });
+        $scope.$watch('alarmoverTime',  function(newValue, oldValue) {
+            if (newValue === oldValue){
+                return;
+            }else {
+                $scope.alarmrecordInfo = null;
+                $scope.alarmclick1=true ;
+                $scope.alarmclick2= true;
+                $scope.alarmclicknew =false ;
+                $scope.alarmclick3= true;
+                $scope.alarmclick4 = true;
+            }
+        });
+        //$(".dwb-s").click(function(){
+        //    console.log(111224445455,$("#appDate").val());
+        //})
+        //$('#appDate').on('input propertychange', function() {
+        //    console.log($(this).val().length + ' characters');
+        //});
+        //$
         //$rootScope.checkConnection();
         //function prostatus(){
         //    return false;
@@ -5036,21 +5202,7 @@ angular.module("app.demo.controllers",[])
                 $scope.alarmclick3= true;
             });
         };
-        //重新加载
-        $scope.alarmrecordloadnew = function(){
-            $scope.alarmrecordPage = 0;
-            $scope.alarmfirObj = {
-                termId:Number($window.sessionStorage.getItem("UtermId")),
-                startTime:Number(new Date($("#appDate").val().replace('-',"/").replace('-',"/")+" 00:00:00").getTime()),
-                endTime:Number(new Date($("#appDateover").val().replace('-',"/").replace('-',"/")+" 23:59:59").getTime()),
-                pageIndex:$scope.alarmrecordPage,
-                pageSize:6
-            };
-            console.log(registerService.getTime());
-            $scope.alarmUrl = "/rest/alarms/period/";
-            //初始加载
-            $scope.alarminit();
-        };
+
         //点击搜索
         $scope.alarmdateyesbtn = function(){
             $scope.searchalarmstart = $("#appDate").val().replace('-',"/").replace('-',"/")+" 00:00:00";
@@ -5077,6 +5229,22 @@ angular.module("app.demo.controllers",[])
                 console.log("看这里啊");
             }
 
+        };
+        //重新加载
+        $scope.alarmrecordloadnew = function(){
+            //$scope.alarmrecordPage = 0;
+            //$scope.alarmfirObj = {
+            //    termId:Number($window.sessionStorage.getItem("UtermId")),
+            //    startTime:Number(new Date($("#appDate").val().replace('-',"/").replace('-',"/")+" 00:00:00").getTime()),
+            //    endTime:Number(new Date($("#appDateover").val().replace('-',"/").replace('-',"/")+" 23:59:59").getTime()),
+            //    pageIndex:$scope.alarmrecordPage,
+            //    pageSize:6
+            //};
+            //console.log(registerService.getTime());
+            //$scope.alarmUrl = "/rest/alarms/period/";
+            ////初始加载
+            //$scope.alarminit();
+            $scope.alarmdateyesbtn();
         };
         //监听路由的变化
         $scope.$on('$stateChangeStart',
@@ -5442,7 +5610,7 @@ angular.module("app.demo.controllers",[])
         $scope.unbundvercodeBtnContent= "点击获取验证码";
         $scope.unbundverCodedis = false;
         $scope.unbundlingdis= false;
-        $scope.unbundlingphone = '[0-9]{11}';
+        $scope.unbundlingphone = "[0-9]{11}";
         //验证手机号码的格式
         $scope.phonePatStyle = function(isValid){
             //var regaccount = $scope.registerForm.regaccount.$modelValue;
@@ -5460,6 +5628,7 @@ angular.module("app.demo.controllers",[])
         $scope.loadapp = {"toggle":false};
         //点击获取验证码
         $scope.unbundlinggetVercode = function(){
+            var unbundaccountval = $(".unbindaccountval").val();
             var unbundlingaccount = $scope.unbundlingForm.unbundlingaccount.$modelValue;
             console.log(unbundlingaccount);
             if(!unbundlingaccount){
@@ -5468,7 +5637,14 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(unbundaccountval.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
                 $scope.unbundverCodedis = true;//不能再次点击，直到ajax结束
                 var unbundverCodeObj = {
                     "cellphone":unbundlingaccount,
@@ -5519,6 +5695,7 @@ angular.module("app.demo.controllers",[])
         };
         //点击确定
         $scope.gounbundyes= function(){
+            var unbundaccountval = $(".unbindaccountval").val();
             var unbundlingaccount = $scope.unbundlingForm.unbundlingaccount.$modelValue;
             var unbundlingcode = $scope.unbundlingForm.unbundlingverCodeContent.$modelValue;
             if(!unbundlingaccount){
@@ -5533,7 +5710,14 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else {
+            }else if(unbundaccountval.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else {
                 $scope.unbundlingdis = true;
                 var undundingyesObj = {
                     cp:Number(unbundlingaccount),
