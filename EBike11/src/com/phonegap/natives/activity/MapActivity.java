@@ -2,8 +2,10 @@ package com.phonegap.natives.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -29,7 +32,9 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.route.BusRouteResult;
 import com.amap.api.services.route.DriveRouteResult;
@@ -73,7 +78,7 @@ import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
 
 
-public class MapActivity extends AppCompatActivity implements View.OnClickListener, LocationSource, LocationListener, AMapLocationListener, RouteSearch.OnRouteSearchListener {
+public class MapActivity extends AppCompatActivity implements View.OnClickListener {
     private MapView mapView;
     private AMap aMap;
     private ImageButton alwaysSracking;
@@ -97,7 +102,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     public AMapLocationClient mLocationClient = null;
     //声明AMapLocationClientOption对象
     public AMapLocationClientOption mLocationOption = null;
-    private OnLocationChangedListener mListener;
+
 
     private GPSRoutePlanning gpsRoutePlanning;
 
@@ -620,6 +625,36 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     }
 
 
+
+
+    //声明定位回调监听器
+    public AMapLocationListener mLocationListener = new AMapLocationListener() {
+        @Override
+        public void onLocationChanged(AMapLocation aMapLocation) {
+
+                if (aMapLocation != null
+                        && aMapLocation.getErrorCode() == 0) {
+//                mListener.onLocationChanged(aMapLocation);// 显示系统小蓝点
+//
+//                LatLng update= coordinateTransformation.transformation(new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude()));
+
+                    startLat = new LatLonPoint(aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                    L.i("定位成功! startLat:"+startLat.toString());
+                } else {
+                    String errText = "定位失败," + aMapLocation.getErrorCode() + ": " + aMapLocation.getErrorInfo();
+                    Log.e("AmapErr", errText);
+//                Toast.makeText(context, "失败原因:" + errText, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,"定位失败,请检查手机网络或GPS信号!",Toast.LENGTH_SHORT).show();
+                    stopPopupWindow();
+                }
+
+        }
+    };
+
+
+
+
+
     /**
      * 初始化AMap对象
      */
@@ -627,7 +662,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         if (aMap == null) {
             aMap = mapView.getMap();
             // 设置定位监听
-            aMap.setLocationSource(this);
+
             // 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
             aMap.setMyLocationEnabled(true);
             // 设置定位的类型为定位模式，有定位、跟随或地图根据面向方向旋转几种
@@ -674,6 +709,36 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
         timeView();
+
+
+
+
+        //初始化定位
+        mLocationClient = new AMapLocationClient(getApplicationContext());
+        //设置定位回调监听
+        mLocationClient.setLocationListener(mLocationListener);
+        //初始化AMapLocationClientOption对象
+        mLocationOption = new AMapLocationClientOption();
+
+        //设置定位模式为AMapLocationMode.Hight_Accuracy，高精度模式。
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        //获取一次定位结果：
+        //该方法默认为false。
+        mLocationOption.setOnceLocation(true);
+        //获取最近3s内精度最高的一次定位结果：
+        //设置setOnceLocationLatest(boolean b)接口为true，启动定位时SDK会返回最近3s内精度最高的一次定位结果。如果设置其为true，setOnceLocation(boolean b)接口也会被设置为true，反之不会，默认为false。
+        mLocationOption.setOnceLocationLatest(true);
+
+        mLocationOption.setWifiActiveScan(false);
+
+        mLocationOption.setHttpTimeOut(20000);
+
+        //给定位客户端对象设置定位参数
+        mLocationClient.setLocationOption(mLocationOption);
+        //启动定位
+        mLocationClient.startLocation();
+
+
 
     }
 
@@ -843,7 +908,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 case R.id.followMe:
                     name = "followMe";
 
-
+                    //给定位客户端对象设置定位参数
+                    mLocationClient.setLocationOption(mLocationOption);
+                    //启动定位
+                    mLocationClient.startLocation();
 
                     aMap.clear();
 
@@ -861,6 +929,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     break;
 
                 case R.id.car_location:
+                    followMeStatus = false;
                     popopWindow.showPopopWindow(context, mapView);
                     startCarLocation();
 
@@ -891,10 +960,32 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
             if (endLat.getLongitude() != 0.0) {
-
+                amapClear();
                 popopWindow.stopPopopWindow();
-                Toast.makeText(context, "数据Type:" + carGPSBean.getContent().getType(), Toast.LENGTH_SHORT).show();
-                initRoutePlanning(startLat, endLat, popopWindow);
+
+                if(carGPSBean.getContent().getType() == 1)
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("当前数据为基站数据,可能与实际位置有所偏差是否继续?");
+                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ToastUtil.showToast(context,"已取消!");
+                        }
+                    });
+                    builder.setPositiveButton("继续", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            initRoutePlanning(startLat, endLat, popopWindow);
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }else
+                {
+                    initRoutePlanning(startLat, endLat, popopWindow);
+                }
+
 
 
             } else {
@@ -933,96 +1024,11 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     }
 
 
-    @Override
-    public void activate(OnLocationChangedListener onLocationChangedListener) {
-        mListener = onLocationChangedListener;
-        if (mLocationClient == null) {
-            //初始化定位
-            mLocationClient = new AMapLocationClient(getApplicationContext());
-            //初始化定位参数
-            mLocationOption = new AMapLocationClientOption();
-            //设置定位回调监听
-            mLocationClient.setLocationListener(this);
-            //设置为高精度定位模式
-            mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-            //设置定位参数
-            mLocationClient.setLocationOption(mLocationOption);
-            // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
-            // 注意设置合适的定位时间的间隔（最小间隔支持为2000ms），并且在合适时间调用stopLocation()方法来取消定位请求
-            // 在定位结束后，在合适的生命周期调用onDestroy()方法
-            // 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
-            mLocationClient.startLocation();//启动定位
-        }
-    }
-
-    @Override
-    public void deactivate() {
-//        targetSdkVersion
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
 
 
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
-
-    @Override
-    public void onLocationChanged(AMapLocation aMapLocation) {
-        if (mListener != null && aMapLocation != null) {
-            if (aMapLocation != null
-                    && aMapLocation.getErrorCode() == 0) {
-//                mListener.onLocationChanged(aMapLocation);// 显示系统小蓝点
-//
-//                LatLng update= coordinateTransformation.transformation(new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude()));
-
-                startLat = new LatLonPoint(aMapLocation.getLatitude(), aMapLocation.getLongitude());
-
-            } else {
-                String errText = "定位失败," + aMapLocation.getErrorCode() + ": " + aMapLocation.getErrorInfo();
-                Log.e("AmapErr", errText);
-//                Toast.makeText(context, "失败原因:" + errText, Toast.LENGTH_SHORT).show();
-                Toast.makeText(context,"定位失败,请检查手机网络或GPS信号!",Toast.LENGTH_SHORT).show();
-                stopPopupWindow();
-            }
-        }
-    }
-
-    @Override
-    public void onBusRouteSearched(BusRouteResult busRouteResult, int i) {
-
-    }
-
-    @Override
-    public void onDriveRouteSearched(DriveRouteResult driveRouteResult, int i) {
-
-    }
-
-    @Override
-    public void onWalkRouteSearched(WalkRouteResult walkRouteResult, int i) {
 
 
-    }
 
-    @Override
-    public void onRideRouteSearched(RideRouteResult rideRouteResult, int i) {
-
-    }
 
 
     public void checkCarStatus() {
@@ -1153,6 +1159,14 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
             postHttpRequest.doPostCheckCarLcation(EBikeSever.server_url + EBikeSever.car_location_url, termId,token, EBikeConstant.CAR_LOCATIOM);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void amapClear()
+    {
+        if(aMap != null)
+        {
+            aMap.clear();
         }
     }
 

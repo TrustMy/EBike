@@ -286,9 +286,10 @@ public class PostNet extends Handler {
 
         if(msg.arg1 == EBikeConstant.HTTP_SUCCESS)
         {
-
+            aMap.clear();
             if(carGPSBean != null &&carGPSBean.getStatus())
             {
+
 
                 LatLng desLatLng  = new LatLng((carGPSBean.getContent().getLat())
                         ,(carGPSBean.getContent().getLng())
@@ -305,7 +306,7 @@ public class PostNet extends Handler {
                         dataType = "基站坐标:";
                     }
 
-                    aMap.clear();
+
                     LatLng update = coordinateTransformation.transformation(desLatLng);
                     L.i("转换过后的 坐标  :"+update.latitude);
                     aMap.addMarker(new MarkerOptions().

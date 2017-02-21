@@ -21,8 +21,8 @@ angular.module("app.demo.controllers",[])
                 });
             }
         }, false);
-        console.log(333333,new Date(1484755200000));
-        console.log(333333,new Date(1484841599000));
+        //console.log(333333,new Date(1486656000000));
+        //console.log(333333222,new Date(1487692799000));
         //console.log(22222,new Date(1484495999000));
         //console.log(44445,new Date("2012/12/25 20:11:11").getTime() - new Date("2012/12/18 20:11:11").getTime());
 
@@ -3370,8 +3370,8 @@ angular.module("app.demo.controllers",[])
             $scope.lastdate();
         },2);
         $scope.datetripbtninit = function(){
-            $("#appDate").val(registerService.getdatestr(-2));
-            $("#appDateover").val(registerService.getdatestr(-1));
+            $scope.ostartTimes = registerService.getdatestr(-2);
+            $scope.overTimes = registerService.getdatestr(-1);
             $scope.ajaxstarttime = $scope.ostartTimes.replace('-','/').replace('-','/');
             $scope.ajaxendtime = $scope.overTimes.replace('-','/').replace('-','/');
             $scope.lastdatepage=0;
