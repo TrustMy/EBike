@@ -514,8 +514,14 @@ angular.module("app.demo.controllers",[])
             var searchpinputcodeval = $(".searchpinputcodeclass").val();
             var regaccount = $scope.searchPassForm.searchPaccount.$modelValue;
             var searchPverCodeContent = $scope.searchPassForm.searchPverCodeContent.$modelValue;
-            var searchPnewpassm = $scope.searchPassForm.searchPnewpass.$modelValue;
-            var searchPagapassm = $scope.searchPassForm.searchPagapass.$modelValue;
+            try {
+                 var searchPnewpassm = $scope.searchPassForm.searchPnewpass.$modelValue;
+                 var searchPagapassm = $scope.searchPassForm.searchPagapass.$modelValue;
+            }catch (err){
+                  var searchPnewpassm = "";
+                  var searchPagapassm = "";
+            }
+
             if(!regaccount){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请确认您的手机号！";
