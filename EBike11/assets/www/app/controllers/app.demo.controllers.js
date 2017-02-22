@@ -21,8 +21,65 @@ angular.module("app.demo.controllers",[])
                 });
             }
         }, false);
-        //console.log(333333,new Date(1486656000000));
-        //console.log(333333222,new Date(1487692799000));
+        //判断当前设备的类型
+        try{
+            console.log(navigator);
+            if(navigator.platform =='iPhone'){
+                $rootScope.phonetyperoot = 4;
+            }else {
+                $rootScope.phonetyperoot = 3;
+            }
+        }catch(err){
+            $rootScope.phonetyperoot = 3;
+            //console.log("判断设备类型报错");
+            //alert("判断设备类型报错");
+        }
+        if($rootScope.phonetyperoot == 4){
+            var mybridge;
+            initwebbridge = function(){
+                function setupWebViewJavascriptBridge(callback) {
+
+                    if (window.WebViewJavascriptBridge) { return callback(WebViewJavascriptBridge); }
+                    if (window.WVJBCallbacks) { return window.WVJBCallbacks.push(callback); }
+                    window.WVJBCallbacks = [callback];
+                    var WVJBIframe = document.createElement('iframe');
+                    WVJBIframe.style.display = 'none';
+                    WVJBIframe.src = 'https://__bridge_loaded__';
+                    document.documentElement.appendChild(WVJBIframe);
+                    setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0)
+                }
+                setupWebViewJavascriptBridge(function(bridge) {
+                        var uniqueId = 1
+                        function log(message, data) {
+                            var log = document.getElementById('log')
+                            var el = document.createElement('div')
+                            el.className = 'logLine'
+                            el.innerHTML = uniqueId++ + '. ' + message + ':<br/>' + JSON.stringify(data)
+                            if (log.children.length) { log.insertBefore(el, log.children[0]) }
+                            else { log.appendChild(el) }
+                        }
+                        mybridge = bridge;
+                        bridge.registerHandler('testJavascriptHandler', function(data, responseCallback)
+                        {
+                            //log('ObjC called testJavascriptHandler with', data)
+                            var responseData = { 'Javascript Says':'Right back atcha!' }
+                            //log('JS responding with', responseData)
+                            responseCallback(responseData)
+                        })
+
+
+                    }
+
+
+                )
+
+
+            }
+        };
+
+
+        console.log(333333,new Date(1486656000000));
+        console.log(333333222,new Date(1487692799000));
         //console.log(22222,new Date(1484495999000));
         //console.log(44445,new Date("2012/12/25 20:11:11").getTime() - new Date("2012/12/18 20:11:11").getTime());
 
@@ -965,10 +1022,12 @@ angular.module("app.demo.controllers",[])
                 $scope.regvercodedis = true;
                 $scope.registerdis = true;
                 $scope.loadapp = {"toggle":true};
+
+
                 $scope.regObj = {
                     cp:Number(regaccount),
                     pw:$.md5(regpass),
-                    phoneType:3,
+                    phoneType:Number($rootScope.phonetyperoot),
                     //nickName:"用户",
                     code:Number(regverCode),
                     email:regemail
@@ -1696,7 +1755,15 @@ angular.module("app.demo.controllers",[])
                 $rootScope.coloryyy3 = false;
                 $scope.searchcarhomedis = false;
             },1000);
-            intent();
+            if($rootScope.phonetyperoot == 3){
+                intent();
+            }else if($rootScope.phonetyperoot == 4){
+                mybridge.callHandler('positionObjcCallback', {"termId":$window.sessionStorage.getItem("UtermId"),"seq":registerService.randomsix(),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken")}, function(response) {
+                    log('JS got response', response)
+                })
+
+            }
+
         };
         $scope.changecolorStatus4 = function(){
             $rootScope.colorfff4 = false;
@@ -4482,10 +4549,16 @@ angular.module("app.demo.controllers",[])
 
 
 
-
                 {"termId":$window.sessionStorage.getItem("UtermId"),"token":$window.sessionStorage.getItem("Utoken"),"startTime":$rootScope.starttimee,"endTime":$rootScope.endtimee,"seq":123456,"startName":$rootScope.startaddresse,"endName":$rootScope.endaddresse
                 });
-        }
+        };
+        $scope.iosto = function(){
+            mybridge.callHandler('trackObjcCallback', {"termId":$window.sessionStorage.getItem("UtermId"),"token":$window.sessionStorage.getItem("Utoken"),"startTime":$rootScope.starttimee,"endTime":$rootScope.endtimee,"seq":123456,"startName":$rootScope.startaddresse,"endName":$rootScope.endaddresse
+            }, function(response) {
+                log('JS got response', response)
+            })
+
+        };
 
         //点击加载行程地图
         $scope.cartripmapbtn = function(index){
@@ -4497,7 +4570,12 @@ angular.module("app.demo.controllers",[])
             $rootScope.startaddresse = etriphistory[index].startpoint;
             $rootScope.endaddresse = etriphistory[index].endpoint;
             console.log("时间这块"+$rootScope.endtimee,$rootScope.starttimee,$rootScope.startaddresse,$rootScope.endaddresse);
-            $scope.to();
+            if($rootScope.phonetyperoot == 3){
+                $scope.to();
+            }else if($rootScope.phonetyperoot == 4){
+                $scope.iosto();
+            }
+
             //console.log($rootScope.endlat,$rootScope.endlng,$rootScope.startlat,$rootScope.staratlng);
             //$state.go("");
 
@@ -4510,7 +4588,11 @@ angular.module("app.demo.controllers",[])
             $rootScope.startaddresse = firsttriphistory[index].startAddresscontent;
             $rootScope.endaddresse = firsttriphistory[index].endAddresscontent;
             console.log("时间这块"+$rootScope.endtimee,$rootScope.starttimee,$rootScope.startaddresse,$rootScope.endaddresse);
-            $scope.to();
+            if($rootScope.phonetyperoot == 3){
+                $scope.to();
+            }else if($rootScope.phonetyperoot == 4){
+                $scope.iosto();
+            }
             //console.log($rootScope.endlat,$rootScope.endlng,$rootScope.startlat,$rootScope.staratlng);
         };
 
@@ -5772,13 +5854,15 @@ angular.module("app.demo.controllers",[])
             }
             else {
                 $scope.unbundlingdis = true;
-                var undundingyesObj = {
+                var undundingyesObj = {  
                     cp:Number(unbundlingaccount),
                     termId:Number(window.sessionStorage.getItem("UtermId")),
                     code:Number(unbundlingcode)
                 };
                 var undundlingyesUrl = "/rest/user/unBind/";
+                $scope.loadapp = {"toggle":true};
                 registerService.commonUser(undundingyesObj,undundlingyesUrl).then(function(e){
+                    $scope.loadapp = {"toggle":false};
                     $scope.unbundlingdis = false;
                     if(e.status == true){
                         $scope.hahaapp= {"toggle":true};
@@ -5795,6 +5879,7 @@ angular.module("app.demo.controllers",[])
                         },2000);
                     }
                 },function(err){
+                    $scope.loadapp = {"toggle":false};
                     $scope.unbundlingdis = false;
                     $scope.subapp= {"toggle":true};
                     $scope.submitWarning = "网络连接失败！";

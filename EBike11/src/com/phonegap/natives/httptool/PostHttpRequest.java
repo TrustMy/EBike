@@ -130,7 +130,7 @@ public class PostHttpRequest {
             @Override
             public void onFailure(Call call, IOException e) {
                 L.i("post:"+e.getMessage());
-
+                L.i("failure:"+e.toString());
                 message.what = EBikeConstant.ERROR;
                 message.arg1 = EBikeConstant.HTTP_EROOR;
                 message.arg2 = 100;
