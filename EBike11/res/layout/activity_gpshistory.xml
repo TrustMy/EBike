@@ -38,7 +38,15 @@
             android:layout_alignParentRight="true"
             android:src="@drawable/menu"/>
 
-
+        <ImageView
+            android:onClick="updateDate"
+            android:id="@+id/update"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/update"/>
 
     </RelativeLayout>
 </RelativeLayout>

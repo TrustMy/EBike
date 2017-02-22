@@ -9,7 +9,7 @@
             手机号：<input class="searchPinputS devicenumwidth bindvehicleaccountval" type="text" ng-model="vehiclebind.account" name="vehiclebindaccount" ng-pattern="regphone" ng-blur="phonePatStyle(vehiclebindForm.vehiclebindaccount.$valid)" required ng-disabled="bindphonedis"/>
         </p>
         <p class="searchPasscontent searchPasscontentjianr">
-            设备号：<input class="searchPinputS devicenumwidth" type="text" ng-model="vehiclebind.divicenum" name="vehiclebinddivicenum" required ng-disabled="bindvehiclenumdis"/>
+            设备号：<input class="searchPinputS devicenumwidth bindvehiclevehiclenumval" type="text" ng-model="vehiclebind.divicenum" ng-pattern="vehiclenumpatt" name="vehiclebinddivicenum" required ng-disabled="bindvehiclenumdis"/>
             <button class="scannedicon" ng-click="vehiclenumbtn()"></button>
         </p>
         <p class="searchPasscontent searchPasscontentjianr">

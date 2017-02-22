@@ -515,11 +515,13 @@ angular.module("app.demo.controllers",[])
             var regaccount = $scope.searchPassForm.searchPaccount.$modelValue;
             var searchPverCodeContent = $scope.searchPassForm.searchPverCodeContent.$modelValue;
             try {
-                 var searchPnewpassm = $scope.searchPassForm.searchPnewpass.$modelValue;
-                 var searchPagapassm = $scope.searchPassForm.searchPagapass.$modelValue;
+                var searchPnewpassm = $scope.searchPassForm.searchPnewpass.$modelValue;
+                var searchPagapassm = $scope.searchPassForm.searchPagapass.$modelValue;
+                var pagepasswordyes = true;
             }catch (err){
-                  var searchPnewpassm = "";
-                  var searchPagapassm = "";
+                var searchPnewpassm = "";
+                var searchPagapassm = "";
+                var pagepasswordyes = false;
             }
 
             if(!regaccount){
@@ -532,6 +534,12 @@ angular.module("app.demo.controllers",[])
                 console.log("验证码的值："+searchPverCodeContent);
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请确认您的验证码！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(!searchPnewpassm && !pagepasswordyes){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请点击获取验证码！";
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
@@ -1046,6 +1054,7 @@ angular.module("app.demo.controllers",[])
         //手机验证码的正则表达式
         $scope.regphone = "[0-9]{11}";
         $scope.bindvehiclepattcode = "[0-9]{6}";
+        $scope.vehiclenumpatt= "[0-9]{15}";
         //验证手机号码的格式
         $scope.phonePatStyle = function(isValid){
             //var regaccount = $scope.registerForm.regaccount.$modelValue;
@@ -1158,6 +1167,7 @@ angular.module("app.demo.controllers",[])
         $scope.gomainPage = function(){
             var bindvehiclecodeval = $(".bindvehiclecodea").val();
             var vehicleaccountval = $(".bindvehicleaccountval").val();
+            var vehiclenumvala = $(".bindvehiclevehiclenumval").val();
             var vehiclebindaccount = $scope.vehiclebindForm.vehiclebindaccount.$modelValue;
             var vehiclebinddivicenum = $scope.vehiclebindForm.vehiclebinddivicenum.$modelValue;
             var vehiclebindverCodeContent = $scope.vehiclebindForm.vehiclebindverCodeContent.$modelValue;
@@ -1185,7 +1195,14 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else if(bindvehiclecodeval.length != 6){
+            }else if(vehiclenumvala.length != 15){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "设备号前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else if(bindvehiclecodeval.length != 6){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "验证码前后不能含有空格！";
                 $timeout(function(){
@@ -4462,6 +4479,7 @@ angular.module("app.demo.controllers",[])
             <!--navigator.intent.startGPS("  Json");-->
             <!--navigator.intent.startGPS("  Json");-->
             navigator.intent.toHistory(
+
 
 
 

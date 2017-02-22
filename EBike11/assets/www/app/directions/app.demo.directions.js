@@ -528,7 +528,7 @@ angular.module("app.demo.directions",["app.demo.service"])
                 //
                     var inputcitylength = $(".changelocationtext").val();
                     if(inputcitylength.length>8 || inputcitylength.indexOf(" ") != -1){
-                        $(".weatherlocationstyle").text(inputcitylength);
+                        //$(".weatherlocationstyle").text(inputcitylength);
                         $("#weathericon").html("");
                         $(".weathercontentt").html("");
                         $(".weatherweathercontent").text("");

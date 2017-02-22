@@ -59,6 +59,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
     private MapView mapView;
     private AMap aMap;
 
+    private ImageView updateBtn;
     private Context context = GPSHistoryActivity.this;
     private List<LatLng> latLngs;
     private CarLocationHistorical carLocationHistorical;
@@ -364,7 +365,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         menyPopupWindow = new MenyPopupWindow(this,mMenuLayout, mMenuListView, mPopupWindowMenu, handler,EBikeConstant.REQUEST_TYPE);
         menyPopupWindow.showPopupWidow( historyMenu, getLayoutInflater(), extBtn, rlTopBar, mMenuList);
 
-
+        updateBtn = (ImageView)findViewById(R.id.update);
 
 
         mTraceList = TraceAsset.parseLocationsData(this.getAssets(),
@@ -637,5 +638,12 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
     }
 
+    public void updateDate(View v)
+    {
+        synchronized (this) {
+
+            checkCoordinate();
+        }
+    }
 
 }

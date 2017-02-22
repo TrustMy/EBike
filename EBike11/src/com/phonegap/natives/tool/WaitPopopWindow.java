@@ -55,7 +55,7 @@ public class WaitPopopWindow {
         this.msg = msg;
     }
 
-    public void showPopopWindow (Context context, View v)
+    public synchronized void showPopopWindow (Context context, View v)
     {
         isShow = true;
         // 一个自定义的布局，作为显示的内容
