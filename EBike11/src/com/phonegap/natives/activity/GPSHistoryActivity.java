@@ -47,6 +47,7 @@ import com.phonegap.natives.tool.TraceAsset;
 import com.phonegap.natives.tool.WaitPopopWindow;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -113,7 +114,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
 
                             if (msg.obj != null) {
-                                aMap.clear();
+
                                 carLocationHistorical = (CarLocationHistorical) msg.obj;
 
 
@@ -135,13 +136,12 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
                                 //--------------->
                                 if(carLocationHistorical.getContent().getGps().size() == 0)
                                 {
-                                    if(waitPopopWindow != null)
-                                    {
-                                        waitPopopWindow.stopPopopWindow();
-                                    }
-                                    Toast.makeText(context, "服务器返回的json GPS 坐标点为0", Toast.LENGTH_SHORT).show();
+                                    stopPopopuwindow();
+                                    ToastUtil.showToast(context,"本次行程坐标点为0!");
                                 }else
                                 {
+
+                                    ToastUtil.showToast(context,"正在努力绘制路线,请稍后...");
                                     guiJiJiuPian(carLocationHistorical);
                                 }
 
@@ -175,11 +175,17 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
                     break;
 
                 case 100:
-                    waitPopopWindow = new WaitPopopWindow();
+
                     waitPopopWindow.setMsg("正在加载历史轨迹,请耐心等待!");
                     waitPopopWindow.showPopopWindow(context, extBtn);
-                    postHttpRequest.doPostCheckCarHistoryLocation(EBikeSever.server_url+EBikeSever.car_history_location_url,termId,token,startTime,endTime,EBikeConstant.CAR_LOCATION_HISTORICAL);
+//
+                    handler.sendEmptyMessageDelayed(101, 10);
+
                     break;
+
+                case 101:
+                    stratHttp();
+                break;
 
                 case EBikeConstant.REQUEST_TYPE://切换基站或者GPS数据轨迹
                     if(waitPopopWindow != null)
@@ -217,6 +223,14 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         }
     };
 
+    private void stratHttp() {
+        try {
+            postHttpRequest.doPostCheckCarHistoryLocation(EBikeSever.server_url+EBikeSever.car_history_location_url,termId,token,startTime,endTime,EBikeConstant.CAR_LOCATION_HISTORICAL);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void checkCoordinate()
     {
@@ -233,7 +247,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
                 stopPopopuwindow();
             }else
             {
-                aMap.clear();
+
                 guiJiJiuPian(carLocationHistorical);
             }
 
@@ -278,6 +292,9 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         seq = intent.getIntExtra("seq", 0);
         termId = intent.getStringExtra("termId");
         token = intent.getStringExtra("token");
+
+
+        L.i("H5 data : startTime:"+startTime+"|endTime:"+endTime+"|startName:"+startName+"|endName:"+endName+"|termId:"+termId);
 
         TimeTool time = new TimeTool();
         String st = startTime+"";
@@ -337,7 +354,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 //        getHttpRequest = new GetHttpRequest(context, handler, aMap, new GPSHistory(aMap, context,null));
         Toast.makeText(context, "正在获取历史行程,请稍后!", Toast.LENGTH_SHORT).show();
 
-        handler.sendEmptyMessageDelayed(100, 10);
+        handler.sendEmptyMessageDelayed(100, 300);
     }
 
     /**
@@ -349,11 +366,6 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         if (aMap == null) {
             aMap = mapView.getMap();
             aMap.moveCamera(CameraUpdateFactory.zoomTo(3));
-//            aMap.moveCamera(CameraUpdateFactory.zoomOut());
-//            LatLng latLng = new LatLng(39.9043964220,116.3944447341);
-//            LatLng latLng1 = new LatLng(39.9188321862,116.3448242973);
-//            LatLngBounds bounds = new LatLngBounds(latLng,latLng1);
-//            aMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100, 100, 2));
         }
         historyMenu = (ImageView) findViewById(R.id.history_menu);
         extBtn = (ImageButton) findViewById(R.id.history_ext);
@@ -373,6 +385,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
 
         postHttpRequest = new PostHttpRequest(context,handler,aMap,new GPSHistory(aMap,context,null));
+        waitPopopWindow = new WaitPopopWindow();
     }
 
     /**
@@ -450,56 +463,6 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
 
         L.i("mTraceList.size() :"+mTraceList.size());
-//        mTraceClient.queryProcessedTrace(1, ml,LBSTraceClient.TYPE_AMAP, this);
-
-
-        //------------------>
-//        List<CarLocationHistorical.AlarmListsBean> newList;
-//        for (int i=0;i<carLocationHistorical.getAlarmLists().size();i+= 100)
-//        {
-//            List<TraceLocation> mTraceLocation = new ArrayList<TraceLocation>();
-//            if(i < (carLocationHistorical.getAlarmLists().size() / 100)* 100)
-//            {
-//                newList =  carLocationHistorical.getAlarmLists().subList(i,i+99);
-//            }else
-//            {
-//                newList =  carLocationHistorical.getAlarmLists().subList(i,carLocationHistorical.getAlarmLists().size());
-//            }
-//
-//            for(int j = 0 ; j<newList.size();j++)
-//            {
-//                if(newList.get(j).getLat() / 1000000.0 == 0.0)
-//                {
-//                    continue;
-//                }else
-//                {
-//                    mTraceLocation.add(new TraceLocation(newList.get(j).getLat()/1000000.0,newList.get(j).getLng()/1000000.0,1,1,1));
-//                }
-//            }
-//            mTraceClient.queryProcessedTrace(1, mTraceLocation, 3, this);
-//
-//        }
-        //------->
-//        List<String> mlist = new ArrayList<String>();
-//        for (int i = 0; i < 1001; i++) {
-//            mlist.add(i+"");
-//        }
-//
-//        for (int i = 0; i < mlist.size(); i+=100) {
-//
-//            L.i("mlist.size() :"+mlist.size()+"| i:"+i);
-//            if(i < (mlist.size() / 100)* 100)
-//            {
-//                L.i("mlist.size():"+mlist.size());
-//                List<String> mls =  mlist.subList(i,i+99);
-//                L.i("mls .size ():"+mls.size());
-//            }else
-//            {
-//                List<String> mls =  mlist.subList(i,mlist.size());
-//                L.i("end mls .size ():"+mls.size());
-//            }
-//
-//        }
 
     }
 
@@ -582,8 +545,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         mHistory.setLatLngs(latLngs);
         mHistory.setName(startName, endName);
         mHistory.startHistory();
-
-        waitPopopWindow.stopPopopWindow();
+        stopPopopuwindow();
     }
 
 
@@ -641,7 +603,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
     public void updateDate(View v)
     {
         synchronized (this) {
-
+            aMap.clear();
             checkCoordinate();
         }
     }

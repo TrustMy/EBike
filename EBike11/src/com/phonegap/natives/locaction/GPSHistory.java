@@ -173,9 +173,11 @@ public class GPSHistory {
 
         if(latLngs.size() != 0)
         {
-            new GPSAddressName(context,new LatLonPoint(latLngs.get(latLngs.size()-1).latitude,latLngs.get(latLngs.size()-1).longitude),handler,EBikeConstant.START_LOCATION);
-            new GPSAddressName(context,new LatLonPoint(latLngs.get(0).latitude,latLngs.get(0).longitude),handler,EBikeConstant.END_LOCATION);
+            new GPSAddressName(context,new LatLonPoint(latLngs.get(0).latitude,latLngs.get(0).longitude),handler,EBikeConstant.START_LOCATION);
+            new GPSAddressName(context,new LatLonPoint(latLngs.get(latLngs.size()-1).latitude,latLngs.get(latLngs.size()-1).longitude),handler,EBikeConstant.END_LOCATION);
 
+            L.i("起点 :经度纬度:"+latLngs.get(latLngs.size()-1).latitude+"|"+latLngs.get(latLngs.size()-1).longitude);
+            L.i("终点 :经度纬度:"+latLngs.get(0).latitude+"|"+latLngs.get(0).longitude);
         }
 
 

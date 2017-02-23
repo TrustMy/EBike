@@ -109,7 +109,7 @@ public class PostHttpRequest {
     }
 
     //获取车辆历史轨迹
-    public void doPostCheckCarHistoryLocation(String url,String termId,String token,long startTime,long endTime,int type)
+    public void doPostCheckCarHistoryLocation(String url,String termId,String token,long startTime,long endTime,int type)throws IOException
     {
 
 
