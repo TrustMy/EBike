@@ -140,7 +140,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
                                     ToastUtil.showToast(context,"本次行程坐标点为0!");
                                 }else
                                 {
-
+                                    stopPopopuwindow();
                                     ToastUtil.showToast(context,"正在努力绘制路线,请稍后...");
                                     guiJiJiuPian(carLocationHistorical);
                                 }
@@ -545,7 +545,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         mHistory.setLatLngs(latLngs);
         mHistory.setName(startName, endName);
         mHistory.startHistory();
-        stopPopopuwindow();
+
     }
 
 
