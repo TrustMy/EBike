@@ -1256,7 +1256,7 @@ angular.module("app.demo.controllers",[])
                 },2000);
             }else if(vehiclenumvala.length != 15){
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "设备号前后不能含有空格！";
+                $scope.submitWarning = "设备号必须是15位数字且前后不能含有空格!";
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
