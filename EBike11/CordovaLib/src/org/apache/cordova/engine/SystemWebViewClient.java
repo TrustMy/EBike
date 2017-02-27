@@ -26,6 +26,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
+import android.util.Log;
 import android.webkit.ClientCertRequest;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
@@ -222,25 +223,28 @@ public class SystemWebViewClient extends WebViewClient {
     @TargetApi(8)
     @Override
     public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-
-        final String packageName = parentEngine.cordova.getActivity().getPackageName();
-        final PackageManager pm = parentEngine.cordova.getActivity().getPackageManager();
-
-        ApplicationInfo appInfo;
-        try {
-            appInfo = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-            if ((appInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
-                // debug = true
-                handler.proceed();
-                return;
-            } else {
-                // debug = false
-                super.onReceivedSslError(view, handler, error);
-            }
-        } catch (NameNotFoundException e) {
-            // When it doubt, lock it out!
-            super.onReceivedSslError(view, handler, error);
-        }
+        handler.proceed();
+//        final String packageName = parentEngine.cordova.getActivity().getPackageName();
+//        final PackageManager pm = parentEngine.cordova.getActivity().getPackageManager();
+//
+//        ApplicationInfo appInfo;
+//        try {
+//            appInfo = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
+//            if ((appInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+//                // debug = true
+//                Log.i("lhh", "h5: one");
+//                handler.proceed();
+//                Log.i("lhh", "h5: two");
+//                return;
+//            } else {
+//                // debug = false
+//                super.onReceivedSslError(view, handler, error);
+//            }
+//        } catch (NameNotFoundException e) {
+//            // When it doubt, lock it out!
+//            Log.i("lhh", "h5: catch");
+//            super.onReceivedSslError(view, handler, error);
+//        }
     }
 
 

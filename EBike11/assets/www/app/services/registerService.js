@@ -6,7 +6,7 @@ angular.module("app.demo.service",[])
         //var baseUrl = 'http://192.168.1.111:18080/bsWebServer-1.0/';
         //var baseUrl = 'http://192.168.1.160:7888/EBWebServer-0.0.1';
         //var baseUrl = 'http://180.168.194.98:7888/EBWebServer-0.0.1';
-        var baseUrl = 'http://180.168.194.98:7888/EBWebServer-2.0';
+        var baseUrl = 'https://180.168.194.98:8443/EBWebServer-2.0';
         //var baseUrl = 'http://192.168.1.134:8080';
         //var baseUrl = 'http://192.168.1.4:8080';
         //var url="http://192.168.1.31:8080/";180.168.194.98 7888

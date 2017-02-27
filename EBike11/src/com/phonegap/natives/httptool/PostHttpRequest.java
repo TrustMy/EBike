@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.amap.api.maps.AMap;
+import com.phonegap.natives.httptool.ssl.TrustAllCerts;
 import com.phonegap.natives.locaction.GPSHistory;
 import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.L;
@@ -44,6 +45,8 @@ public class PostHttpRequest {
     public PostHttpRequest (Context context , Handler handler , AMap aMap , GPSHistory gpsHistory)
     {
         this.okHttpClient = new OkHttpClient.Builder()
+                .sslSocketFactory(TrustAllCerts.createSSLSocketFactory())
+                .hostnameVerifier(new TrustAllCerts.TrustAllHostnameVerifier())
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
             .build();
@@ -134,7 +137,7 @@ public class PostHttpRequest {
                 message.what = EBikeConstant.ERROR;
                 message.arg1 = EBikeConstant.HTTP_EROOR;
                 message.arg2 = 100;
-                message.obj = "网络连接超时!";
+                message.obj = e.toString();
 
                 postNet.sendMessage(message);
 

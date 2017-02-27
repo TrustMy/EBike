@@ -1140,7 +1140,7 @@ angular.module("app.demo.controllers",[])
                     //    "Format: " + result.format + "\n" +
                     //    "Cancelled: " + result.cancelled);
                     $scope.$apply(function(){
-                        $scope.vehiclebind = {"divicenum":result.text};
+                        $scope.vehiclebinddivicenum = result.text;
                     })
 
                 },
