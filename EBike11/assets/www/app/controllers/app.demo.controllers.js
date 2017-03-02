@@ -1132,7 +1132,7 @@ angular.module("app.demo.controllers",[])
         };
         //点击扫码
         $scope.vehiclenumbtn = function(){
-            console.log("点击扫码")
+            console.log("点击扫码");
             cordova.plugins.barcodeScanner.scan(
                 function (result) {
                     //alert("We got a barcode\n" +
@@ -1256,7 +1256,7 @@ angular.module("app.demo.controllers",[])
                 },2000);
             }else if(vehiclenumvala.length != 15){
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "设备号必须是15位数字且前后不能含有空格!";
+                $scope.submitWarning = "设备号必须是15位数字且前后不能含有空格！";
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
@@ -4725,18 +4725,23 @@ angular.module("app.demo.controllers",[])
                 $scope.allstatusalarmdis=false ;
                 $scope.allalarmblur = true;
                 if(e.status == true){
-                    for(var i = 0;i<$scope.alarmrecordInfo.length;i++){
-                        var contentalarming = $scope.alarmrecordInfo;
-                        contentalarming[i].isalarmstatus = false;
-                         $scope.alarmrecordInfo = contentalarming;
+                    try{
+                        for(var i = 0;i<$scope.alarmrecordInfo.length;i++){
+                            var contentalarming = $scope.alarmrecordInfo;
+                            contentalarming[i].isalarmstatus = false;
+                            $scope.alarmrecordInfo = contentalarming;
 
                             $scope.alarmrecordInfo = contentalarming;
-                        console.log("已经标记了");
-                        if(i==$scope.alarmrecordInfo.length-1){
-                            $scope.loadapp = {"toggle":false};
+                            console.log("已经标记了");
+                            if(i==$scope.alarmrecordInfo.length-1){
+                                $scope.loadapp = {"toggle":false};
+                            }
+
                         }
+                    }catch (err){
 
                     }
+
                 }else if(e.status == false) {
                     $scope.loadapp = {"toggle":false};
                     $scope.subapp= {"toggle":true};
@@ -4771,18 +4776,23 @@ angular.module("app.demo.controllers",[])
                 $scope.allnostatusalarmdis=false ;
                 $scope.allnoalarmblur = true;
                 if(e.status == true){
-                    for(var i = 0;i<$scope.alarmrecordInfo.length;i++){
-                        var contentalarming = $scope.alarmrecordInfo;
-                        contentalarming[i].isalarmstatus = true;
-                        $scope.alarmrecordInfo = contentalarming;
+                    try{
+                        for(var i = 0;i<$scope.alarmrecordInfo.length;i++){
+                            var contentalarming = $scope.alarmrecordInfo;
+                            contentalarming[i].isalarmstatus = true;
+                            $scope.alarmrecordInfo = contentalarming;
 
-                        $scope.alarmrecordInfo = contentalarming;
-                        console.log("已经标记了");
-                        if(i==$scope.alarmrecordInfo.length-1){
-                            $scope.loadapp = {"toggle":false};
+                            $scope.alarmrecordInfo = contentalarming;
+                            console.log("已经标记了");
+                            if(i==$scope.alarmrecordInfo.length-1){
+                                $scope.loadapp = {"toggle":false};
+                            }
+
                         }
+                    }catch (err){
 
                     }
+
                 }else if(e.status == false) {
                     $scope.loadapp = {"toggle":false};
                     $scope.subapp= {"toggle":true};
