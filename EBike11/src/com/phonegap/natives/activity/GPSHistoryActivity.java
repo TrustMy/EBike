@@ -1,8 +1,10 @@
 package com.phonegap.natives.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -59,7 +61,11 @@ import java.util.zip.GZIPOutputStream;
 public class GPSHistoryActivity extends Activity implements TraceListener {
     private MapView mapView;
     private AMap aMap;
+    //定义一个过滤器；
+    private IntentFilter intentFilter;
 
+    //定义一个广播监听器；
+    private Delete netChangReceiver;
     private ImageView updateBtn;
     private Context context = GPSHistoryActivity.this;
     private List<LatLng> latLngs;
@@ -351,6 +357,19 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
     private void initLocation() {
 
+
+        //实例化过滤器；
+        intentFilter = new IntentFilter();
+        //添加过滤的Action值；
+        intentFilter.addAction("Delete");
+
+
+        //实例化广播监听器；
+        netChangReceiver = new Delete();
+        //将广播监听器和过滤器注册在一起；
+        registerReceiver(netChangReceiver, intentFilter);
+
+
 //        getHttpRequest = new GetHttpRequest(context, handler, aMap, new GPSHistory(aMap, context,null));
         Toast.makeText(context, "正在获取历史行程,请稍后!", Toast.LENGTH_SHORT).show();
 
@@ -605,6 +624,15 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         synchronized (this) {
             aMap.clear();
             checkCoordinate();
+        }
+    }
+
+    public class Delete extends BroadcastReceiver
+    {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            finish();
         }
     }
 

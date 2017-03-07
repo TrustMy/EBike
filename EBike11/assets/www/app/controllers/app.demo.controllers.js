@@ -1839,6 +1839,8 @@ angular.module("app.demo.controllers",[])
                         });
                         //Listen notification arrived event, when a notification arrived, the callback function will be called
                         window.baidupush.listenNotificationArrived(function(info){
+//                            alert("通知到达了:"+info)
+//                            $state.go("mains.home.alarmRecord")
                             if(0<=$rootScope.alarmcount && $rootScope.alarmcount<=98){
                                 $rootScope.alarmcount = Number($rootScope.alarmcount);
                                 $rootScope.alarmcount++;
@@ -1853,9 +1855,11 @@ angular.module("app.demo.controllers",[])
 
                         //Listen notification clicked event, when a notification is clicked, the callback function will be called
                         window.baidupush.listenNotificationClicked(function(info){
+//                            alert("通知点击了:"+info)
+                              navigator.intent.toDelete({"pushclick":true});
+                            $state.go("mains.home.alarmRecord")
 
-                            //your code here
-                            //alert("listenNotificationClicked:" + JSON.stringify(info));
+
                         });
                     }catch (err){
                         console.log(err.message);

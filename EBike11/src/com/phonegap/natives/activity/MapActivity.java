@@ -1,9 +1,11 @@
 package com.phonegap.natives.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -54,6 +56,7 @@ import com.phonegap.natives.locaction.GPSHistory;
 import com.phonegap.natives.locaction.GPSRoutePlanning;
 import com.phonegap.natives.tool.AndroidCheckVersion;
 import com.phonegap.natives.tool.CoordinateTransformation;
+import com.phonegap.natives.tool.DeleterInterface;
 import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.EBikeSever;
 import com.phonegap.natives.tool.ErrorPopopWindow;
@@ -87,6 +90,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     private ImageButton netWork;
     private ImageButton extBtn;
     private ImageButton carLocation;
+
+    private Activity activity = this;
 
     private boolean buzzerStatus = false, trackStatus = false, followMeStatus = false, netWorkStatus = false;
     private static ImageView loading;
@@ -132,6 +137,12 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     private String nowTime = null;
 
     private TimeTool timeTool = new TimeTool();
+
+    //定义一个过滤器；
+    private IntentFilter intentFilter;
+
+    //定义一个广播监听器；
+    private Delete netChangReceiver;
 
     //计时器
     private boolean hasBackgroundCountdownView = false;
@@ -596,7 +607,16 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     private void initLocation() {
+        //实例化过滤器；
+        intentFilter = new IntentFilter();
+        //添加过滤的Action值；
+        intentFilter.addAction("Delete");
 
+
+        //实例化广播监听器；
+        netChangReceiver = new Delete();
+        //将广播监听器和过滤器注册在一起；
+        registerReceiver(netChangReceiver, intentFilter);
 
         coordinateTransformation = new CoordinateTransformation(context);
 
@@ -1170,4 +1190,14 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+
+
+    public class  Delete extends BroadcastReceiver
+    {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            finish();
+        }
+    }
 }

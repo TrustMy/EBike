@@ -9,6 +9,7 @@ import com.phonegap.natives.activity.GPSHistoryActivity;
 import com.phonegap.natives.activity.MapActivity;
 import com.phonegap.natives.bean.GPSHistoryActivityBean;
 import com.phonegap.natives.bean.MapActivityBean;
+import com.phonegap.natives.tool.DeleterInterface;
 import com.phonegap.natives.tool.L;
 
 import org.apache.cordova.CallbackContext;
@@ -95,6 +96,13 @@ public class Hub extends CordovaPlugin {
 
 
 
+        }else if(action.equals("Delete"))
+        {
+            Intent intent = new Intent();
+            intent.setAction("Delete");
+            cordova.getActivity().sendBroadcast(intent);
+
+            L.i("Delete  Activity");
         }
         // 执行js传过来的success方法
         callbackContext.success();
