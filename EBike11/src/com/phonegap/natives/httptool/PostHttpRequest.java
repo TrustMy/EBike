@@ -45,12 +45,12 @@ public class PostHttpRequest {
     public PostHttpRequest (Context context , Handler handler , AMap aMap , GPSHistory gpsHistory)
     {
         this.okHttpClient = new OkHttpClient.Builder()
-                .sslSocketFactory(TrustAllCerts.createSSLSocketFactory())
+                .sslSocketFactory(TrustAllCerts.createSSLSocketFactory(),new TrustAllCerts())
                 .hostnameVerifier(new TrustAllCerts.TrustAllHostnameVerifier())
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
             .build();
-        builder = new Request.Builder();
+
         this.context = context;
         this.postNet = new PostNet(context,handler,aMap ,gpsHistory);
     }
@@ -75,6 +75,7 @@ public class PostHttpRequest {
         MediaType JSON = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(JSON, json);
         L.i("json:"+json);
+        builder = new Request.Builder();
         Request request = builder.url(url).addHeader("Token", token).post(body).build();
 
         executeResponse(request, type);

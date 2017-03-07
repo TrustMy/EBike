@@ -26,6 +26,7 @@ public class TimeTool {
     public long getTime(String s) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
 
+        L.i("GPS 时间:"+s);
         long millionSeconds = sdf.parse(s).getTime();//毫秒
         return millionSeconds;
     }
