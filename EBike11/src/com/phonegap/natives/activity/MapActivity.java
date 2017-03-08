@@ -240,13 +240,13 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
                     break;
-                /*
+
                 case EBikeConstant.BUZZER:
 
                     if (msg.arg1 == EBikeConstant.HTTP_SUCCESS) {
                         //执行成功
                         if (buzzerStatus) {
-                            openBuzzer.setImageResource(R.drawable.bell_1);
+                            openBuzzer.setImageResource(R.drawable.bell_5);
                             buzzerStatus = false;
                         } else {
                             openBuzzer.setImageResource(R.drawable.bell_3);
@@ -265,7 +265,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
                     break;
-                    */
+
                 case EBikeConstant.ALWAYS_TRACKING:
                     synchronized (this) {
 
@@ -694,7 +694,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 //        setMapCustomStyleFile(this);
 
         alwaysSracking = (ImageButton) findViewById(R.id.alwaysSracking);
-//        openBuzzer = (ImageButton) findViewById(R.id.openBuzzer);
+        openBuzzer = (ImageButton) findViewById(R.id.openBuzzer);
         followMe = (ImageButton) findViewById(R.id.followMe);
 //        netWork = (ImageButton) findViewById(R.id.network);
         extBtn = (ImageButton) findViewById(R.id.mapactivity_ext);
@@ -704,7 +704,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
         alwaysSracking.setOnClickListener(this);
         carLocation.setOnClickListener(this);
-//        openBuzzer.setOnClickListener(this);
+        openBuzzer.setOnClickListener(this);
         followMe.setOnClickListener(this);
 //        netWork.setOnClickListener(this);
 
@@ -894,7 +894,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
                     break;
-                /*
+
                 case R.id.openBuzzer:
 
 
@@ -924,7 +924,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
                     break;
-                */
+
                 case R.id.followMe:
                     name = "followMe";
 

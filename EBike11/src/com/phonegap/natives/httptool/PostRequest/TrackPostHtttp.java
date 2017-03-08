@@ -47,8 +47,8 @@ public class TrackPostHtttp extends AsyncTask {
             url = new URL(EBikeSever.server_url+EBikeSever.car_location_url);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
-            connection.setConnectTimeout(3000);
-            connection.setReadTimeout(3000);
+            connection.setConnectTimeout(4500);
+            connection.setReadTimeout(4500);
 
             connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
 

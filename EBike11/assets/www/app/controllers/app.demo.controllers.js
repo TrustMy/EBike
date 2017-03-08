@@ -1777,7 +1777,7 @@ angular.module("app.demo.controllers",[])
             $rootScope.colorfff6 = false;
             $rootScope.coloryyy6 =true ;
         };
-
+        $rootScope.baidupushNum = 0  //用于防止第一次进入时执行点击事件
         $scope.messagepush = function(){
             document.addEventListener('deviceready', function () {
                 //{
@@ -1856,10 +1856,11 @@ angular.module("app.demo.controllers",[])
                         //Listen notification clicked event, when a notification is clicked, the callback function will be called
                         window.baidupush.listenNotificationClicked(function(info){
 //                            alert("通知点击了:"+info)
-                              navigator.intent.toDelete({"pushclick":true});
-                            $state.go("mains.home.alarmRecord")
-
-
+                                if($rootScope.baidupushNum>0){
+                                    navigator.intent.toDelete({"pushclick":true});
+                                    $state.go("mains.home.alarmRecord")
+                                }
+                                $rootScope.baidupushNum++;  //用于防止第一次进入时执行点击事件
                         });
                     }catch (err){
                         console.log(err.message);

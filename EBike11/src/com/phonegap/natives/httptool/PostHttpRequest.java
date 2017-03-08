@@ -14,7 +14,9 @@ import com.phonegap.natives.tool.ToastUtil;
 import com.phonegap.network.PostNet;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -47,8 +49,8 @@ public class PostHttpRequest {
         this.okHttpClient = new OkHttpClient.Builder()
                 .sslSocketFactory(TrustAllCerts.createSSLSocketFactory(),new TrustAllCerts())
                 .hostnameVerifier(new TrustAllCerts.TrustAllHostnameVerifier())
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
             .build();
 
         this.context = context;
@@ -138,7 +140,7 @@ public class PostHttpRequest {
                 message.what = EBikeConstant.ERROR;
                 message.arg1 = EBikeConstant.HTTP_EROOR;
                 message.arg2 = 100;
-                message.obj = e.toString();
+                message.obj = "网络连接超时";
 
                 postNet.sendMessage(message);
 
