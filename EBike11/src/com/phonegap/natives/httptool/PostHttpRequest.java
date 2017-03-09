@@ -58,7 +58,7 @@ public class PostHttpRequest {
     }
 
 
-    public void doPostCheckCarStatus(String url,String termId,String token,String userPhone,String appSN,int type) throws IOException
+    public void doPostCheckCarStatus(String url,String termId,String token,String userPhone,long appSN,int type) throws IOException
     {
         String json  ="{\"termId\":"+termId+",\"userCellPhone\":"+userPhone+",\"appSN\":"+appSN+"};";
         doRequest(url, termId, token, type, json);
@@ -84,7 +84,7 @@ public class PostHttpRequest {
     }
 
     //开蜂鸣
-    public void doPostBUZZER(String url,String termId,String token,String userPhone,String appSN,boolean buzzerStatus,int type)
+    public void doPostBUZZER(String url,String termId,String token,String userPhone,long appSN,boolean buzzerStatus,int type)
     {
 
 
@@ -107,8 +107,8 @@ public class PostHttpRequest {
 
 
 
-    //开启实时追踪
-    public void doPostStartTracking(String url,String termId,String token,String userCellPhone,String appSN,int interval,int duration,int type)
+    //开启实时追踪18121100590
+    public void doPostStartTracking(String url,String termId,String token,String userCellPhone,long appSN,int interval,int duration,int type)
     {
         String json = "{\"termId\":"+termId+",\"userCellPhone\":"+userCellPhone+",\"appSN\":"+appSN+",\"interval\":"+interval+",\"duration\":"+duration+"}";
         doRequest(url, termId, token, type, json);

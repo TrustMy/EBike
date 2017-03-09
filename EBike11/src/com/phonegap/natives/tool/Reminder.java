@@ -1,36 +1,31 @@
 package com.phonegap.natives.tool;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Created by Trust on 2016/12/20.
+ * Created by Trust on 2016/11/3.
  */
 public class Reminder {
-    Timer timer;
-    Context context;
-    int seconds;
-    int i = 0;
-    Handler handler;
+    private Timer timer;
+    private Context context;
+    private int seconds;
+    private boolean isStartRanging = false;
+    private Handler handler;
+    private int type;
 
-
-    public int getI() {
-        return i;
-    }
-
-    public void setI(int i) {
-        this.i = i;
-    }
-
-    public Reminder(int seconds, Context context,Handler handler) {
+    public Reminder(int seconds, Context context , Handler handler,int type) {
         timer = new Timer();
-        this.seconds =seconds;
+       this.seconds =seconds;
         this.context =context;
         this.handler = handler;
+        this.type = type;
     }
     public void stopReminder ()
     {
@@ -41,34 +36,22 @@ public class Reminder {
         timer.schedule(new RemindTask(), seconds * 1000);
     }
 
-    public void sendHandler ()
-    {
-        Message message = new Message();
-        message.what = EBikeConstant.ALWAYS_TRACKING_LINE;
-        message.obj = true;
-        handler.sendMessage(message);
+    public boolean getIsStartRanging (){return isStartRanging;};
+    public void setIsStartRanging (boolean isStartRanging){this.isStartRanging = isStartRanging;};
 
 
-    }
 
     class RemindTask extends TimerTask {
-
-
-
-
-
         public void run() {
-//            Toast.makeText(context, "定时器时间到了 提示一下:", Toast.LENGTH_SHORT).show();
+            L.i("Reminder 隐藏 5min  到了");
 
-            L.i("15s 到了");
             Message message = new Message();
-            message.what = 1;
+            message.what = type;
             handler.sendMessage(message);
-                timer.cancel(); //Terminate the timer thread
-
-
-
-
+            timer.cancel(); //Terminate the timer thread
         }
     }
+
+
+
 }

@@ -179,8 +179,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     private List<LatLng> cacheGPS = new ArrayList<LatLng>();
     private List<LatLng> cacheMAP = new ArrayList<LatLng>();
 
-    private String userPhone,token,termId,appSN = "1484897327",seq;
-
+    private String userPhone,token,termId,seq;
+    private long appSN ;
     private boolean isOpenBuzzerStatus  = false;
 
 //    public boolean isMapLiner() {
@@ -310,17 +310,20 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                                     followMe.setClickable(true);
                                     followMe.setImageResource(R.drawable.walk);
 
-                                    /*
+                                    carLocation.setClickable(true);
+                                    carLocation.setImageResource(R.drawable.bike);
+
+
                                     openBuzzer.setClickable(true);
                                     if(buzzerStatus)
                                     {
                                         openBuzzer.setImageResource(R.drawable.bell_3);
                                     }else
                                     {
-                                        openBuzzer.setImageResource(R.drawable.bell_1);
+                                        openBuzzer.setImageResource(R.drawable.bell_5);
                                     }
 
-                                       */
+
 
 
                                 } else {
@@ -338,10 +341,15 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                                             followMe.setClickable(false);
                                             followMe.setImageResource(R.drawable.walk_2);
 
+                                            carLocation.setClickable(true);
+                                            carLocation.setImageResource(R.drawable.bike_2);
+
                                             timeTest = new TimeTest(0, context, handler);
                                             timeTest.startTime();
 
-                                    /*
+                                            new Reminder(300,context,handler,10).startReminder();
+
+
                                             openBuzzer.setClickable(false);
                                             if(buzzerStatus)
                                             {
@@ -350,7 +358,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                                             {
                                                 openBuzzer.setImageResource(R.drawable.bell_2);
                                             }
-                                            */
+
 
                                 }
 
@@ -391,8 +399,12 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 //                                } catch (IOException e) {
 //                                    e.printStackTrace();
 //                                }
-                                 new TrackPostHtttp(handler,context,aMap,termId,token,gpsHistory).execute();
-
+//                                 new TrackPostHtttp(handler,context,aMap,termId,token,gpsHistory).execute();
+                                try {
+                                    lwaysTrackingLine.doGet(EBikeSever.server_url+EBikeSever.car_location_url,termId,token,EBikeConstant.ALWAYS_TRACKING_LINE);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
 
                         } else {
@@ -472,7 +484,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
                 case 10:
 
-                    gpsHistory.setIsStop(true);
+
 
                     Log.i("lhh", "5min success! ");
                     //关闭
@@ -536,6 +548,11 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     waitPopopWindow = new WaitPopopWindow();
                     waitPopopWindow.showPopopWindow(context, home);
 //                    checkCarStatus();
+                    startGPSTracking(0, EBikeConstant.OPEN_ALWAYS_TRACKING, 0);
+                    break;
+
+                case EBikeConstant.OPEN_ALWAYS_TRACKING:
+                    L.i("OPEN_ALWAYS_TRACKING");
                     startCarLocation();
                     break;
             }
@@ -918,6 +935,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     Log.d("MapActivity", "postRequestClasz.getBuzzerStatus() :" + postRequestClasz.getBuzzerStatus());
 //                postRequestClasz = new PostRequestClasz(context, EBikeConstant.BUZZER, handler);
 //                postRequestClasz.execute(EBikeSever.server_url + EBikeSever.open_buzzer, uid, operationType, operation, seq);
+
+                   appSN = System.currentTimeMillis()/1000;
+
+                    L.i("appSN:"+appSN);
                     postHttpRequest.doPostBUZZER(EBikeSever.server_url + EBikeSever.car_buzzer,termId,token,userPhone,appSN,isOpenBuzzerStatus,EBikeConstant.BUZZER);
 //                postRequestClasz = new PostRequestClasz(context,EBikeConstant.BUZZER,handler);
 //                postRequestClasz.execute(context.getResources().getString(R.string.server_url)+context.getResources().getString(R.string.test_error_url),"18516236390",123123123);
@@ -951,7 +972,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 case R.id.car_location:
                     followMeStatus = false;
                     popopWindow.showPopopWindow(context, mapView);
-                    startCarLocation();
+                    startGPSTracking(5, EBikeConstant.OPEN_ALWAYS_TRACKING, 10);
+
 
                     break;
 
@@ -1032,7 +1054,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
     private void startGPSTracking(int num, int types, int seconds) {
 
-        postHttpRequest.doPostStartTracking(EBikeSever.server_url+EBikeSever.car_time_tracking_lcation_url, termId,token,userPhone,appSN,seconds,durationtime,types);
+        postHttpRequest.doPostStartTracking(EBikeSever.server_url+EBikeSever.car_time_tracking_lcation_url, termId,token,userPhone,appSN,seconds,num,types);
 
 
     }

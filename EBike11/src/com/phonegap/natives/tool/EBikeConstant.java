@@ -44,6 +44,7 @@ public  class EBikeConstant {
 
     public static final int REQUEST_TYPE = 13;
 
+    public static final int OPEN_ALWAYS_TRACKING = 14;
 
 
 }

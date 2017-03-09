@@ -5,18 +5,22 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.amap.api.maps.AMap;
+import com.phonegap.natives.httptool.ssl.TrustAllCerts;
 import com.phonegap.natives.locaction.GPSHistory;
 import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.L;
 import com.phonegap.network.GetNet;
+import com.phonegap.network.PostNet;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -30,6 +34,7 @@ public class LwaysTrackingLine {
     private GetNet getNet;
     private AMap aMap;
     private Message message;
+    private PostNet postNet;
     private boolean isExt = false;
 
 
@@ -44,22 +49,30 @@ public class LwaysTrackingLine {
         this.context = context;
         this.handler = handler;
         this.okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(3, TimeUnit.SECONDS)
-                .readTimeout(3, TimeUnit.SECONDS)
+                .sslSocketFactory(TrustAllCerts.createSSLSocketFactory(),new TrustAllCerts())
+                .hostnameVerifier(new TrustAllCerts.TrustAllHostnameVerifier())
+                .connectTimeout(4, TimeUnit.SECONDS)
+                .readTimeout(4, TimeUnit.SECONDS)
                 .build();
-        builder = new Request.Builder();
+
         getNet = new GetNet(context,handler,aMap,gpsHistory);
+        postNet = new PostNet(context,handler,aMap,gpsHistory);
     }
 
-    public void doGet (String url ,int type) throws IOException {
-        Request request = builder.get().url(url).build();
-        synchronized (context) {
+    public void doGet (String url ,String termId,String token,int type) throws IOException {
+
+
 
             L.i("Get LwaysTrackingLine  请求  实时追踪数据");//
-
+            builder = new Request.Builder();
+            String json  ="{\"termId\":"+termId+"};";
+            MediaType JSON = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(JSON, json);
+            builder = new Request.Builder();
+            Request request = builder.url(url).addHeader("Token", token).post(body).build();
             executeResponse(request, type);
 
-        }
+
     }
 
     public void setIsExt (boolean isExt)
@@ -86,42 +99,38 @@ public class LwaysTrackingLine {
             @Override
             public void onFailure(Call call, IOException e) {
                 L.i("Get LwaysTrackingLine:"+e.toString());//
-                if(!isExt)
-                {
+
 
                     try {
                         message.what = type;
                         message.arg1 = EBikeConstant.HTTP_EROOR;
+                        message.obj = "网络连接超时";
                         Thread.sleep(100);
-                        getNet.sendMessage(message);
+                        postNet.sendMessage(message);
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
                     }
 
-                }
+
 
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
 
-                if(!isExt)
-                {
 
-                    try {
+
                         Message messages = new Message();
                         messages.what = type;
                         String json = response.body().string();
                         L.i("Get LwaysTrackingLine json :" + json);
                         messages.arg1 = EBikeConstant.HTTP_SUCCESS;
                         messages.obj = json;
-                        Thread.sleep(100);
-                        getNet.sendMessage(messages);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
 
-                }
+                        postNet.sendMessage(messages);
+
+
+
             }
 
 

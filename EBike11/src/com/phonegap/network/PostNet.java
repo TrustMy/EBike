@@ -91,7 +91,7 @@ public class PostNet extends Handler {
             error = gson.fromJson(res,Error.class);
         }else
         {
-            L.i("服务器返回的不是json :"+res);
+            L.i("Error :"+res);
         }
 
         switch (msg.what)
@@ -183,6 +183,12 @@ public class PostNet extends Handler {
                 handler.sendMessage(message1);
                 break;
 
+            case EBikeConstant.OPEN_ALWAYS_TRACKING:
+                L.i("OPEN_ALWAYS_TRACKING");
+                 message = new Message();
+                message.what = EBikeConstant.OPEN_ALWAYS_TRACKING;
+                handler.sendMessage(message);
+                break;
 
 
         }
@@ -232,13 +238,12 @@ public class PostNet extends Handler {
                             ToastUtil.showToast(context,"GPS数据为0.0");
                         }
 
-
                         Log.d("MapActivity", "GPSlatLng.longitude != 0.0 && MapLatLng.longitude != 0.0");
                     }else
                     {
 
 //                            Toast.makeText(context, "未获取到实时追踪GPS数据(Type != 0)", Toast.LENGTH_SHORT).show();
-                            ToastUtil.showToast(context,"未获取到实时追踪GPS数据(Type != 0)");
+                            ToastUtil.showToast(context,"GPS坐标无效或不稳定!");
 
                     }
 

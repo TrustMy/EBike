@@ -118,7 +118,7 @@ public class WaitPopopWindow {
 //
 //         设置好参数之后再show
         popupWindow.showAtLocation(v, Gravity.CENTER,0,0);
-        new Reminder(15,context,handler).startReminder();
+        new WartTime(15,context,handler,1).startReminder();
         L.i("开始计时");
     }
 
