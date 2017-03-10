@@ -1,19 +1,97 @@
 /**
  * Created by dong on 2016/8/15.
  */
+var mybridge;
+initwebbridge = function(){
+    function setupWebViewJavascriptBridge(callback) {
+        
+        if (window.WebViewJavascriptBridge) { return callback(WebViewJavascriptBridge); }
+        if (window.WVJBCallbacks) { return window.WVJBCallbacks.push(callback); }
+        window.WVJBCallbacks = [callback];
+        var WVJBIframe = document.createElement('iframe');
+        WVJBIframe.style.display = 'none';
+        WVJBIframe.src = 'https://__bridge_loaded__';
+        document.documentElement.appendChild(WVJBIframe);
+        setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0)
+    }
+    setupWebViewJavascriptBridge(function(bridge) {
+                                 var uniqueId = 1
+                                 function log(message, data) {
+                                 var log = document.getElementById('log')
+                                 var el = document.createElement('div')
+                                 el.className = 'logLine'
+                                 el.innerHTML = uniqueId++ + '. ' + message + ':<br/>' + JSON.stringify(data)
+                                 if (log.children.length) { log.insertBefore(el, log.children[0]) }
+                                 else { log.appendChild(el) }
+                                 }
+                                 mybridge = bridge;
+                                 bridge.registerHandler('testJavascriptHandler', function(data, responseCallback)
+                                                        {
+                                                        //log('ObjC called testJavascriptHandler with', data)
+                                                        //var responseData = { 'Javascript Says':'Right back atcha!' }
+                                                        ////log('JS responding with', responseData)
+                                                        //responseCallback(responseData)
+                                                        
+                                                        
+                                                        
+                                                        //log('ObjC called testJavascriptHandler with', data)
+                                                        var responseData = { 'Javascript Says':'Right back atcha!' }
+                                                        $(".vehiclenumvalclass").val(data.deviceid);
+                                                        
+                                                        
+                                                        //log('JS responding with', responseData)
+                                                        responseCallback(responseData)
+                                                        
+                                                        })
+                                 
+                                 
+                                 }
+                                 
+                                 
+                                 )
+    
+    
+}
+
 angular.module("app.demo.controllers",[])
-    //初始app
+//初始app
     .controller("indexcontroller",function($scope,$rootScope,$state,registerService,$timeout,$interval,$window){
-        $rootScope.windoWHeihgt = ($(window).height())*1+"px";
+
         //console.log("看看md5："+$.md5("Hello,Liehuo.Net"));
         console.log(new Date().getTime());
+
+        //判断当前设备的类型
+        try{
+            console.log(navigator);
+            if(navigator.platform =='iPhone'){
+                $rootScope.phonetyperoot = 4;
+                $rootScope.windoWHeihgt = ($(window).height())*1-20+"px";
+                   initwebbridge();
+            }else {
+                $rootScope.phonetyperoot = 3;
+                $rootScope.windoWHeihgt = ($(window).height())*1+"px";
+            }
+        }catch(err){
+            $rootScope.phonetyperoot = 3;
+            //console.log("判断设备类型报错");
+            //alert("判断设备类型报错");
+        }
+        
+
+
+
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
         document.addEventListener('deviceready', function () {
 //            alert("indexcontroller:"+document.documentElement.clientHeight)
             if((document.documentElement.clientHeight + "px") != $rootScope.windoWHeihgt){
-                $rootScope.windoWHeihgt=document.documentElement.clientHeight + "px";
+                if(navigator.platform =='iPhone'){
+                    //$rootScope.windoWHeihgt=parseFloat(document.documentElement.clientHeight)-20 + "px";
+                }else {
+                    $rootScope.windoWHeihgt=document.documentElement.clientHeight + "px";
+                }
+
                 $scope.$apply(function(){
                     $scope.winHeight = {
                         "height":$rootScope.windoWHeihgt
@@ -21,65 +99,8 @@ angular.module("app.demo.controllers",[])
                 });
             }
         }, false);
-        //判断当前设备的类型
-        try{
-            console.log(navigator);
-            if(navigator.platform =='iPhone'){
-                $rootScope.phonetyperoot = 4;
-            }else {
-                $rootScope.phonetyperoot = 3;
-            }
-        }catch(err){
-            $rootScope.phonetyperoot = 3;
-            //console.log("判断设备类型报错");
-            //alert("判断设备类型报错");
-        }
-        if($rootScope.phonetyperoot == 4){
-            var mybridge;
-            initwebbridge = function(){
-                function setupWebViewJavascriptBridge(callback) {
-
-                    if (window.WebViewJavascriptBridge) { return callback(WebViewJavascriptBridge); }
-                    if (window.WVJBCallbacks) { return window.WVJBCallbacks.push(callback); }
-                    window.WVJBCallbacks = [callback];
-                    var WVJBIframe = document.createElement('iframe');
-                    WVJBIframe.style.display = 'none';
-                    WVJBIframe.src = 'https://__bridge_loaded__';
-                    document.documentElement.appendChild(WVJBIframe);
-                    setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0)
-                }
-                setupWebViewJavascriptBridge(function(bridge) {
-                        var uniqueId = 1
-                        function log(message, data) {
-                            var log = document.getElementById('log')
-                            var el = document.createElement('div')
-                            el.className = 'logLine'
-                            el.innerHTML = uniqueId++ + '. ' + message + ':<br/>' + JSON.stringify(data)
-                            if (log.children.length) { log.insertBefore(el, log.children[0]) }
-                            else { log.appendChild(el) }
-                        }
-                        mybridge = bridge;
-                        bridge.registerHandler('testJavascriptHandler', function(data, responseCallback)
-                        {
-                            //log('ObjC called testJavascriptHandler with', data)
-                            var responseData = { 'Javascript Says':'Right back atcha!' }
-                            //log('JS responding with', responseData)
-                            responseCallback(responseData)
-                        })
-
-
-                    }
-
-
-                )
-
-
-            }
-        };
-
-
-        console.log(333333,new Date(1486656000000));
-        console.log(333333222,new Date(1487692799000));
+        console.log(333333,new Date(1488983606000));
+        console.log(333333222,new Date(1488983606000));
         //console.log(22222,new Date(1484495999000));
         //console.log(44445,new Date("2012/12/25 20:11:11").getTime() - new Date("2012/12/18 20:11:11").getTime());
 
@@ -329,6 +350,12 @@ angular.module("app.demo.controllers",[])
 
                             //console.log($rootScope.alarmcount);
                             //
+                            //iOS push regiser
+                        if($rootScope.phonetyperoot == 4){
+                            mybridge.callHandler('loginsucessObjcCallback', {"termId":$window.sessionStorage.getItem("UtermId"),"seq":registerService.randomsix(),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken")}, function(response) {
+                                log('JS got response', response)
+                            })
+                                                                }
 
                             $rootScope.mineuserphone = uname;
 
@@ -694,8 +721,23 @@ angular.module("app.demo.controllers",[])
                     },2000);
                 })
             }
+        };
+        $scope.forgetpassiphonenumbtna = function(){
+            console.log("hahhah");
+            $state.go("searchpforgetiphone");
         }
     })
+     //找回密码，更换手机号
+    .controller("searchpforgetiphonecontroller",function($scope,$rootScope,$state,registerService,$interval,$timeout){
+        $scope.searchPassBackBtn = function(){
+            window.history.go(-1);
+        };
+        $scope.winHeight = {
+            "height":$rootScope.windoWHeihgt
+        };
+    })
+
+
     //找回密码,输入新密码页面
     //.controller("verCodeNewPassController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window){
     //    //返回按钮
@@ -897,6 +939,7 @@ angular.module("app.demo.controllers",[])
             //$Http
             var regaccountval = $(".inputregisteraccountr").val();
             var regaccount = $scope.registerForm.regaccount.$modelValue;
+            var regsecordorder = $(".inputregsecretordert").val();
             console.log(regaccount);
             if(!regaccount){
                 $scope.subapp= {"toggle":true};
@@ -907,6 +950,18 @@ angular.module("app.demo.controllers",[])
             }else if(regaccountval.length != 11){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(!regsecordorder){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的密令！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(regsecordorder.indexOf(" ") != -1){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "密令中不能含有空格！";
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
@@ -1133,27 +1188,37 @@ angular.module("app.demo.controllers",[])
         //点击扫码
         $scope.vehiclenumbtn = function(){
             console.log("点击扫码");
-            cordova.plugins.barcodeScanner.scan(
-                function (result) {
-                    //alert("We got a barcode\n" +
-                    //    "Result: " + result.text + "\n" +
-                    //    "Format: " + result.format + "\n" +
-                    //    "Cancelled: " + result.cancelled);
-                    $scope.$apply(function(){
-                        $scope.vehiclebinddivicenum = result.text;
-                    })
+            if($rootScope.phonetyperoot == 4){
+                mybridge.callHandler('cameraObjcCallback', {"termId":$window.sessionStorage.getItem("UtermId")}, function(response) {
+                    log('JS got response', response)
 
-                },
-                function (error) {
-                    //alert("Scanning failed: " + error);
-                    //$scope.verCodedis = false;
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = error+"！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                }
-            );
+
+                })
+
+            }else {
+                cordova.plugins.barcodeScanner.scan(
+                    function (result) {
+                        //alert("We got a barcode\n" +
+                        //    "Result: " + result.text + "\n" +
+                        //    "Format: " + result.format + "\n" +
+                        //    "Cancelled: " + result.cancelled);
+                        //$scope.$apply(function(){
+                            $(".vehiclenumvalclass").val(result.text);
+                        //})
+
+                    },
+                    function (error) {
+                        //alert("Scanning failed: " + error);
+                        //$scope.verCodedis = false;
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = error+"！";
+                        $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                );
+            }
+
 
         }
         //点击获取验证码
@@ -1405,7 +1470,9 @@ angular.module("app.demo.controllers",[])
     })
     //home页面
     .controller("homeController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window,$location){
-
+        $scope.winHeight = {
+            "height":$rootScope.windoWHeihgt
+        };
         $scope._topnot=(parseFloat($rootScope.windoWHeihgt) - 120)/2 +"px";
         //console.log($scope._top);
         $scope.modelpositionStnot = {
@@ -1777,28 +1844,22 @@ angular.module("app.demo.controllers",[])
             $rootScope.colorfff6 = false;
             $rootScope.coloryyy6 =true ;
         };
-        $rootScope.baidupushNum = 0  //用于防止第一次进入时执行点击事件
+        $rootScope.baidupushNum = 0;
         $scope.messagepush = function(){
+            console.log("run here?")
             document.addEventListener('deviceready', function () {
-                //{
-                //    type: "onBind",
-                //        data:{
-                //    requestId: 123456,
-                //        errorCode: 0,
-                //        appId: "123456",
-                //        channelId: "123456",
-                //        userId: "123456",
-                //        deviceType: 3
-                //}
-                //}
                 if(window.baidupush){
                     // alert(3);
                     try {
+                        console.log("pushID here2")
+                        var baidupushFlag = false;
                         window.baidupush.startWork("8ulOPgOAf03mhcRTr8Yq0HUY", function(info){
                             //success callback
                             //your code here
                             // alert(4);
                             // alert("startWork:" + JSON.stringify(info));
+//                            console.log("pushID startwork")
+                            baidupushFlag = true
                             if(info.data.errorCode == 0){
                                 var pushinfoObj = {
                                     cp:Number($window.sessionStorage.getItem("Ucp")),
@@ -1827,11 +1888,54 @@ angular.module("app.demo.controllers",[])
                                 })
                             }
                         });
+                        //解决第一次安装app初次登陆没有绑定的bug
+                        $timeout(function(){
+                        console.log("pushID timeout:"+baidupushFlag)
+                        if (!baidupushFlag){
+                                $timeout(function(){
+                                    window.baidupush.startWork("8ulOPgOAf03mhcRTr8Yq0HUY", function(info){
+                                        baidupushFlag = true
+                                        if(info.data.errorCode == 0){
+                                            var pushinfoObj = {
+                                                cp:Number($window.sessionStorage.getItem("Ucp")),
+                                                pushId:info.data.channelId+"",
+                                                phoneType:Number(info.data.deviceType)
+                                                //channelid:3795525986954054108,
+                                                //type:3
+                                            };
+                                            console.log("pushID:"+pushinfoObj.pushId)
+                                            var pushinfoUrl = "/rest/user/registerPushId/";
+                                            registerService.commonUser(pushinfoObj,pushinfoUrl).then(function(e){
+                                                console.log(e);
+                                                if(e.status==true){
+                                                }else{
+                                                    $scope.subapp= {"toggle":true};
+                                                    $scope.submitWarning = e.err+"！";
+                                                    $scope.timedontknowreason = $timeout(function(){
+                                                        $scope.subapp= {"toggle":false};
+                                                    },2000);
+                                                }
+                                            },function(err){
+                                                $scope.subapp= {"toggle":true};
+                                                $scope.submitWarning = "网络连接失败！";
+                                                $scope.timedontkonwerr = $timeout(function(){
+                                                    $scope.subapp= {"toggle":false};
+                                                },2000);
+                                            })
+                                        }{
+                                            alert("云推送启动失败...")
+                                        }
+                                    });
+                                },500)
+                        }
+                        },3000)
+
                         //Resume work, re-bind the ids
-                        // window.baidupush.resumeWork(function(info){
-                        //     //your code here
-                        //     //alert("resumeWork:" + JSON.stringify(info));
-                        // });
+                         window.baidupush.resumeWork(function(info){
+                             //your code here
+                             console.log("pushID resume");
+                             //alert("resumeWork:" + JSON.stringify(info));
+                         });
                         window.baidupush.listenMessage(function(info){
                             //your code here
                             //channelid接口
@@ -1839,8 +1943,6 @@ angular.module("app.demo.controllers",[])
                         });
                         //Listen notification arrived event, when a notification arrived, the callback function will be called
                         window.baidupush.listenNotificationArrived(function(info){
-//                            alert("通知到达了:"+info)
-//                            $state.go("mains.home.alarmRecord")
                             if(0<=$rootScope.alarmcount && $rootScope.alarmcount<=98){
                                 $rootScope.alarmcount = Number($rootScope.alarmcount);
                                 $rootScope.alarmcount++;
@@ -1856,11 +1958,14 @@ angular.module("app.demo.controllers",[])
                         //Listen notification clicked event, when a notification is clicked, the callback function will be called
                         window.baidupush.listenNotificationClicked(function(info){
 //                            alert("通知点击了:"+info)
+
                                 if($rootScope.baidupushNum>0){
                                     navigator.intent.toDelete({"pushclick":true});
                                     $state.go("mains.home.alarmRecord")
                                 }
                                 $rootScope.baidupushNum++;  //用于防止第一次进入时执行点击事件
+                            //your code here
+                            //alert("listenNotificationClicked:" + JSON.stringify(info));
                         });
                     }catch (err){
                         console.log(err.message);
@@ -1879,6 +1984,7 @@ angular.module("app.demo.controllers",[])
         // console.log("看看推送的值:"+$rootScope.pushyesorno);
         if($rootScope.pushyesorno){
             $scope.timersmessagetime = $timeout(function(){
+            console.log("pushID here")
                 $scope.messagepush();
             },500);
         };
@@ -5907,5 +6013,174 @@ angular.module("app.demo.controllers",[])
         //点击取消
         $scope.backminePage = function(){
             $state.go("mains.mine");
+        }
+    })
+    //更换手机号
+    .controller("changeiphonenumController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout){
+        $scope.searchPassBackBtn = function(){
+            window.history.go(-1);
+        };
+        $scope.winHeight = {
+            "height":$rootScope.windoWHeihgt
+        };
+        $scope.newchangephonepatt = "[0-9]{11}";
+        $scope.changeiphonecodepatt= '[0-9]{6}';
+        $scope.vercodeBtnContent= "点击获取验证码";
+        $scope.phonePatStylea = function(isValid){
+            console.log("失去焦点")
+            //var regaccount = $scope.registerForm.regaccount.$modelValue;
+            if(isValid){
+
+            }else{
+                console.log("手机号码格式错误");
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的手机号！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+        };
+        //点击获取验证码
+        $scope.changeiphonegetVercode = function(){
+            var newchangeiphonepow = $(".newchangeiphonepow").val();
+            var changeiphonenewaccount = $scope.changeiphoneForm.changeiphonenewaccount.$modelValue;
+            console.log(changeiphonenewaccount);
+            if(!changeiphonenewaccount){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的手机号！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(newchangeiphonepow.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
+                $scope.unbundverCodedis = true;//不能再次点击，直到ajax结束
+                var unbundverCodeObj = {
+                    "cp":Number(changeiphonenewaccount)
+
+                };
+                var unbundverCodeUrl = "/register/applySmsCode/";
+                $scope.loadapp = {"toggle":true};
+                registerService.commonUser(unbundverCodeObj,unbundverCodeUrl).then(function(e){
+                    $scope.loadapp = {"toggle":false};
+                    //当status正确的时候，
+                    if(e.status == true){
+                        var s = 60;
+                        $scope.unbundvercodeBtnContent = s+"秒" ;
+                        var regVertimer = $interval(function(){
+                            s--;
+                            if(s>0){
+                                $scope.unbundvercodeBtnContent = s+"秒" ;
+                                //console.log(s);
+                            }else{
+                                $scope.unbundverCodedis = false;
+                                $scope.unbundvercodeBtnContent = "重新获取验证码" ;
+                                $interval.cancel(regVertimer);
+                                //console.log(s);
+                            }
+                        },2000)
+                    }else{
+                        $scope.unbundverCodedis = false;
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                        console.log(e.err);
+                    }
+
+                },function(err){
+                    $scope.loadapp = {"toggle":false};
+                    $scope.unbundverCodedis = false;
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = "网络连接失败！";
+                    $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                });
+
+
+            }
+        };
+        $scope.backminePage = function(){
+            $state.go("mains.mine");
+        };
+        $scope.changeiphonebtnPage= function(){
+            var newchangeiphonepow = $(".newchangeiphonepow").val();//手机号
+            var changeiphonepassval = $(".changeiphonepassval").val();//密码
+            var changeiphonecodeclass = $(".changeiphonecodeclass").val();//验证码
+            var changeiphonenewaccounta = $scope.changeiphoneForm.changeiphonenewaccount.$modelValue;
+            var changeiphonepassworda = $scope.changeiphoneForm.changeiphonepassword.$modelValue;
+            var changeiphoneverCodeContenta = $scope.changeiphoneForm.changeiphoneverCodeContent.$modelValue;
+            if(!changeiphonenewaccounta){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的手机号！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(!changeiphonepassworda){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的密码！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(!changeiphoneverCodeContenta){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的验证码！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(newchangeiphonepow.indexOf(" ") != -1){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "新的手机号码只能为11位数字，不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(changeiphonecodeclass.indexOf(" ") != -1){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "验证码只能为6位数字，不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else {
+                $scope.changeiphoneyesbtndis = true;
+                var changeiphoneObj = {
+                    "pw":changeiphonepassval,
+                    "newcp":Number(changeiphonenewaccounta)
+                };
+                var changeiphoneUrl = "";
+                $scope.loadapp = {"toggle":true};
+                registerService.commonUser(unbundverCodeObj,unbundverCodeUrl).then(function(e){
+                    $scope.loadapp = {"toggle":false};
+                    $scope.changeiphoneyesbtndis = false;
+                    if(e.status == true){
+                        $scope.hahaapp= {"toggle":true};
+                        $scope.submithappy = "更换手机号码成功，稍后进入登录页面！";
+                        $timeout(function(){
+                            $scope.hahaapp= {"toggle":false};
+                            $state.go("submits");
+                        },2000);
+                    }else {
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.reason+"！";
+                        $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                },function(err){
+                    $scope.loadapp = {"toggle":false};
+                    $scope.changeiphoneyesbtndis = false;
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = "网络连接失败！";
+                    $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                })
+            }
         }
     })

@@ -51,8 +51,8 @@ public class LwaysTrackingLine {
         this.okHttpClient = new OkHttpClient.Builder()
                 .sslSocketFactory(TrustAllCerts.createSSLSocketFactory(),new TrustAllCerts())
                 .hostnameVerifier(new TrustAllCerts.TrustAllHostnameVerifier())
-                .connectTimeout(4, TimeUnit.SECONDS)
-                .readTimeout(4, TimeUnit.SECONDS)
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
                 .build();
 
         getNet = new GetNet(context,handler,aMap,gpsHistory);

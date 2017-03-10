@@ -10,7 +10,13 @@ angular.module("myApp",["ui.router","app.demo.controllers","app.demo.service","a
             url:"/searchp",
             templateUrl:"searchPass.html",
             controller:"searchPassController"
-        }).state("registers",{
+        })
+            .state("searchpforgetiphone",{
+                url:"/searchpforgetiphone",
+                templateUrl:"searchpforgetiphone.html",
+                controller:"searchpforgetiphonecontroller"
+            })
+            .state("registers",{
             url:"/regs",
             templateUrl:"register.html",
             controller:"registercontroller"
@@ -126,7 +132,16 @@ angular.module("myApp",["ui.router","app.demo.controllers","app.demo.service","a
 
                 }
             }
-        })
+        }).state("mains.mine.changeiphonenum",{
+                url:"/changeiphonenum",
+                views:{
+                    'tab-mine':{
+                        templateUrl:"app/views/main.mine.changeiphonenum.html",
+                        controller:"changeiphonenumController"
+
+                    }
+                }
+            })
             .state("mains.mine.unbundling",{
                 url:"/unbundling",
                 views:{

@@ -28,7 +28,7 @@ public class TimeTest {
         isStop = true;
         timeClasa = new TimeClasa();
         timer = new Timer();
-        timer.schedule(timeClasa,0,5*1000);
+        timer.schedule(timeClasa,0,15*1000);
         L.i("timeTools  success!");
     }
     public void stopTime()

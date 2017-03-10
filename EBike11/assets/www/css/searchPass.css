@@ -57,7 +57,7 @@
 .searchPBtnPStyle {
     width:12rem;
     height:1.7rem;
-    margin:2rem 2rem;
+    margin:1.5rem 2rem;
     -webkit-border-radius:0.9rem;
     -moz-border-radius:0.9rem;
     border-radius:0.9rem;
@@ -122,4 +122,12 @@
         margin:1rem 7rem 1rem;
     }
 
+}
+.changeiphonesearchpass {
+    color:#e08101;
+    margin:0 2rem;
+    font-size: 0.5rem;
+}
+.searchforgetpassiphone {
+    margin: 1.3rem 2rem 0.4rem;
 }

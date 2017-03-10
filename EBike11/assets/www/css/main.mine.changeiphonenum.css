@@ -1,0 +1,5 @@
+.changeiphonelogo {
+    background:url("../img/iphonelogo.png") no-repeat;
+    -webkit-background-size:contain;
+    background-size:contain;
+}

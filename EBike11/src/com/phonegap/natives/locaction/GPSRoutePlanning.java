@@ -14,6 +14,7 @@ import com.amap.api.services.route.RouteSearch;
 import com.amap.api.services.route.WalkPath;
 import com.amap.api.services.route.WalkRouteResult;
 import com.phonegap.natives.gpstool.WalkRouteOverlay;
+import com.phonegap.natives.tool.L;
 import com.phonegap.natives.tool.WaitPopopWindow;
 
 
@@ -65,12 +66,12 @@ public class GPSRoutePlanning  implements RouteSearch.OnRouteSearchListener{
 
     @Override
     public void onBusRouteSearched(BusRouteResult busRouteResult, int i) {
-
+        L.i("onBusRouteSearched");
     }
 
     @Override
     public void onDriveRouteSearched(DriveRouteResult driveRouteResult, int i) {
-
+        L.i("onDriveRouteSearched");
     }
 
     @Override

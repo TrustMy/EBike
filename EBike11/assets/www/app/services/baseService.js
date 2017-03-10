@@ -93,7 +93,6 @@ baseService.prototype.submits = function(obj) {
     //obj = that.columnToData(obj,that.mapping[that.usersSub]);
     console.log("登录的参数"+JSON.stringify(obj));
     var q = that.$q.defer();
-     console.log("登录地址:"+ that.baseUrl);
     that.$http.post(that.baseUrl+'/rest/user/login/',obj,congfigsed)
         .then(function (e) {
             console.log(123455,e.headers('Token'));

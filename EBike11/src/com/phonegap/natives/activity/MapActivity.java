@@ -187,6 +187,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 //        return isMapLiner;
 //    }
 
+    private Reminder isNoShow;
+
 
     public List<LatLng> getCacheMAP() {
         return cacheMAP;
@@ -280,7 +282,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                             if (gpsHistory != null) {
 
 
-                                if (trackStatus == false && TrackGPSNum == -1) {
+                                if (trackStatus == false ) {
 
 //                                    aMap.clear();
                                     //关闭
@@ -297,6 +299,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                                     if(timeTest != null)
                                     {
                                         timeTest.stopTime();
+                                    }
+                                    if(isNoShow != null)
+                                    {
+                                        isNoShow.stopReminder();
                                     }
 
 //                                    gpsHistory.hiddenMarker();
@@ -347,7 +353,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                                             timeTest = new TimeTest(0, context, handler);
                                             timeTest.startTime();
 
-                                            new Reminder(300,context,handler,10).startReminder();
+                                            isNoShow =  new Reminder(300,context,handler,10);
+                                            isNoShow.startReminder();
 
 
                                             openBuzzer.setClickable(false);
@@ -365,6 +372,16 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
                             }
                         } else {
+
+                            if(!trackStatus)
+                            {
+                                if(TrackGPSNum != 0)
+                                {
+                                    trackStatus = true;
+                                }
+                            }
+
+
 
                             startErrorPopopWindow((String) msg.obj);
 
@@ -513,16 +530,20 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     durationtime = EBikeConstant.STOP_ALWAYS_TRACKING;
                     followMe.setClickable(true);
                     followMe.setImageResource(R.drawable.walk);
-                    /*
+
                    if(buzzerStatus)
                    {
                        openBuzzer.setImageResource(R.drawable.bell_3);
                    }else
                    {
-                       openBuzzer.setImageResource(R.drawable.bell_1);
+                       openBuzzer.setImageResource(R.drawable.bell_5);
                    }
                     openBuzzer.setClickable(true);
-                    */
+
+                    carLocation.setClickable(true);
+                    carLocation.setImageResource(R.drawable.bike);
+
+
 
 
                     break;
@@ -548,7 +569,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     waitPopopWindow = new WaitPopopWindow();
                     waitPopopWindow.showPopopWindow(context, home);
 //                    checkCarStatus();
-                    startGPSTracking(0, EBikeConstant.OPEN_ALWAYS_TRACKING, 0);
+                    startGPSTracking(30, EBikeConstant.OPEN_ALWAYS_TRACKING, 5);
                     break;
 
                 case EBikeConstant.OPEN_ALWAYS_TRACKING:
@@ -863,7 +884,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
                     if (trackStatus) {
                         durationtime = EBikeConstant.STOP_ALWAYS_TRACKING;
-                        TrackGPSNum = -1;
+
                         seconds = 0;
                         trackStatus = false;
                         gpsHistory.setIsStop(true);
@@ -972,7 +993,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 case R.id.car_location:
                     followMeStatus = false;
                     popopWindow.showPopopWindow(context, mapView);
-                    startGPSTracking(5, EBikeConstant.OPEN_ALWAYS_TRACKING, 10);
+                    startGPSTracking(30, EBikeConstant.OPEN_ALWAYS_TRACKING, 5);
 
 
                     break;
@@ -1052,9 +1073,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    private void startGPSTracking(int num, int types, int seconds) {
+    private void startGPSTracking(int duration, int types, int seconds) {
 
-        postHttpRequest.doPostStartTracking(EBikeSever.server_url+EBikeSever.car_time_tracking_lcation_url, termId,token,userPhone,appSN,seconds,num,types);
+        postHttpRequest.doPostStartTracking(EBikeSever.server_url+EBikeSever.car_time_tracking_lcation_url, termId,token,userPhone,appSN,seconds,duration,types);
 
 
     }

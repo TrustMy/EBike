@@ -8,16 +8,17 @@
         <p class="searchPasscontent searchPasscontentjianr">
             手机号：<input class="searchPinputS searchiaccoutpow" type="text" ng-model="searchP.account" name="searchPaccount" ng-pattern="regphone" ng-blur="phonePatStyle(searchPassForm.searchPaccount.$valid)" required ng-disabled="searchpaccountdis" />
         </p>
-        <p class="searchPasscontent searchPasscontentjianr">
+        <p class="searchPasscontent searchPasscontentjianr searchforgetpassiphone">
             验证码：<input class="searchPinputS searchpinputcodeclass" type="text" ng-model="searchP.verCodeContent" ng-pattern="searchPcondepat" name="searchPverCodeContent" required ng-disabled="searchpvercodedis"/>
             <button class="searchPverCodeBtn" ng-click="getVercode()" ng-disabled="verCodedis"><span ng-bind="vercodeBtnContent"></span></button>
         </p>
         <p class="searchPasscontent searchPasscontentjianr" ng-if="passnew.toggle">
             新密码：<input class="searchPinputS searnewPassStyle" type="password" ng-model="searchP.newpass" name="searchPnewpass" required ng-disabled="searchPnewdis"/>
         </p>
-        <p class="searchPasscontent searchPasscontentjianr" ng-if="passnew.toggle">
+        <p class="searchPasscontent searchPasscontentjianr searchforgetpassiphone" ng-if="passnew.toggle">
             确认新密码：<input class="searchPinputS searnewPassStyle" type="password" ng-model="searchP.agapass" name="searchPagapass" required ng-disabled="searchPolddis"/>
         </p>
+        <button class="changeiphonesearchpass" ng-click="forgetpassiphonenumbtna()">无法找回验证码？</button>
         <p class="searchPBtnPStyle searchPBtnPStylejianr">
             <button class="searchPBtnStyle searchPBtnNo searchPBtnStylejianr" ng-click="backSubmitPage()">取消</button>
             <button class="searchPBtnStyle searchPBtnYes searchPBtnStylejianr" ng-click="verCodegoNewPassPage()" ng-disabled="searchvercodedis">确认</button>

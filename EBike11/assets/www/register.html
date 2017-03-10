@@ -10,6 +10,9 @@
         <p class="submituser displayIB registeruserjianr">
             邮箱：<input class="inputregisterwidth" type="email" ng-model="reg.email" name="regemail" required ng-disabled="regemaildis" placeholder="选填项" />
         </p>
+        <p class="submituser displayIB registeruserjianr">
+            密令：<input class="inputregisterwidth inputregsecretordert" type="text" ng-model="reg.secretorder" name="regsecretorder" required ng-disabled="regsecretorderdis" />
+        </p>
         <p class="registerCode registerCodejianr">
             <input type="text" class="vercodeStyle registerCodejianr registercodeclassa" ng-model="reg.verCode" ng-pattern="searchPcondepat" name="regverCode" required ng-disabled="regvercodedis"/>
             <button class="vercodeBtn registerCodejianr" ng-click="getVercode()" ng-disabled="verCodedis"><span ng-bind="vercodeBtnContent"></span></button>
