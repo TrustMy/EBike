@@ -228,12 +228,12 @@ angular.module("app.demo.controllers",[])
                 //console.log("手机号码格式正确",uname);
                 console.log("成功")
             }else{
-                console.log("手机号码格式错误");
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "手机号码格式错误！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000)
+//                console.log("手机号码格式错误");
+//                $scope.subapp= {"toggle":true};
+//                $scope.submitWarning = "手机号码格式错误！";
+//                $timeout(function(){
+//                    $scope.subapp= {"toggle":false};
+//                },2000)
             }
 
             //$scope.regphone = /\\s/;
@@ -275,7 +275,7 @@ angular.module("app.demo.controllers",[])
                 $scope.submitdis = false;
                 $scope.submitBtnblue = true;
                 $scope.submitBtngrey = false;
-                $scope.submitWarning = "请您输入手机号！";
+                $scope.submitWarning = "请确认您的手机号！";
                 $scope.subapp= {"toggle":true};
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
@@ -1301,7 +1301,7 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else if(!vehiclebinddivicenum){
+            }else if(!vehiclenumvala){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请确认您的设备号！";
                 $timeout(function(){
@@ -1341,7 +1341,7 @@ angular.module("app.demo.controllers",[])
                 var vehiclebindObj = {
                     cp:Number(vehiclebindaccount),
                     //type:1,
-                    termId:Number(vehiclebinddivicenum),
+                    termId:Number(vehiclenumvala),
                     code:Number(vehiclebindverCodeContent)
 
                 }
@@ -1356,13 +1356,13 @@ angular.module("app.demo.controllers",[])
                     console.log(e);
                     if(e.status == true){
                         $window.sessionStorage.setItem("UUcp", Number(vehiclebindaccount));
-                        $window.sessionStorage.setItem("UtermId", vehiclebinddivicenum);
+                        $window.sessionStorage.setItem("UtermId", vehiclenumvala);
                         $scope.subapp= {"toggle":true};
                         $scope.submitWarning = "绑定设备成功！";
                         $timeout(function(){
                             $scope.subapp= {"toggle":false};
 
-                            $rootScope.mineusertermid = vehiclebinddivicenum;
+                            $rootScope.mineusertermid = vehiclenumvala;
 
 
                             //判断之前的页面是什么页面
@@ -1922,8 +1922,6 @@ angular.module("app.demo.controllers",[])
                                                     $scope.subapp= {"toggle":false};
                                                 },2000);
                                             })
-                                        }{
-                                            alert("云推送启动失败...")
                                         }
                                     });
                                 },500)

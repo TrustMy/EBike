@@ -15,6 +15,7 @@ import com.amap.api.services.route.WalkPath;
 import com.amap.api.services.route.WalkRouteResult;
 import com.phonegap.natives.gpstool.WalkRouteOverlay;
 import com.phonegap.natives.tool.L;
+import com.phonegap.natives.tool.ToastUtil;
 import com.phonegap.natives.tool.WaitPopopWindow;
 
 
@@ -77,30 +78,36 @@ public class GPSRoutePlanning  implements RouteSearch.OnRouteSearchListener{
     @Override
     public void onWalkRouteSearched(WalkRouteResult walkRouteResult, int i) {
 
-        Log.d("GPSRoutePlanning", "路径规划的结果 :"+i+"ss :"+walkRouteResult.toString());
-        WalkPath walkPath = walkRouteResult.getPaths().get(0);
+        Log.d("GPSRoutePlanning", "路径规划的结果 :"+i);
+       if (i == 3003) {
+            ToastUtil.showToast(context,"距离车辆位置过长!");
+        }else if(i ==3001)
+        {
+            ToastUtil.showToast(context,"附近搜不到路!");
+        }else if(i == 3002)
+        {
+            ToastUtil.showToast(context,"路线计算失败!");
+        }else if(i == 3000)
+        {
+            ToastUtil.showToast(context,"不在中国陆地范围内!");
+        }else
+        {
+            WalkPath walkPath = walkRouteResult.getPaths().get(0);
 
-        Log.d("GPSRoutePlanning", " Show WalkPath :" + walkPath);
-        WalkRouteOverlay walkRouteOverlay = new WalkRouteOverlay(context,
-                aMap, walkPath, walkRouteResult.getStartPos(),
-                walkRouteResult.getTargetPos());
-        walkRouteOverlay.removeFromMap();
-        walkRouteOverlay.addToMap();
-        walkRouteOverlay.zoomToSpan();
+            Log.d("GPSRoutePlanning", " Show WalkPath :" + walkPath);
+            WalkRouteOverlay walkRouteOverlay = new WalkRouteOverlay(context,
+                    aMap, walkPath, walkRouteResult.getStartPos(),
+                    walkRouteResult.getTargetPos());
+            walkRouteOverlay.removeFromMap();
+            walkRouteOverlay.addToMap();
+            walkRouteOverlay.zoomToSpan();
+        }
 
 
         if(popupWindow != null)
         {
             popupWindow.stopPopopWindow();
         }
-
-
-
-
-
-
-
-
 
     }
 

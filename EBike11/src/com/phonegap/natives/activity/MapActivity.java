@@ -860,6 +860,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
             mLocationClient.onDestroy();
         }
         aMap.clear();
+
+        unregisterReceiver(netChangReceiver);
+
+
     }
 
     @SuppressWarnings("ResourceType")
