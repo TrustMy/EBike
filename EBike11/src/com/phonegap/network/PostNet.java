@@ -19,6 +19,7 @@ import com.phonegap.natives.bean.CarGPSBean;
 import com.phonegap.natives.bean.CarLocationHistorical;
 import com.phonegap.natives.bean.CarStatusBean;
 import com.phonegap.natives.bean.Error;
+import com.phonegap.natives.bean.PushIdBean;
 import com.phonegap.natives.bean.TrackingBean;
 import com.phonegap.natives.locaction.GPSHistory;
 import com.phonegap.natives.tool.CoordinateTransformation;
@@ -26,6 +27,7 @@ import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.L;
 import com.phonegap.natives.tool.TimeTool;
 import com.phonegap.natives.tool.ToastUtil;
+import com.phonegap.natives.tool.push.PushTool;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -190,7 +192,30 @@ public class PostNet extends Handler {
                 handler.sendMessage(message);
                 break;
 
+            case EBikeConstant.PUSH_ID:
+                if(msg.arg1 == EBikeConstant.HTTP_SUCCESS)
+                {
+                    toPushId(msg,gson,EBikeConstant.PUSH_ID);
+                }else
+                {
+                    commitTimeOutHandler(EBikeConstant.PUSH_ID,(String) msg.obj);
+                }
+                break;
 
+        }
+    }
+
+    private void toPushId(Message msg, Gson gson, int type) {
+        PushIdBean pushBean = gson.fromJson((String)msg.obj,PushIdBean.class);
+        if (pushBean.getStatus()) {
+            Message message = new Message();
+            message.what = type;
+            message.obj = pushBean;
+            handler.sendMessage(message);
+        }else
+        {
+//返回错误信息
+            errorSend(type);
         }
     }
 

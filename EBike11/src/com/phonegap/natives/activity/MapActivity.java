@@ -1,6 +1,7 @@
 package com.phonegap.natives.activity;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.sax.StartElementListener;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -43,6 +45,7 @@ import com.amap.api.services.route.DriveRouteResult;
 import com.amap.api.services.route.RideRouteResult;
 import com.amap.api.services.route.RouteSearch;
 import com.amap.api.services.route.WalkRouteResult;
+import com.phonegap.ebike.BaseActivity;
 import com.phonegap.ebike.R;
 import com.phonegap.natives.bean.CarGPSBean;
 import com.phonegap.natives.bean.TestCheckBean;
@@ -69,6 +72,8 @@ import com.phonegap.natives.tool.TimeTest;
 import com.phonegap.natives.tool.TimeTool;
 import com.phonegap.natives.tool.ToastUtil;
 import com.phonegap.natives.tool.WaitPopopWindow;
+import com.phonegap.natives.tool.push.PushId;
+import com.phonegap.natives.tool.push.PushTool;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -81,7 +86,7 @@ import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
 
 
-public class MapActivity extends AppCompatActivity implements View.OnClickListener {
+public class MapActivity extends BaseActivity implements View.OnClickListener {
     private MapView mapView;
     private AMap aMap;
     private ImageButton alwaysSracking;
@@ -190,6 +195,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     private Reminder isNoShow;
 
 
+
     public List<LatLng> getCacheMAP() {
         return cacheMAP;
     }
@@ -204,6 +210,27 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
     public void setCacheGPS(List<LatLng> cacheGPS) {
         this.cacheGPS = cacheGPS;
+    }
+
+
+
+    private  void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("当前数据为基站数据,可能与实际位置有所偏差是否继续?");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setPositiveButton("继续", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private Handler handler = new Handler() {
@@ -569,17 +596,23 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     waitPopopWindow = new WaitPopopWindow();
                     waitPopopWindow.showPopopWindow(context, home);
 //                    checkCarStatus();
-                    startGPSTracking(30, EBikeConstant.OPEN_ALWAYS_TRACKING, 5);
+                    startCarLocation();
                     break;
 
                 case EBikeConstant.OPEN_ALWAYS_TRACKING:
                     L.i("OPEN_ALWAYS_TRACKING");
                     startCarLocation();
                     break;
+                case EBikeConstant.DIALOG:
+                    showDialog();
+                    break;
+
             }
 
         }
     };
+
+
 
     private void stopPopupWindow() {
         if (popopWindow != null) {
@@ -603,6 +636,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
 
         init();
+
+
 
 
         androidCheckVersion = new AndroidCheckVersion(context);
@@ -806,7 +841,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
-
+        PushTool.handler = handler;
         mapView.onResume();
 
 
@@ -997,8 +1032,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 case R.id.car_location:
                     followMeStatus = false;
                     popopWindow.showPopopWindow(context, mapView);
-                    startGPSTracking(30, EBikeConstant.OPEN_ALWAYS_TRACKING, 5);
-
+                    startCarLocation();
 
                     break;
 

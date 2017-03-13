@@ -1,16 +1,28 @@
 package com.phonegap.tools.natives;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.amap.api.maps.AMap;
 import com.google.gson.Gson;
 import com.phonegap.natives.activity.GPSHistoryActivity;
 import com.phonegap.natives.activity.MapActivity;
 import com.phonegap.natives.bean.GPSHistoryActivityBean;
 import com.phonegap.natives.bean.MapActivityBean;
+import com.phonegap.natives.bean.Push;
+import com.phonegap.natives.bean.PushIdBean;
+import com.phonegap.natives.httptool.PostHttpRequest;
+import com.phonegap.natives.httptool.PostRequest.PostRequestClasz;
 import com.phonegap.natives.tool.DeleterInterface;
+import com.phonegap.natives.tool.EBikeConstant;
+import com.phonegap.natives.tool.EBikeSever;
 import com.phonegap.natives.tool.L;
+import com.phonegap.natives.tool.NetWorkeAvailable;
+import com.phonegap.natives.tool.ToastUtil;
+import com.phonegap.natives.tool.push.PushId;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -24,7 +36,38 @@ public class Hub extends CordovaPlugin {
     private Gson gson ;
     private MapActivityBean mapActivityBean;
     private GPSHistoryActivityBean gpsHistoryActivityBean;
+    Push push;
+    NetWorkeAvailable netWorkeAvailable;
+    int num = 1;
+    private Handler handler = new Handler()
+    {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what)
+            {
+                case EBikeConstant.PUSH_ID:
+                    if(msg.arg1 == EBikeConstant.HTTP_SUCCESS)
+                    {
+                        L.i("PUSH_ID success");
+                    }else
+                    {
+                        L.i("PUSH_ID error!");
+                        num++;
+                        if(num < 4)
+                        {
+                            toPush();
 
+                        }else
+                        {
+                            L.i("PUSH_ID error! num  == "+num);
+                        }
+                    }
+                    break;
+            }
+        }
+    };
+
+    private PostHttpRequest postHttpRequest ;
     public Hub() {
     }
 
@@ -36,7 +79,7 @@ public class Hub extends CordovaPlugin {
     public boolean execute(String action, final JSONArray args,
                            final CallbackContext callbackContext) throws JSONException {
 
-
+        postHttpRequest = new PostHttpRequest(cordova.getActivity(),handler, null,null);
         if (action.equals("MapActivity")) {
 //            cordova.getThreadPool().execute(new Runnable() {
 //                @Override
@@ -103,10 +146,50 @@ public class Hub extends CordovaPlugin {
             cordova.getActivity().sendBroadcast(intent);
 
             L.i("Delete  Activity");
+        }else if(action.equals("Push"))
+        {
+            netWorkeAvailable = new NetWorkeAvailable();
+            gson = new Gson();
+            String token ;
+            String msg =  toStringJson(args);
+            push = gson.fromJson(msg,Push.class);
+            L.i("Push:"+msg);
+            if(PushId.ID != null)
+            {
+                if(!PushId.ID .equals(push.getPushId()))
+                {
+                    toPush();
+                }else
+                {
+                    L.i("pushId 相同");
+                }
+            }else
+            {
+               Toast.makeText(cordova.getActivity(), "报警通知初始化失败,请重新登录!", Toast.LENGTH_SHORT).show();
+            }
+
         }
         // 执行js传过来的success方法
         callbackContext.success();
         return true;
+    }
+
+    private void toPush() {
+        if(push != null)
+        {
+            if(checkIntent())
+            {
+                postHttpRequest.doPushId(EBikeSever.server_url+EBikeSever.server_push_url,push.getToken(), push.getUserPhone(),PushId.ID,3, EBikeConstant.PUSH_ID);
+
+            }else
+            {
+                Toast.makeText(cordova.getActivity(), "网络链接异常,请检查网络!", Toast.LENGTH_SHORT).show();
+            }
+
+        }else
+        {
+            L.i("toPush ==  null");
+        }
     }
 
 
@@ -133,4 +216,17 @@ public class Hub extends CordovaPlugin {
     public boolean execute(String action, String rawArgs, CallbackContext callbackContext) throws JSONException {
         return super.execute(action, rawArgs, callbackContext);
     }
+
+
+    private boolean checkIntent() {
+        netWorkeAvailable = new NetWorkeAvailable();
+//        netWorkeAvailable.isMobile(context);
+
+//        netWorkeAvailable.isWiFi(context);
+
+//        Log.d("MapActivity", "检查手机网络 : " + netWorkeAvailable.isMobile(context) + "|" + netWorkeAvailable.isNetworkAvailable(context) + "|" + netWorkeAvailable.isWiFi(context));
+        return netWorkeAvailable.isNetworkAvailable(cordova.getActivity());
+    }
+
+
 }

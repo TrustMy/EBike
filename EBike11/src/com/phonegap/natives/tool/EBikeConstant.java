@@ -46,5 +46,8 @@ public  class EBikeConstant {
 
     public static final int OPEN_ALWAYS_TRACKING = 14;
 
+    public static final int PUSH_ID = 15;
+
+    public static final int DIALOG = 16;
 
 }

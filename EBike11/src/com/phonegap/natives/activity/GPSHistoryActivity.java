@@ -28,6 +28,7 @@ import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
 import com.amap.api.trace.TraceOverlay;
 import com.google.gson.Gson;
+import com.phonegap.ebike.BaseActivity;
 import com.phonegap.ebike.R;
 import com.phonegap.natives.bean.CarLocationHistorical;
 import com.phonegap.natives.bean.TestBean;
@@ -58,7 +59,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.zip.GZIPOutputStream;
 
-public class GPSHistoryActivity extends Activity implements TraceListener {
+public class GPSHistoryActivity extends BaseActivity implements TraceListener {
     private MapView mapView;
     private AMap aMap;
     //定义一个过滤器；

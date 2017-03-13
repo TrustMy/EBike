@@ -30,6 +30,11 @@
          //                                    alert(succseeMsg);
                                          }, null, "Hub", "Delete", [message]);
                          },
+         toPush: function(message,length,mills) {
+                                exec(function(succseeMsg){ // 成功的回调方法
+                  //                                    alert(succseeMsg);
+                                          }, null, "Hub", "Push", [message]);
+                            },
 
 
     };

@@ -19,24 +19,34 @@
 
 package com.phonegap.ebike;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.android.pushservice.PushConstants;
+import com.baidu.android.pushservice.PushManager;
+import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.ErrorPopopWindow;
 import com.phonegap.natives.tool.WaitPopopWindow;
+import com.phonegap.natives.tool.push.PushTool;
+import com.phonegap.natives.tool.push.Utils;
 import com.phonegap.natives.tool.version.CheckVersionTask;
 
 import org.apache.cordova.*;
 
 import java.text.BreakIterator;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends CordovaActivity
 {
@@ -44,7 +54,9 @@ public class MainActivity extends CordovaActivity
     private Context context = MainActivity.this;
     RelativeLayout rl;
     private String localVersion;
-    private Handler handler = new Handler(){
+    public  static List<Activity> activityList = new ArrayList<Activity>();
+
+    public Handler handler = new Handler(){
 
         @Override
         public void handleMessage(Message msg) {
@@ -52,7 +64,28 @@ public class MainActivity extends CordovaActivity
            {
                case 1:
                    checkVersions();
+
                break;
+
+               case EBikeConstant.DIALOG:
+                   AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                   builder.setTitle("当前数据为基站数据,可能与实际位置有所偏差是否继续?");
+                   builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int which) {
+
+                       }
+                   });
+                   builder.setPositiveButton("继续", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int which) {
+
+                       }
+                   });
+                   AlertDialog dialog = builder.create();
+                   dialog.show();
+                   break;
+
            }
 
         }
@@ -83,6 +116,11 @@ public class MainActivity extends CordovaActivity
         popopWindow = new ErrorPopopWindow();
         handler.sendEmptyMessageDelayed(1, 2000);
 
+              PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY,
+                Utils.getMetaValue(MainActivity.this, "api_key"));
+
+        activityList.add(MainActivity.this);
+        PushTool.handler = handler;
     }
 
 
@@ -118,5 +156,11 @@ public class MainActivity extends CordovaActivity
                 0);
         return packInfo.versionName;
 
+    }
+
+    @Override
+    protected void onResume() {
+        PushTool.handler = handler;
+        super.onResume();
     }
 }

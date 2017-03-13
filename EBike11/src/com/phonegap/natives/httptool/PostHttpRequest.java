@@ -64,6 +64,13 @@ public class PostHttpRequest {
         doRequest(url, termId, token, type, json);
     }
 
+    public void doPushId(String url,String token,String phone,String pushid,int phoneType,int type)
+    {
+        String json = "{\"cp\":"+phone+",\"pushId\":\""+pushid+"\",\"phoneType\":"+phoneType+"}";
+        doRequest(url, "", token, type, json);
+    }
+
+
     // 获取车辆最近一次GPS数据
     public void doPostCheckCarLcation(String url, String termId ,String token, int type) throws IOException {
 

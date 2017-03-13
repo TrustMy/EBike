@@ -228,12 +228,12 @@ angular.module("app.demo.controllers",[])
                 //console.log("手机号码格式正确",uname);
                 console.log("成功")
             }else{
-//                console.log("手机号码格式错误");
-//                $scope.subapp= {"toggle":true};
-//                $scope.submitWarning = "手机号码格式错误！";
-//                $timeout(function(){
-//                    $scope.subapp= {"toggle":false};
-//                },2000)
+                //console.log("手机号码格式错误");
+                //$scope.subapp= {"toggle":true};
+                //$scope.submitWarning = "手机号码格式错误！";
+                //$timeout(function(){
+                //    $scope.subapp= {"toggle":false};
+                //},2000)
             }
 
             //$scope.regphone = /\\s/;
@@ -317,6 +317,8 @@ angular.module("app.demo.controllers",[])
                         pw: $.md5(upass)
 
                     };
+                    $scope.substarttimehs = new Date().getTime();
+                    console.log(333333,$scope.substarttimehs);
                     registerService.submits($scope.subObj).then(function(e){
                         $scope.subaccountdis = false;
                         $scope.subpassdis = false;
@@ -351,7 +353,10 @@ angular.module("app.demo.controllers",[])
                             //console.log($rootScope.alarmcount);
                             //
                             //iOS push regiser
-                        if($rootScope.phonetyperoot == 4){
+
+
+
+                            if($rootScope.phonetyperoot == 4){
                             mybridge.callHandler('loginsucessObjcCallback', {"termId":$window.sessionStorage.getItem("UtermId"),"seq":registerService.randomsix(),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken")}, function(response) {
                                 log('JS got response', response)
                             })
@@ -381,6 +386,9 @@ angular.module("app.demo.controllers",[])
                             //console.log(e.user);
 
                             //console.log($rootScope.mainUsercontent);
+                            navigator.intent.toPush(
+                                {"termId":$window.sessionStorage.getItem("UtermId"),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken"),"pushId": e.content.pushId}
+                            );
                             if ($scope.noRemember == false){
                                 //存储cookie
                                 registerService.setCookie("CookieUserName", uname);
@@ -415,6 +423,7 @@ angular.module("app.demo.controllers",[])
 
                         }
                     },function(err){
+                        $scope.subendtimehs = new Date().getTime();
                         $scope.subaccountdis = false;
                         $scope.subpassdis = false;
                         $scope.loadapp = {"toggle":false};
@@ -422,7 +431,13 @@ angular.module("app.demo.controllers",[])
                         $scope.submitBtnblue = true;
                         $scope.submitBtngrey = false;
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = "登录失败！";
+                        console.log(222222,$scope.subendtimehs);
+                        console.log(12222222,$scope.subendtimehs - $scope.substarttimehs);
+                        if($scope.subendtimehs - $scope.substarttimehs>=6500){
+                            $scope.submitWarning = "请求超时！";
+                        }else {
+                            $scope.submitWarning = "网络连接失败！";
+                        }
                         $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000)
@@ -545,6 +560,8 @@ angular.module("app.demo.controllers",[])
                 };
                 var verCodeUrl = "/register/applySmsCode/";
                 $scope.loadapp = {"toggle":true};
+                $scope.vercodestarttimehs = new Date().getTime();
+                console.log("请求开始时间："+$scope.vercodestarttimehs);
                 registerService.commonUser(verCodeObj,verCodeUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     //当status正确的时候，
@@ -575,10 +592,19 @@ angular.module("app.demo.controllers",[])
                     }
 
                 },function(err){
+                    $scope.vercodeendtimehs = new Date().getTime();
+                    console.log("请求结束时间："+$scope.vercodeendtimehs);
+
                     $scope.loadapp = {"toggle":false};
                     $scope.verCodedis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    console.log("请求时间差："+$scope.vercodeendtimehs - $scope.vercodestarttimehs);
+                    if($scope.vercodeendtimehs - $scope.vercodestarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -676,7 +702,8 @@ angular.module("app.demo.controllers",[])
                     cp:Number(regaccount),
                     code:Number(searchPverCodeContent),
                     pwd:$.md5(searchPnewpassm)
-                }
+                };
+                $scope.searchpstarttimehs = new Date().getTime();
                 registerService.confirmvercodes($scope.searchPobj).then(function(e){
                     console.log(e);
                     $scope.searchpaccountdis = false;
@@ -708,6 +735,7 @@ angular.module("app.demo.controllers",[])
                         },2000);
                     }
                 },function(err){
+                    $scope.searchpendtimehs = new Date().getTime();
                     $scope.searchpaccountdis = false;
                     $scope.searchpvercodedis = false;
                     $scope.searchPnewdis= false;
@@ -715,7 +743,13 @@ angular.module("app.demo.controllers",[])
                     $scope.loadapp = {"toggle":false};
                     $scope.searchvercodedis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+
+                    console.log("请求时间差："+$scope.searchpendtimehs - $scope.searchpstarttimehs);
+                    if($scope.searchpendtimehs - $scope.searchpstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -831,7 +865,9 @@ angular.module("app.demo.controllers",[])
     //注册
     .controller("registercontroller",function($scope,$rootScope,$state,registerService,$interval,$timeout){
         //背景的高度
-
+        $scope.searchPassBackBtn = function(){
+            window.history.go(-1);
+        };
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
@@ -973,6 +1009,7 @@ angular.module("app.demo.controllers",[])
                 };
                 var verCodeUrl = "/register/applySmsCode/";
                 $scope.loadapp = {"toggle":true};
+                $scope.vercodestarttimehs = new Date().getTime();
                 registerService.commonUser(verCodeObj,verCodeUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     //当status正确的时候，
@@ -1006,7 +1043,13 @@ angular.module("app.demo.controllers",[])
                     $scope.loadapp = {"toggle":false};
                     $scope.verCodedis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.vercodeendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.vercodeendtimehs - $scope.vercodestarttimehs);
+                    if($scope.vercodeendtimehs - $scope.vercodestarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -1087,6 +1130,7 @@ angular.module("app.demo.controllers",[])
                     code:Number(regverCode),
                     email:regemail
                 };
+                $scope.regstarttimehs = new Date().getTime();
                 registerService.registers($scope.regObj).then(function(e){
                     $scope.regaccountdis = false;
                     $scope.regpassdis = false;
@@ -1121,7 +1165,14 @@ angular.module("app.demo.controllers",[])
                     $scope.loadapp = {"toggle":false};
                     $scope.registerdis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.regendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.regendtimehs - $scope.regstarttimehs);
+                    if($scope.regendtimehs - $scope.regstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -1247,6 +1298,7 @@ angular.module("app.demo.controllers",[])
                 };
                 var verCodeUrl = "/register/applySmsCode/";
                 $scope.loadapp = {"toggle":true};
+                $scope.vercodestarttimehs = new Date().getTime();
                 registerService.commonUser(verCodeObj,verCodeUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     //当status正确的时候，
@@ -1279,7 +1331,14 @@ angular.module("app.demo.controllers",[])
                     $scope.loadapp = {"toggle":false};
                     $scope.bindverCodedis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.vercodeendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.vercodeendtimehs - $scope.vercodestarttimehs);
+                    if($scope.vercodeendtimehs - $scope.vercodestarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -1347,6 +1406,7 @@ angular.module("app.demo.controllers",[])
                 }
                 var vehiclebindUrl = "/rest/user/bind/";
                 $scope.loadapp = {"toggle":true};
+                $scope.vehiclebindstarttimehs = new Date().getTime();
                 registerService.commonUser(vehiclebindObj,vehiclebindUrl).then(function(e){
                     $scope.bindphonedis = false;
                     $scope.bindvehiclenumdis = false;
@@ -1393,7 +1453,14 @@ angular.module("app.demo.controllers",[])
                     $scope.bindvercodedis = false;
                     $scope.loadapp = {"toggle":false};
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.vehiclebindendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.vehiclebindendtimehs - $scope.vehiclebindstarttimehs);
+                    if($scope.vehiclebindendtimehs - $scope.vehiclebindstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -1589,6 +1656,7 @@ angular.module("app.demo.controllers",[])
             $scope.timesfortiload = $timeout(function(){
                 $scope.loadapp = {"toggle":false};
             },3000);
+            $scope.carstartusbellstarttimehs = new Date().getTime();
             registerService.commonUser($scope.carstatusbellObj,$scope.carstatusbellUrl).then(function(e){
                 $scope.loadapp = {"toggle":false};
                 $scope.fortificationdis = false;
@@ -1644,7 +1712,14 @@ angular.module("app.demo.controllers",[])
                 $scope.fortificationdis = false;
                 $scope.orFortification = "点击获取";
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
+                $scope.carstartusbellendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs);
+                if($scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
                 $scope.timersferrload = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
@@ -1670,6 +1745,7 @@ angular.module("app.demo.controllers",[])
                 }
                 $scope.vehiclesoperationUrl = "/rest/cmd/lock/";
                 $scope.loadapp = {"toggle":true};
+                $scope.vehiclesoperationstarttimehs = new Date().getTime();
                 registerService.commonUser($scope.vehiclesoperationObj,$scope.vehiclesoperationUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     $scope.fortificationdis = false;
@@ -1718,7 +1794,14 @@ angular.module("app.demo.controllers",[])
                     $scope.colorfffNo=false ;
                     $scope.coloryyyNo = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.vehiclesoperationendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs);
+                    if($scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $scope.timenoerrtime = $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -1737,6 +1820,7 @@ angular.module("app.demo.controllers",[])
                 }
                 $scope.vehiclesoperationUrl = "/rest/cmd/lock/";
                 $scope.loadapp = {"toggle":true};
+                $scope.vehiclesoperationstarttimehs = new Date().getTime();
                 registerService.commonUser($scope.vehiclesoperationObj,$scope.vehiclesoperationUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     console.log(e);
@@ -1784,7 +1868,14 @@ angular.module("app.demo.controllers",[])
                     $scope.colorfffNo= true;
                     $scope.coloryyyNo = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.vehiclesoperationendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs);
+                    if($scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $scope.ftimeerrtime = $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -1845,147 +1936,165 @@ angular.module("app.demo.controllers",[])
             $rootScope.coloryyy6 =true ;
         };
         $rootScope.baidupushNum = 0;
-        $scope.messagepush = function(){
-            console.log("run here?")
-            document.addEventListener('deviceready', function () {
-                if(window.baidupush){
-                    // alert(3);
-                    try {
-                        console.log("pushID here2")
-                        var baidupushFlag = false;
-                        window.baidupush.startWork("8ulOPgOAf03mhcRTr8Yq0HUY", function(info){
-                            //success callback
-                            //your code here
-                            // alert(4);
-                            // alert("startWork:" + JSON.stringify(info));
-//                            console.log("pushID startwork")
-                            baidupushFlag = true
-                            if(info.data.errorCode == 0){
-                                var pushinfoObj = {
-                                    cp:Number($window.sessionStorage.getItem("Ucp")),
-                                    pushId:info.data.channelId+"",
-                                    phoneType:Number(info.data.deviceType)
-                                    //channelid:3795525986954054108,
-                                    //type:3
-                                };
-                                var pushinfoUrl = "/rest/user/registerPushId/";
-                                registerService.commonUser(pushinfoObj,pushinfoUrl).then(function(e){
-                                    console.log(e);
-                                    if(e.status==true){
-                                    }else{
-                                        $scope.subapp= {"toggle":true};
-                                        $scope.submitWarning = e.err+"！";
-                                        $scope.timedontknowreason = $timeout(function(){
-                                            $scope.subapp= {"toggle":false};
-                                        },2000);
-                                    }
-                                },function(err){
-                                    $scope.subapp= {"toggle":true};
-                                    $scope.submitWarning = "网络连接失败！";
-                                    $scope.timedontkonwerr = $timeout(function(){
-                                        $scope.subapp= {"toggle":false};
-                                    },2000);
-                                })
-                            }
-                        });
-                        //解决第一次安装app初次登陆没有绑定的bug
-                        $timeout(function(){
-                        console.log("pushID timeout:"+baidupushFlag)
-                        if (!baidupushFlag){
-                                $timeout(function(){
-                                    window.baidupush.startWork("8ulOPgOAf03mhcRTr8Yq0HUY", function(info){
-                                        baidupushFlag = true
-                                        if(info.data.errorCode == 0){
-                                            var pushinfoObj = {
-                                                cp:Number($window.sessionStorage.getItem("Ucp")),
-                                                pushId:info.data.channelId+"",
-                                                phoneType:Number(info.data.deviceType)
-                                                //channelid:3795525986954054108,
-                                                //type:3
-                                            };
-                                            console.log("pushID:"+pushinfoObj.pushId)
-                                            var pushinfoUrl = "/rest/user/registerPushId/";
-                                            registerService.commonUser(pushinfoObj,pushinfoUrl).then(function(e){
-                                                console.log(e);
-                                                if(e.status==true){
-                                                }else{
-                                                    $scope.subapp= {"toggle":true};
-                                                    $scope.submitWarning = e.err+"！";
-                                                    $scope.timedontknowreason = $timeout(function(){
-                                                        $scope.subapp= {"toggle":false};
-                                                    },2000);
-                                                }
-                                            },function(err){
-                                                $scope.subapp= {"toggle":true};
-                                                $scope.submitWarning = "网络连接失败！";
-                                                $scope.timedontkonwerr = $timeout(function(){
-                                                    $scope.subapp= {"toggle":false};
-                                                },2000);
-                                            })
-                                        }
-                                    });
-                                },500)
-                        }
-                        },3000)
-
-                        //Resume work, re-bind the ids
-                         window.baidupush.resumeWork(function(info){
-                             //your code here
-                             console.log("pushID resume");
-                             //alert("resumeWork:" + JSON.stringify(info));
-                         });
-                        window.baidupush.listenMessage(function(info){
-                            //your code here
-                            //channelid接口
-                            //alert("listenMessage:"+ JSON.stringify(info));
-                        });
-                        //Listen notification arrived event, when a notification arrived, the callback function will be called
-                        window.baidupush.listenNotificationArrived(function(info){
-                            if(0<=$rootScope.alarmcount && $rootScope.alarmcount<=98){
-                                $rootScope.alarmcount = Number($rootScope.alarmcount);
-                                $rootScope.alarmcount++;
-                            }else if($rootScope.alarmcount>=99) {
-                                $rootScope.alarmcount = "99+";
-                            }
-
-                            $rootScope.alarmiconcountnone= false;
-                            //your code here
-                            //alert("listenNotificationArrived:" + JSON.stringify(info));
-                        });
-
-                        //Listen notification clicked event, when a notification is clicked, the callback function will be called
-                        window.baidupush.listenNotificationClicked(function(info){
-//                            alert("通知点击了:"+info)
-
-                                if($rootScope.baidupushNum>0){
-                                    navigator.intent.toDelete({"pushclick":true});
-                                    $state.go("mains.home.alarmRecord")
-                                }
-                                $rootScope.baidupushNum++;  //用于防止第一次进入时执行点击事件
-                            //your code here
-                            //alert("listenNotificationClicked:" + JSON.stringify(info));
-                        });
-                    }catch (err){
-                        console.log(err.message);
-                        alert("云推送启动失败...")
-                    }
-
-                }else{
-                    alert("推送启动失败..");
-                }
-                //Start work, bind the ids
-                //Only for android
-                //Listen message arrived event, when a message arrived, the callback function will be called
-            }, false);
-            $rootScope.pushyesorno = false;
-        };
+//        $scope.messagepush = function(){
+//            console.log("run here?");
+//            document.addEventListener('deviceready', function () {
+//                if(window.baidupush){
+//                    // alert(3);
+//                    try {
+//                        console.log("pushID here2");
+//                        var baidupushFlag = false;
+//                        window.baidupush.startWork("8ulOPgOAf03mhcRTr8Yq0HUY", function(info){
+//                            //success callback
+//                            //your code here
+//                            // alert(4);
+//                            // alert("startWork:" + JSON.stringify(info));
+////                            console.log("pushID startwork")
+//                            baidupushFlag = true
+//                            if(info.data.errorCode == 0){
+//                                var pushinfoObj = {
+//                                    cp:Number($window.sessionStorage.getItem("Ucp")),
+//                                    pushId:info.data.channelId+"",
+//                                    phoneType:Number(info.data.deviceType)
+//                                    //channelid:3795525986954054108,
+//                                    //type:3
+//                                };
+//                                var pushinfoUrl = "/rest/user/registerPushId/";
+//                                $scope.pushinfostarttimehs = new Date().getTime();
+//                                registerService.commonUser(pushinfoObj,pushinfoUrl).then(function(e){
+//                                    console.log(e);
+//                                    if(e.status==true){
+//                                    }else{
+//                                        $scope.subapp= {"toggle":true};
+//                                        $scope.submitWarning = e.err+"！";
+//                                        $scope.timedontknowreason = $timeout(function(){
+//                                            $scope.subapp= {"toggle":false};
+//                                        },2000);
+//                                    }
+//                                },function(err){
+//                                    $scope.subapp= {"toggle":true};
+//                                    $scope.pushinfoendtimehs = new Date().getTime();
+//                                    console.log("请求时间差："+$scope.pushinfoendtimehs - $scope.pushinfostarttimehs);
+//                                    if($scope.pushinfoendtimehs - $scope.pushinfostarttimehs>=6500){
+//                                        $scope.submitWarning = "请求超时！";
+//                                    }else {
+//                                        $scope.submitWarning = "网络连接失败！";
+//                                    }
+//                                    //$scope.submitWarning = "网络连接失败！";
+//                                    $scope.timedontkonwerr = $timeout(function(){
+//                                        $scope.subapp= {"toggle":false};
+//                                    },2000);
+//                                })
+//                            }
+//                        });
+//                        //解决第一次安装app初次登陆没有绑定的bug
+//                        $timeout(function(){
+//                        console.log("pushID timeout:"+baidupushFlag)
+//                        if (!baidupushFlag){
+//                                $timeout(function(){
+//                                    window.baidupush.startWork("8ulOPgOAf03mhcRTr8Yq0HUY", function(info){
+//                                        baidupushFlag = true
+//                                        if(info.data.errorCode == 0){
+//                                            var pushinfoObj = {
+//                                                cp:Number($window.sessionStorage.getItem("Ucp")),
+//                                                pushId:info.data.channelId+"",
+//                                                phoneType:Number(info.data.deviceType)
+//                                                //channelid:3795525986954054108,
+//                                                //type:3
+//                                            };
+//                                            console.log("pushID:"+pushinfoObj.pushId)
+//                                            var pushinfoUrl = "/rest/user/registerPushId/";
+//                                            $scope.pushinfostarttimehs = new Date().getTime();
+//                                            registerService.commonUser(pushinfoObj,pushinfoUrl).then(function(e){
+//                                                console.log(e);
+//                                                if(e.status==true){
+//                                                }else{
+//                                                    $scope.subapp= {"toggle":true};
+//                                                    $scope.submitWarning = e.err+"！";
+//                                                    $scope.timedontknowreason = $timeout(function(){
+//                                                        $scope.subapp= {"toggle":false};
+//                                                    },2000);
+//                                                }
+//                                            },function(err){
+//                                                $scope.subapp= {"toggle":true};
+//                                                $scope.pushinfoendtimehs = new Date().getTime();
+//                                                console.log("请求时间差："+$scope.pushinfoendtimehs - $scope.pushinfostarttimehs);
+//                                                if($scope.pushinfoendtimehs - $scope.pushinfostarttimehs>=6500){
+//                                                    $scope.submitWarning = "请求超时！";
+//                                                }else {
+//                                                    $scope.submitWarning = "网络连接失败！";
+//                                                }
+//                                                //$scope.submitWarning = "网络连接失败！";
+//                                                $scope.timedontkonwerr = $timeout(function(){
+//                                                    $scope.subapp= {"toggle":false};
+//                                                },2000);
+//                                            })
+//                                        }{
+//                                            alert("云推送启动失败...")
+//                                        }
+//                                    });
+//                                },500)
+//                        }
+//                        },3000)
+//
+//                        //Resume work, re-bind the ids
+//                         window.baidupush.resumeWork(function(info){
+//                             //your code here
+//                             console.log("pushID resume");
+//                             //alert("resumeWork:" + JSON.stringify(info));
+//                         });
+//                        window.baidupush.listenMessage(function(info){
+//                            //your code here
+//                            //channelid接口
+//                            //alert("listenMessage:"+ JSON.stringify(info));
+//                        });
+//                        //Listen notification arrived event, when a notification arrived, the callback function will be called
+//                        window.baidupush.listenNotificationArrived(function(info){
+//                            if(0<=$rootScope.alarmcount && $rootScope.alarmcount<=98){
+//                                $rootScope.alarmcount = Number($rootScope.alarmcount);
+//                                $rootScope.alarmcount++;
+//                            }else if($rootScope.alarmcount>=99) {
+//                                $rootScope.alarmcount = "99+";
+//                            }
+//
+//                            $rootScope.alarmiconcountnone= false;
+//                            //your code here
+//                            //alert("listenNotificationArrived:" + JSON.stringify(info));
+//                        });
+//
+//                        //Listen notification clicked event, when a notification is clicked, the callback function will be called
+//                        window.baidupush.listenNotificationClicked(function(info){
+////                            alert("通知点击了:"+info)
+//
+//                                if($rootScope.baidupushNum>0){
+//                                    navigator.intent.toDelete({"pushclick":true});
+//                                    $state.go("mains.home.alarmRecord")
+//                                }
+//                                $rootScope.baidupushNum++;  //用于防止第一次进入时执行点击事件
+//                            //your code here
+//                            //alert("listenNotificationClicked:" + JSON.stringify(info));
+//                        });
+//                    }catch (err){
+//                        console.log(err.message);
+//                        alert("云推送启动失败...")
+//                    }
+//
+//                }else{
+//                    alert("推送启动失败..");
+//                }
+//                //Start work, bind the ids
+//                //Only for android
+//                //Listen message arrived event, when a message arrived, the callback function will be called
+//            }, false);
+//            $rootScope.pushyesorno = false;
+//        };
         // console.log("看看推送的值:"+$rootScope.pushyesorno);
-        if($rootScope.pushyesorno){
-            $scope.timersmessagetime = $timeout(function(){
-            console.log("pushID here")
-                $scope.messagepush();
-            },500);
-        };
+        //if($rootScope.pushyesorno){
+        //    $scope.timersmessagetime = $timeout(function(){
+        //    console.log("pushID here")
+        //        $scope.messagepush();
+        //    },500);
+        //};
         $scope.weathertodayday = registerService.weatherdate();
         $scope.weatherpif = false;
     })
@@ -2149,6 +2258,7 @@ angular.module("app.demo.controllers",[])
             //},1);
             $scope.todayandloaddis = true; //继续加载不可点击
             $scope.loadapp = {"toggle":true};
+            $scope.todaytripstarttimehs = new Date().getTime();
             registerService.commonUser($scope.todaytripObj,$scope.todaytripUrl).then(function(e){
                 $scope.timersloadapp = $timeout(function(){
                     $scope.loadapp = {"toggle":false};
@@ -2654,10 +2764,10 @@ angular.module("app.demo.controllers",[])
                             $scope.clickandaddloadstoday =false ;//点击继续加载
                         }
                         $scope.todayandloaddis = false; //继续加载可点击
-                        $rootScope.subapp= {"toggle":true};
-                        $rootScope.submitWarning = e.err+"！";
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
                         $scope.timersstodayerrson = $timeout(function(){
-                            $rootScope.subapp= {"toggle":false};
+                            $scope.subapp= {"toggle":false};
                         },2000);
                     }
                 },500);
@@ -2678,10 +2788,17 @@ angular.module("app.demo.controllers",[])
 
                 $scope.todayandloaddis = false; //继续加载可点击
                 $scope.loadapp = {"toggle":false};
-                $rootScope.subapp= {"toggle":true};
-                $rootScope.submitWarning = "网络连接失败！";
+                $scope.subapp= {"toggle":true};
+                $scope.todaytripendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.todaytripendtimehs - $scope.todaytripstarttimehs);
+                if($scope.todaytripendtimehs - $scope.todaytripstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$rootScope.submitWarning = "网络连接失败！";
                 $scope.timeerrtodayapp = $timeout(function(){
-                    $rootScope.subapp= {"toggle":false};
+                    $scope.subapp= {"toggle":false};
                 },2000);
             });
         };
@@ -2794,6 +2911,7 @@ angular.module("app.demo.controllers",[])
             $scope.loadapp = {"toggle":true};
             var j = 0;
             console.log($scope.ajaxstarttime,$scope.ajaxendtime);
+            $scope.lasttripstarttimehs = new Date().getTime();
             registerService.commonUser($scope.lasttripObj,$scope.lasttripUrl).then(function(e){
                 $scope.timerrlastloadtime = $timeout(function(){
                     $scope.loadapp = {"toggle":false};
@@ -3560,7 +3678,14 @@ angular.module("app.demo.controllers",[])
             },function(err){
                 $scope.loadapp = {"toggle":false};
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
+                $scope.lasttripendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.lasttripendtimehs - $scope.lasttripstarttimehs);
+                if($scope.lasttripendtimehs - $scope.lasttripstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
                 $scope.timerrlasterrtime = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
@@ -3997,6 +4122,7 @@ angular.module("app.demo.controllers",[])
             $scope.loadapp = {"toggle":true};
             var j = 0;
             console.log($scope.ajaxstarttime,$scope.ajaxendtime);
+            $scope.lasttripstarttimehs = new Date().getTime();
             registerService.commonUser($scope.lasttripObj,$scope.lasttripUrl).then(function(e){
                 $scope.timerrlastloadtime = $timeout(function(){
                     $scope.loadapp = {"toggle":false};
@@ -4632,7 +4758,14 @@ angular.module("app.demo.controllers",[])
             },function(err){
                 $scope.loadapp = {"toggle":false};
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
+                $scope.lasttripendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.lasttripendtimehs - $scope.lasttripstarttimehs);
+                if($scope.lasttripendtimehs - $scope.lasttripstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
                 $scope.timerrlasterrtime = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
@@ -4829,6 +4962,7 @@ angular.module("app.demo.controllers",[])
             };
             var allstatusalarmUrl = "/rest/alarms/updateAll/";
             $scope.loadapp = {"toggle":true};
+            $scope.allstatusalarmstarttimehs = new Date().getTime();
             registerService.commonUser(allstatusalarmobj,allstatusalarmUrl).then(function(e){
 
                 $scope.allstatusalarmdis=false ;
@@ -4864,7 +4998,14 @@ angular.module("app.demo.controllers",[])
                 $scope.allstatusalarmdis=false ;
                 $scope.allalarmblur = true;
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
+                $scope.allstatusalarmendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.allstatusalarmendtimehs - $scope.allstatusalarmstarttimehs);
+                if($scope.allstatusalarmendtimehs - $scope.allstatusalarmstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
                 $scope.timealarmtimeerr = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
@@ -4880,6 +5021,7 @@ angular.module("app.demo.controllers",[])
             };
             var allstatusalarmUrl = "/rest/alarms/updateAll/";
             $scope.loadapp = {"toggle":true};
+            $scope.allstatusalarmstarttimehs = new Date().getTime();
             registerService.commonUser(allstatusalarmobj,allstatusalarmUrl).then(function(e){
 
                 $scope.allnostatusalarmdis=false ;
@@ -4915,7 +5057,14 @@ angular.module("app.demo.controllers",[])
                 $scope.allnostatusalarmdis=false ;
                 $scope.allnoalarmblur = true;
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
+                $scope.allstatusalarmendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.allstatusalarmendtimehs - $scope.allstatusalarmstarttimehs);
+                if($scope.allstatusalarmendtimehs - $scope.allstatusalarmstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
                 $scope.timealarmtimeerr = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
@@ -4949,6 +5098,7 @@ angular.module("app.demo.controllers",[])
             $scope.alarmloadtimeout = $timeout(function(){
                 $scope.loadapp = {"toggle":false};
             },10000);
+            $scope.alarmfirstarttimehs = new Date().getTime();
             registerService.commonUser($scope.alarmfirObj,$scope.alarmUrl).then(function(e){
 
                 $scope.alarmloadtimeoutzhege = $timeout(function(){
@@ -5127,7 +5277,14 @@ angular.module("app.demo.controllers",[])
                 $scope.alarmandloaddis = false;//继续加载可以点击
                 $scope.loadapp = {"toggle":false};
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
+                $scope.alarmfirendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.alarmfirendtimehs - $scope.alarmfirstarttimehs);
+                if($scope.alarmfirendtimehs - $scope.alarmfirstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
                 $scope.timealarmtimeerr = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
@@ -5257,6 +5414,7 @@ angular.module("app.demo.controllers",[])
             };
            //$scope.alarminit();
             $scope.loadapp = {"toggle":true};
+            $scope.alarmfirstarttimehs = new Date().getTime();
             registerService.commonUser($scope.alarmfirObj,$scope.alarmUrl).then(function(e){
                 $scope.timeandloadalarmtime = $timeout(function(){
                     $scope.loadapp = {"toggle":false};
@@ -5437,7 +5595,14 @@ angular.module("app.demo.controllers",[])
                 $scope.alarmandloaddis = false;//继续加载可以点击
                 $scope.loadapp = {"toggle":false};
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
+                $scope.alarmfirendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.alarmfirendtimehs - $scope.alarmfirstarttimehs);
+                if($scope.alarmfirendtimehs - $scope.alarmfirstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
                 $scope.timealarmwhereerr = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
@@ -5727,6 +5892,7 @@ angular.module("app.demo.controllers",[])
                 };
                 var searchpassUrl = "/rest/user/resetPwd/";
                 $scope.loadapp = {"toggle":true};
+                $scope.searchpassstarttimehs = new Date().getTime();
                 registerService.commonUser(searchpassObj,searchpassUrl).then(function(e){
                     $scope.changepassoldcontentdis = false;
                     $scope.changepassnewcontentdis = false;
@@ -5754,7 +5920,14 @@ angular.module("app.demo.controllers",[])
                     $scope.loadapp = {"toggle":false};
                     $scope.changepasspdis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.searchpassendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.searchpassendtimehs - $scope.searchpassstarttimehs);
+                    if($scope.searchpassendtimehs - $scope.searchpassstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -5813,6 +5986,7 @@ angular.module("app.demo.controllers",[])
                 //$http
                 //修改成功昵称，$rootScope.mineusernick =  e.user.nickName;赋值
                 $scope.loadapp = {"toggle":true};
+                $scope.changeNstarttimehs = new Date().getTime();
                 registerService.commonUser(changeNObj,changeNUrl).then(function(e){
                     $scope.changenicknewdis = false;
                     $scope.loadapp = {"toggle":false};
@@ -5837,7 +6011,14 @@ angular.module("app.demo.controllers",[])
                     $scope.loadapp = {"toggle":false};
                     $scope.changenickdis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.changeNendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.changeNendtimehs - $scope.changeNstarttimehs);
+                    if($scope.changeNendtimehs - $scope.changeNstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -5899,6 +6080,7 @@ angular.module("app.demo.controllers",[])
                 };
                 var unbundverCodeUrl = "/register/applySmsCode/";
                 $scope.loadapp = {"toggle":true};
+                $scope.unbundverCodestarttimehs = new Date().getTime();
                 registerService.commonUser(unbundverCodeObj,unbundverCodeUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     //当status正确的时候，
@@ -5931,7 +6113,14 @@ angular.module("app.demo.controllers",[])
                     $scope.loadapp = {"toggle":false};
                     $scope.unbundverCodedis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.unbundverCodeendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.unbundverCodeendtimehs - $scope.unbundverCodestarttimehs);
+                    if($scope.unbundverCodeendtimehs - $scope.unbundverCodestarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -5980,6 +6169,7 @@ angular.module("app.demo.controllers",[])
                 };
                 var undundlingyesUrl = "/rest/user/unBind/";
                 $scope.loadapp = {"toggle":true};
+                $scope.undundingyesstarttimehs = new Date().getTime();
                 registerService.commonUser(undundingyesObj,undundlingyesUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     $scope.unbundlingdis = false;
@@ -6001,7 +6191,14 @@ angular.module("app.demo.controllers",[])
                     $scope.loadapp = {"toggle":false};
                     $scope.unbundlingdis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.undundingyesendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.undundingyesendtimehs - $scope.undundingyesstarttimehs);
+                    if($scope.undundingyesendtimehs - $scope.undundingyesstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -6064,6 +6261,7 @@ angular.module("app.demo.controllers",[])
                 };
                 var unbundverCodeUrl = "/register/applySmsCode/";
                 $scope.loadapp = {"toggle":true};
+                $scope.unbundverCodestarttimehs = new Date().getTime();
                 registerService.commonUser(unbundverCodeObj,unbundverCodeUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     //当status正确的时候，
@@ -6096,7 +6294,14 @@ angular.module("app.demo.controllers",[])
                     $scope.loadapp = {"toggle":false};
                     $scope.unbundverCodedis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.unbundverCodeendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.unbundverCodeendtimehs - $scope.unbundverCodestarttimehs);
+                    if($scope.unbundverCodeendtimehs - $scope.unbundverCodestarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -6153,6 +6358,7 @@ angular.module("app.demo.controllers",[])
                 };
                 var changeiphoneUrl = "";
                 $scope.loadapp = {"toggle":true};
+                $scope.unbundverCodestarttimehs = new Date().getTime();
                 registerService.commonUser(unbundverCodeObj,unbundverCodeUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     $scope.changeiphoneyesbtndis = false;
@@ -6174,7 +6380,14 @@ angular.module("app.demo.controllers",[])
                     $scope.loadapp = {"toggle":false};
                     $scope.changeiphoneyesbtndis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.unbundverCodeendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.unbundverCodeendtimehs - $scope.unbundverCodestarttimehs);
+                    if($scope.unbundverCodeendtimehs - $scope.unbundverCodestarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
