@@ -15,6 +15,7 @@ import com.phonegap.ebike.MainActivity;
 import com.phonegap.ebike.R;
 import com.phonegap.natives.activity.GPSHistoryActivity;
 import com.phonegap.natives.activity.MapActivity;
+import com.phonegap.natives.bean.DialogBean;
 import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.L;
 import com.phonegap.natives.tool.ToastUtil;
@@ -68,22 +69,28 @@ public class PushTool extends PushMessageReceiver {
 
     @Override
     public void onMessage(Context context, String s, String s1) {
-        L.i("onMessage");
+        L.i("onMessage"+s+"\n:ss"+s+"\ns1:"+s1);
     }
 
     @Override
     public void onNotificationClicked(Context context, String s, String s1, String s2) {
         L.i("onNotificationClicked");
-        Toast.makeText(context, "onNotificationClicked", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, "onNotificationClicked", Toast.LENGTH_SHORT).show();
+        Message message = new Message();
+        message.what = EBikeConstant.DIALOG;
+
+        DialogBean dialogBean =   new DialogBean();
+        dialogBean.setTitle(s);
+        dialogBean.setMsg(s1);
+        message.obj =dialogBean;
+        handler.sendMessage(message);
     }
 
     @Override
     public void onNotificationArrived(Context context, String s, String s1, String s2) {
-        L.i("onNotificationArrived"+handler);
-        Toast.makeText(context, "onNotificationArrived", Toast.LENGTH_SHORT).show();
-        Message message = new Message();
-        message.what = EBikeConstant.DIALOG;
-        handler.sendMessage(message);
+        L.i("onNotificationArrived"+s+"|\ns1 \n"+s1+"|\ns2"+s2);
+//        Toast.makeText(context, "onNotificationArrived", Toast.LENGTH_SHORT).show();
+
 
     }
 }

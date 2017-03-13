@@ -48,6 +48,7 @@ import com.amap.api.services.route.WalkRouteResult;
 import com.phonegap.ebike.BaseActivity;
 import com.phonegap.ebike.R;
 import com.phonegap.natives.bean.CarGPSBean;
+import com.phonegap.natives.bean.DialogBean;
 import com.phonegap.natives.bean.TestCheckBean;
 import com.phonegap.natives.httptool.GetHttpRequest;
 import com.phonegap.natives.httptool.GetRequest.GetRequestClasz;
@@ -72,6 +73,7 @@ import com.phonegap.natives.tool.TimeTest;
 import com.phonegap.natives.tool.TimeTool;
 import com.phonegap.natives.tool.ToastUtil;
 import com.phonegap.natives.tool.WaitPopopWindow;
+import com.phonegap.natives.tool.dialog.DialogTool;
 import com.phonegap.natives.tool.push.PushId;
 import com.phonegap.natives.tool.push.PushTool;
 
@@ -214,24 +216,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
 
 
-    private  void showDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("当前数据为基站数据,可能与实际位置有所偏差是否继续?");
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
 
-            }
-        });
-        builder.setPositiveButton("继续", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
 
     private Handler handler = new Handler() {
         @Override
@@ -380,7 +365,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                                             timeTest = new TimeTest(0, context, handler);
                                             timeTest.startTime();
 
-                                            isNoShow =  new Reminder(300,context,handler,10);
+                                            isNoShow =  new Reminder(30,context,handler,10);
                                             isNoShow.startReminder();
 
 
@@ -604,7 +589,8 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                     startCarLocation();
                     break;
                 case EBikeConstant.DIALOG:
-                    showDialog();
+                    DialogBean dialogBean = (DialogBean) msg.obj;
+                    DialogTool.showDialog(context,dialogBean.getTitle(),dialogBean.getMsg());
                     break;
 
             }

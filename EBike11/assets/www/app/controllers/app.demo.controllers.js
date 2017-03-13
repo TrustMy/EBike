@@ -1662,7 +1662,7 @@ angular.module("app.demo.controllers",[])
                 $scope.fortificationdis = false;
                 console.log(e);
                 console.log("报警数"+e.totleAlarm);
-                if(e.totleAlarm){
+                if(e.totleAlarm >=0){
                     //$window.sessionStorage.setItem("useralarmcount", e.AlarmCount);
                     if(0<= e.totleAlarm && e.totleAlarm<=99){
                         $rootScope.alarmcount = e.totleAlarm;
@@ -1671,7 +1671,7 @@ angular.module("app.demo.controllers",[])
                     }
 
                 }else {
-                    $rootScope.alarmcount = 0;
+//                    $rootScope.alarmcount = 0;
                 }
                 console.log("$rootScope.alarmcount:"+$rootScope.alarmcount)
                 $scope.timealarmcontenttime = $timeout(function(){

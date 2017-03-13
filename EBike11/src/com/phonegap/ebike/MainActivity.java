@@ -35,9 +35,11 @@ import android.widget.Toast;
 
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
+import com.phonegap.natives.bean.DialogBean;
 import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.ErrorPopopWindow;
 import com.phonegap.natives.tool.WaitPopopWindow;
+import com.phonegap.natives.tool.dialog.DialogTool;
 import com.phonegap.natives.tool.push.PushTool;
 import com.phonegap.natives.tool.push.Utils;
 import com.phonegap.natives.tool.version.CheckVersionTask;
@@ -68,22 +70,8 @@ public class MainActivity extends CordovaActivity
                break;
 
                case EBikeConstant.DIALOG:
-                   AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                   builder.setTitle("当前数据为基站数据,可能与实际位置有所偏差是否继续?");
-                   builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int which) {
-
-                       }
-                   });
-                   builder.setPositiveButton("继续", new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int which) {
-
-                       }
-                   });
-                   AlertDialog dialog = builder.create();
-                   dialog.show();
+                   DialogBean dialogBean = (DialogBean) msg.obj;
+                   DialogTool.showDialog(context,dialogBean.getTitle(),dialogBean.getMsg());
                    break;
 
            }
