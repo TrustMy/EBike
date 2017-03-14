@@ -187,16 +187,17 @@
 .weatherlocationstyle {
     margin:0.5rem 0 0 1rem;
     padding-left:1.2rem;
-    height:0.8rem;
+    height:1.3rem;
+    line-height: 1.3rem;
     background:url("../img/weatherlocationicon.png") no-repeat;
     -webkit-background-size:contain;
     background-size:contain;
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     display: inline-block;
 }
 .weathertemperstyle {
     width:16rem;
-    margin:0.5rem auto 0rem;
+    margin:0 auto ;
     font-size: 1.6rem;
     text-align: center;
 
@@ -222,17 +223,17 @@
 .changelocationtext {
     margin-left:1rem;
     width:6rem;
-    height:0.8rem;
+    height:1.3rem;
     border:0.05rem solid #fff;
     -webkit-border-radius:0.3rem;
     -moz-border-radius:0.3rem;
     border-radius:0.3rem;
     color:#fff;
-    font-size:0.5rem;
+    font-size:0.6rem;
 }
 .changelocationbutton {
     width:2rem;
-    height:0.8rem;
+    height:1.3rem;
     background:#fff;
     color:#5c9594;
     -webkit-border-radius:0.3rem;

@@ -3,8 +3,8 @@
     width:100%;
 }
 .registerlogo {
-    margin:3rem 5rem 1rem;
-    width:6rem;
+    margin:2rem 5.5rem 1rem;
+    width:5rem;
 }
 .vercodeStyle {
     /*margin:1rem 0 */
@@ -65,10 +65,14 @@
     }
     .registerlogojianr {
         width:5rem;
-        margin:1.6rem 5.5rem 0.9rem;
+        margin:1.2rem 5.5rem 0.9rem;
     }
     .registerCodejianr {
         height:1.2rem;
     }
 
+}
+.positionabsoluteregback {
+    position:absolute;
+    top:0;
 }

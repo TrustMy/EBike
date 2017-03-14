@@ -731,6 +731,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     private void init() {
         if (aMap == null) {
             aMap = mapView.getMap();
+
             // 设置定位监听
 
             // 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false

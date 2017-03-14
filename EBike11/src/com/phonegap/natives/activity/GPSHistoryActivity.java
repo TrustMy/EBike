@@ -385,6 +385,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
         if (aMap == null) {
             aMap = mapView.getMap();
+
             aMap.moveCamera(CameraUpdateFactory.zoomTo(3));
         }
         historyMenu = (ImageView) findViewById(R.id.history_menu);
@@ -442,7 +443,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
-
+        unregisterReceiver(netChangReceiver);
     }
 
     public void closeGPSHistoryActivity(View v) {

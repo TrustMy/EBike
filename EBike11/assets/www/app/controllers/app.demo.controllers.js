@@ -65,7 +65,7 @@ angular.module("app.demo.controllers",[])
             console.log(navigator);
             if(navigator.platform =='iPhone'){
                 $rootScope.phonetyperoot = 4;
-                $rootScope.windoWHeihgt = ($(window).height())*1-20+"px";
+                $rootScope.windoWHeihgt = ($(window).height())*1+"px";
                    initwebbridge();
             }else {
                 $rootScope.phonetyperoot = 3;
@@ -1662,7 +1662,7 @@ angular.module("app.demo.controllers",[])
                 $scope.fortificationdis = false;
                 console.log(e);
                 console.log("报警数"+e.totleAlarm);
-                if(e.totleAlarm >=0){
+                if(e.totleAlarm>=0){
                     //$window.sessionStorage.setItem("useralarmcount", e.AlarmCount);
                     if(0<= e.totleAlarm && e.totleAlarm<=99){
                         $rootScope.alarmcount = e.totleAlarm;
@@ -1671,7 +1671,7 @@ angular.module("app.demo.controllers",[])
                     }
 
                 }else {
-//                    $rootScope.alarmcount = 0;
+                    //$rootScope.alarmcount = 0;
                 }
                 console.log("$rootScope.alarmcount:"+$rootScope.alarmcount)
                 $scope.timealarmcontenttime = $timeout(function(){
@@ -2115,6 +2115,7 @@ angular.module("app.demo.controllers",[])
     })
     //mine页面
     .controller("mineController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window){
+        $scope.$state = $state;
         $scope.searchPassBackBtn = function(){
             window.history.go(-1);
             //console.log(window.history);

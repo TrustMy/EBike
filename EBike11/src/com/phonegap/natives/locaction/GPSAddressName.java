@@ -11,6 +11,7 @@ import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
+import com.phonegap.natives.tool.L;
 
 /**
  * Created by Trust on 2016/12/21.
@@ -42,7 +43,8 @@ public class GPSAddressName {
     }
 
 
-    public GeocodeSearch.OnGeocodeSearchListener onGeocodeSearchListener = new GeocodeSearch.OnGeocodeSearchListener() {
+    public GeocodeSearch.OnGeocodeSearchListener onGeocodeSearchListener = new GeocodeSearch
+            .OnGeocodeSearchListener() {
         @Override
         public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int i) {
             if (i == 1000) {
@@ -50,6 +52,8 @@ public class GPSAddressName {
                         && regeocodeResult.getRegeocodeAddress().getFormatAddress() != null) {
                      addressName = regeocodeResult.getRegeocodeAddress().getFormatAddress()
                             + "附近";
+                    L.i("addressName: regeocodeResult"+regeocodeResult.getRegeocodeAddress()
+                            .getCity());
                     Message message = new Message();
                     message.what = type;
                     message.obj = addressName;

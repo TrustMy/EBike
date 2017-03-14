@@ -101,8 +101,8 @@ baseService.prototype.submits = function(obj) {
             q.resolve(e.data);
             console.log(e);
         },function (err) {
-            console.log('登录失败:');
             q.reject(err);
+            console.log('登录失败:');
             console.log(err);
     });
     return q.promise;

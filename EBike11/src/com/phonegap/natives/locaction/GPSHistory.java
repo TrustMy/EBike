@@ -7,6 +7,9 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
@@ -14,6 +17,7 @@ import com.amap.api.maps.model.BitmapDescriptor;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.services.core.LatLonPoint;
@@ -25,6 +29,7 @@ import com.phonegap.natives.tool.L;
 import com.phonegap.natives.tool.TimeTool;
 
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.MGF1ParameterSpec;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +43,10 @@ public class GPSHistory {
     private List<LatLng> latLngs = new ArrayList<LatLng>();
     private List<LatLng> GpslatLngs = new ArrayList<LatLng>();
     private List<LatLng> MaplatLngs = new ArrayList<LatLng>();
+    private static final int START = 0;
+    private static final int END = 1;
 
-
+    private String titleMessage,bodyMessage;
 
 //    private List<LatLng> cacheGPS = new ArrayList<LatLng>();
 
@@ -63,6 +70,7 @@ public class GPSHistory {
         this.GPSAddresName = GPSAddresName;
     }
 
+
     public void setIsStop(boolean isStop)
     {
         this.isStop = isStop;
@@ -77,6 +85,8 @@ public class GPSHistory {
 
     private MapActivity mapActivity;
 
+    AMap endAmap;
+    AMap startAmap;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -85,10 +95,12 @@ public class GPSHistory {
                 case EBikeConstant.START_LOCATION:
                     if(startName.equals("获取地址失败"))
                     {
-                        addresIcon(latLngs.get(0),"起点",R.drawable.my_location_3, (String) msg.obj);
+                        startName = (String) msg.obj;
+//                        addStartResIcon(latLngs.get(0),"起点",R.drawable.my_location_3, (String) msg.obj);
                     }else
                     {
-                        addresIcon(latLngs.get(0),"起点",R.drawable.my_location_3,startName);
+
+//                        addStartResIcon(latLngs.get(0),"起点",R.drawable.my_location_3,startName);
                     }
 
 
@@ -99,17 +111,19 @@ public class GPSHistory {
                             0, //俯仰角0°~45°（垂直与地图时为0）
                             0  ////偏航角 0~360° (正北方为0)
                     )));
-
+                    L.i("start");
                     break;
                 case EBikeConstant.END_LOCATION:
                     if(endName.equals("获取地址失败"))
                     {
-                        addresIcon(latLngs.get(latLngs.size()-1),"终点",R.drawable.car_location_3, (String) msg.obj);
+                        endName = (String) msg.obj;
+                        addEndResIcon(latLngs.get(latLngs.size()-1),"终点",R.drawable.car_location_3, (String) msg.obj,END);
                     }else
                     {
-                        addresIcon(latLngs.get(latLngs.size()-1),"终点",R.drawable.car_location_3,endName);
-                    }
 
+                        addEndResIcon(latLngs.get(latLngs.size()-1),"终点",R.drawable.car_location_3,endName,END);
+                    }
+                    L.i("end");
                     break;
 
                 case EBikeConstant.EMPTY_GPS_MAP_CACHE:
@@ -147,10 +161,9 @@ public class GPSHistory {
     }
 
 
-
-
     private void initLiner() {
-
+        endAmap = aMap;
+        startAmap = aMap;
     }
 
 
@@ -173,11 +186,25 @@ public class GPSHistory {
 
         if(latLngs.size() != 0)
         {
-            new GPSAddressName(context,new LatLonPoint(latLngs.get(0).latitude,latLngs.get(0).longitude),handler,EBikeConstant.START_LOCATION);
-            new GPSAddressName(context,new LatLonPoint(latLngs.get(latLngs.size()-1).latitude,latLngs.get(latLngs.size()-1).longitude),handler,EBikeConstant.END_LOCATION);
+//            new GPSAddressName(context,new LatLonPoint(latLngs.get(0).latitude,latLngs.get(0).longitude),handler,EBikeConstant.START_LOCATION);
+//            new GPSAddressName(context,new LatLonPoint(latLngs.get(latLngs.size()-1).latitude,latLngs.get(latLngs.size()-1).longitude),handler,EBikeConstant.END_LOCATION);
 
             L.i("起点 :经度纬度:"+latLngs.get(latLngs.size()-1).latitude+"|"+latLngs.get(latLngs.size()-1).longitude);
             L.i("终点 :经度纬度:"+latLngs.get(0).latitude+"|"+latLngs.get(0).longitude);
+            addEndResIcon(latLngs.get(latLngs.size()-1),"终点",R.drawable.car_location_3, endName,END);
+            addEndResIcon(latLngs.get(0),"起点",R.drawable.my_location_3,startName,START);
+            aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
+                    new LatLng(latLngs.get(0).latitude,latLngs.get(0).longitude),//新的中心点坐标
+                    500, //新的缩放级别
+                    0, //俯仰角0°~45°（垂直与地图时为0）
+                    0  ////偏航角 0~360° (正北方为0)
+            )));
+//            try {
+//                Thread.sleep(3000);
+//                addStartResIcon(latLngs.get(0),"起点",R.drawable.my_location_3,startName);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
 
 
@@ -347,21 +374,12 @@ public class GPSHistory {
     }
 
 
-
-
-
-
-
-
     public void GpsIcon ( LatLng latLng , int Icon,long name)
     {
 
         MarkerOptions markerOptions =   new MarkerOptions().
                 position(latLng).title(timeTool.getGPSTime(name)).icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(context.getResources(),Icon)));
         aMap.addMarker(markerOptions).showInfoWindow();
-
-
-
     }
 
 
@@ -371,12 +389,39 @@ public class GPSHistory {
     }
 
 
-    public void addresIcon ( LatLng latLng ,String title ,int Icon , String msg)
+    View infoWindowEnd = null;
+    public void addEndResIcon (LatLng latLng , String title , int Icon , String msg , final int types)
     {
-        aMap.addMarker(new MarkerOptions().
+        final String titleEnd = title;
+        final String msgEnd = msg;
+        endAmap.setOnMarkerClickListener(onMarkerClickListener);
+        endAmap.setInfoWindowAdapter(new AMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                if(infoWindowEnd == null) {
+                    infoWindowEnd = LayoutInflater.from(context).inflate(
+                            R.layout.info_window, null);
+                }
+                TextView titleTv = (TextView) infoWindowEnd.findViewById(R.id.info_window_title);
+                TextView msgTv = (TextView) infoWindowEnd.findViewById(R.id.info_window_msg);
+                titleTv.setText(titleMessage);
+                msgTv .setText(bodyMessage);
+
+                return infoWindowEnd;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                return null;
+            }
+        });
+        L.i("addEndResIcon");
+        endAmap.addMarker(new MarkerOptions().
                 position(latLng).
                 title(title).
-                snippet(msg).icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(context.getResources(),Icon)))).showInfoWindow();
+                snippet(msg).icon(BitmapDescriptorFactory.
+                fromBitmap(BitmapFactory.decodeResource(context.getResources(),Icon))));
+
     }
 
 
@@ -384,24 +429,31 @@ public class GPSHistory {
     {
         this.startName = startName;
         this.endName = endName;
-
     }
 
-    public   String getName ()
-{
-    return name;
-}
-    public static  void setName(String names)
-    {
-        name = names;
-    }
 
     public void seachAddres (LatLng latLng)
     {
         new GPSAddressName(context,new LatLonPoint(latLng.latitude,latLng.longitude),handler,EBikeConstant.GPS_ADDRES);
     }
 
-
+    public AMap.OnMarkerClickListener onMarkerClickListener = new AMap.OnMarkerClickListener() {
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+            L.i("markerid:"+marker.getId());
+            if(marker.getId().equals("Marker1"))
+            {
+                titleMessage = "起点";
+                bodyMessage = startName;
+            }else if(marker.getId().equals("Marker2"))
+            {
+                titleMessage = "终点";
+                bodyMessage = endName;
+            }
+            marker.showInfoWindow(); // 显示改点对应 的infowindow
+            return false;
+        }
+    };
 
 
 }

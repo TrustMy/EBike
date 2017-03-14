@@ -18,7 +18,7 @@
     margin:1.25rem;
 }
 .trmarginmine {
-    margin:1rem 0.5rem 0;
+    margin:0.2rem 0.5rem 0.2rem;
     font-size:0.8rem;
     color:#d0d0d0;
 }
@@ -37,12 +37,12 @@
     width:1rem;
 }
 .minetablesed {
-    width:4rem;
+    width:3.5rem;
     text-align: left;
     line-height:1rem;
 }
 .minetablethr {
-    width:8.5rem;
+    width:8rem;
     text-align: right;
     line-height: 1rem;
 }
@@ -76,6 +76,12 @@
     background-size: contain;
 }
 @media(max-device-height: 480px) {
+    .divminetablepositiona {
+        position: absolute;
+        top:12rem;
+        bottom: 2.6rem;
+        overflow-y:auto;
+    }
     .trlineheight {
         line-height: 1.3rem;
     }
@@ -89,6 +95,12 @@
     }
 }
 @media(min-device-height: 481px) and (max-device-height:568px ) {
+    .divminetablepositiona {
+        position: absolute;
+        top:12rem;
+        bottom: 2.6rem;
+        overflow-y:auto;
+    }
     .trlineheight {
         line-height: 1.6rem;
     }
@@ -102,6 +114,12 @@
     }
 }
 @media(min-device-height: 569px) and (max-device-height:750px ) {
+    .divminetablepositiona {
+        position: absolute;
+        top:11rem;
+        bottom: 2.6rem;
+        overflow-y:auto;
+    }
     .trlineheight {
         line-height: 1.9rem;
     }
@@ -115,6 +133,12 @@
     }
 }
 @media(min-device-height:751px){
+    .divminetablepositiona {
+        position: absolute;
+        top:10rem;
+        bottom: 2.6rem;
+        overflow-y:auto;
+    }
     .trlineheight {
         line-height: 1.2rem;
     }
@@ -138,4 +162,32 @@
 /*.heightlinenickstyle {*/
     /*line-height: 0.5rem;*/
 /*}*/
+.mode_spanexit {
+    width:4.6rem;
+    line-height: 30px;
+    display: inline-block;
+    height: 30px;
+    color:#014286;
+}
+.exitappmodelborderspan {
+    font-size: 20px;
+}
+.minetablebordera {
+    border-bottom:1px solid #12364b;
+}
+
+.minetablefourright {
+    width:1.5rem;
+
+}
+.minerightbtnstylea {
+    display: inline-block;
+    margin:0.5rem 0 0 0.5rem ;
+    width:0.5rem;
+    height:1rem;
+    background:url("../img/arrow_right.png") no-repeat right;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+
 
