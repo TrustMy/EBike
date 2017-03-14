@@ -294,7 +294,8 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                             if (gpsHistory != null) {
 
 
-                                if (trackStatus == false ) {
+                                if (trackStatus == true) {
+                                    trackStatus = false;
 
 //                                    aMap.clear();
                                     //关闭
@@ -346,9 +347,9 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
                                 } else {
                                             //开始
-
-                                            L.i("  start success");
                                             trackStatus = true;
+                                            L.i("  start success");
+
                                             mCvCountdownViewTest.start(TIMES);
                                             mCvCountdownViewTest.setVisibility(View.VISIBLE);
 
@@ -365,7 +366,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                                             timeTest = new TimeTest(0, context, handler);
                                             timeTest.startTime();
 
-                                            isNoShow =  new Reminder(30,context,handler,10);
+                                            isNoShow =  new Reminder(300,context,handler,10);
                                             isNoShow.startReminder();
 
 
@@ -377,22 +378,11 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                                             {
                                                 openBuzzer.setImageResource(R.drawable.bell_2);
                                             }
-
-
                                 }
 
 
                             }
                         } else {
-
-                            if(!trackStatus)
-                            {
-                                if(TrackGPSNum != 0)
-                                {
-                                    trackStatus = true;
-                                }
-                            }
-
 
 
                             startErrorPopopWindow((String) msg.obj);
@@ -517,6 +507,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
                     Log.i("lhh", "5min success! ");
                     //关闭
+                    mCvCountdownViewTest.setVisibility(View.INVISIBLE);
                     mCvCountdownViewTest.stop();
                     mCvCountdownViewTest.start(ENDTIMES);
                     mCvCountdownViewTest.stop();
@@ -911,10 +902,10 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                         durationtime = EBikeConstant.STOP_ALWAYS_TRACKING;
 
                         seconds = 0;
-                        trackStatus = false;
+                        trackStatus = true;
                         gpsHistory.setIsStop(true);
                     } else {
-                        trackStatus = true;
+                        trackStatus = false;
                         durationtime = EBikeConstant.START_ALWAYS_TRACKING;
                         seconds = 5;
                         TrackGPSNum = 0;

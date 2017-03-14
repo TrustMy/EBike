@@ -102,11 +102,12 @@ public class LwaysTrackingLine {
 
 
                     try {
-                        message.what = type;
-                        message.arg1 = EBikeConstant.HTTP_EROOR;
-                        message.obj = "网络连接超时";
+                        Message messages = new Message();
+                        messages.what = type;
+                        messages.arg1 = EBikeConstant.HTTP_EROOR;
+                        messages.obj = "网络连接超时";
                         Thread.sleep(100);
-                        postNet.sendMessage(message);
+                        postNet.sendMessage(messages);
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
                     }

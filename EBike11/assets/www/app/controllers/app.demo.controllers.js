@@ -5484,7 +5484,7 @@ angular.module("app.demo.controllers",[])
                                     function alarmaddjiacoverlnglarfun(){
                                         AMap.service('AMap.Geocoder',function() {
                                             $scope.warningadd = new AMap.Geocoder({});
-                                            $scope.warningadd.getAddress([lnglatXY], function (status, result) {
+                                            $scope.warningadd.getAddress([lnglatXYcover], function (status, result) {
                                                 if (status === 'complete' && result.info === 'OK') {
                                                     if(result.regeocodes[0].formattedAddress == ""){
                                                         $scope.addressa = "获取地址失败";

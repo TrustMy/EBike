@@ -59,7 +59,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.zip.GZIPOutputStream;
 
-public class GPSHistoryActivity extends BaseActivity implements TraceListener {
+public class GPSHistoryActivity extends Activity implements TraceListener {
     private MapView mapView;
     private AMap aMap;
     //定义一个过滤器；
