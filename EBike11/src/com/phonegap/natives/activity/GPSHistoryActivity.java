@@ -444,6 +444,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         super.onDestroy();
         mapView.onDestroy();
         unregisterReceiver(netChangReceiver);
+        aMap.clear();
     }
 
     public void closeGPSHistoryActivity(View v) {

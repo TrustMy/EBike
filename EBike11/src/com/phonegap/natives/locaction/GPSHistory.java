@@ -441,11 +441,14 @@ public class GPSHistory {
         @Override
         public boolean onMarkerClick(Marker marker) {
             L.i("markerid:"+marker.getId());
-            if(marker.getId().equals("Marker1"))
+            String path = marker.getId();
+            String newPath =path.substring(6);
+            int a = Integer.parseInt(newPath);
+            if(a%2 == 0)
             {
                 titleMessage = "起点";
                 bodyMessage = startName;
-            }else if(marker.getId().equals("Marker2"))
+            }else if(a%2 == 1)
             {
                 titleMessage = "终点";
                 bodyMessage = endName;
