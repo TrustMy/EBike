@@ -47,7 +47,7 @@ public class GPSHistory {
     private static final int END = 1;
 
     private String titleMessage,bodyMessage;
-
+    int type;
 //    private List<LatLng> cacheGPS = new ArrayList<LatLng>();
 
 //    private List<LatLng> cacheMap = new ArrayList<LatLng>();
@@ -192,13 +192,19 @@ public class GPSHistory {
             L.i("起点 :经度纬度:"+latLngs.get(latLngs.size()-1).latitude+"|"+latLngs.get(latLngs.size()-1).longitude);
             L.i("终点 :经度纬度:"+latLngs.get(0).latitude+"|"+latLngs.get(0).longitude);
             addEndResIcon(latLngs.get(latLngs.size()-1),"终点",R.drawable.car_location_3, endName,END);
-            addEndResIcon(latLngs.get(0),"起点",R.drawable.my_location_3,startName,START);
-            aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
-                    new LatLng(latLngs.get(0).latitude,latLngs.get(0).longitude),//新的中心点坐标
-                    500, //新的缩放级别
-                    0, //俯仰角0°~45°（垂直与地图时为0）
-                    0  ////偏航角 0~360° (正北方为0)
-            )));
+            try {
+                Thread.sleep(100);
+                addEndResIcon(latLngs.get(0),"起点",R.drawable.my_location_3,startName,START);
+                aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
+                        new LatLng(latLngs.get(0).latitude,latLngs.get(0).longitude),//新的中心点坐标
+                        500, //新的缩放级别
+                        0, //俯仰角0°~45°（垂直与地图时为0）
+                        0  ////偏航角 0~360° (正北方为0)
+                )));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
 //            try {
 //                Thread.sleep(3000);
 //                addStartResIcon(latLngs.get(0),"起点",R.drawable.my_location_3,startName);
@@ -390,7 +396,7 @@ public class GPSHistory {
 
 
     View infoWindowEnd = null;
-    public void addEndResIcon (LatLng latLng , String title , int Icon , String msg , final int types)
+    public void addEndResIcon (LatLng latLng , String title , int Icon , String msg ,  int types)
     {
         final String titleEnd = title;
         final String msgEnd = msg;
@@ -416,12 +422,12 @@ public class GPSHistory {
             }
         });
         L.i("addEndResIcon");
-        endAmap.addMarker(new MarkerOptions().
+        Marker marker =endAmap.addMarker(new MarkerOptions().
                 position(latLng).
                 title(title).
                 snippet(msg).icon(BitmapDescriptorFactory.
                 fromBitmap(BitmapFactory.decodeResource(context.getResources(),Icon))));
-
+        marker.setObject(types);
     }
 
 
@@ -440,23 +446,26 @@ public class GPSHistory {
     public AMap.OnMarkerClickListener onMarkerClickListener = new AMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
-            L.i("markerid:"+marker.getId());
+            L.i("markerid:"+marker.getId()+"|ob:"+marker.getObject());
             String path = marker.getId();
             String newPath =path.substring(6);
             int a = Integer.parseInt(newPath);
-            if(a%2 == 0)
+
+            if(marker.getObject().equals(START))
             {
                 titleMessage = "起点";
                 bodyMessage = startName;
-            }else if(a%2 == 1)
+            }else if(marker.getObject().equals(END))
             {
                 titleMessage = "终点";
                 bodyMessage = endName;
             }
             marker.showInfoWindow(); // 显示改点对应 的infowindow
-            return false;
+            return true;
         }
     };
+
+
 
 
 }

@@ -2,7 +2,7 @@
  * Created by Administrator on 2016/8/12.
  */
 (function (doc, win) {
-    var docEl = doc.documentElement,
+    var docEl = doc.documentElement || doc.body,
         resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
         recalc = function () {
             var clientWidth = docEl.clientWidth;

@@ -853,6 +853,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void onDestroy() {
+        unregisterReceiver(netChangReceiver);
         super.onDestroy();
         mapView.onDestroy();
 
@@ -874,7 +875,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
         }
         aMap.clear();
 
-        unregisterReceiver(netChangReceiver);
+
 
 
     }
