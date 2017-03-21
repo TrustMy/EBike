@@ -92,7 +92,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     private MapView mapView;
     private AMap aMap;
     private ImageButton alwaysSracking;
-    private ImageButton openBuzzer;
+    private ImageButton foundCar;
     private ImageButton followMe;
     private ImageButton netWork;
     private ImageButton extBtn;
@@ -260,10 +260,10 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                     if (msg.arg1 == EBikeConstant.HTTP_SUCCESS) {
                         //执行成功
                         if (buzzerStatus) {
-                            openBuzzer.setImageResource(R.drawable.bell_5);
+                            foundCar.setImageResource(R.drawable.bell_5);
                             buzzerStatus = false;
                         } else {
-                            openBuzzer.setImageResource(R.drawable.bell_3);
+                            foundCar.setImageResource(R.drawable.bell_4);
                             buzzerStatus = true;
                         }
 
@@ -333,13 +333,13 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                                     carLocation.setImageResource(R.drawable.bike);
 
 
-                                    openBuzzer.setClickable(true);
+                                    foundCar.setClickable(true);
                                     if(buzzerStatus)
                                     {
-                                        openBuzzer.setImageResource(R.drawable.bell_3);
+                                        foundCar.setImageResource(R.drawable.bell_4);
                                     }else
                                     {
-                                        openBuzzer.setImageResource(R.drawable.bell_5);
+                                        foundCar.setImageResource(R.drawable.bell_5);
                                     }
 
 
@@ -370,13 +370,13 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                                             isNoShow.startReminder();
 
 
-                                            openBuzzer.setClickable(false);
+                                            foundCar.setClickable(false);
                                             if(buzzerStatus)
                                             {
-                                                openBuzzer.setImageResource(R.drawable.bell_4);
+                                                foundCar.setImageResource(R.drawable.bell_4);
                                             }else
                                             {
-                                                openBuzzer.setImageResource(R.drawable.bell_2);
+                                                foundCar.setImageResource(R.drawable.bell_5);
                                             }
                                 }
 
@@ -472,11 +472,11 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
 //                        Toast.makeText(context, "status +arg2 :"+msg.arg2, Toast.LENGTH_SHORT).show();
                         if (msg.arg2 == EBikeConstant.CLOSE_BUZZER) {
-                            openBuzzer.setImageResource(R.drawable.bell_1);
+                            foundCar.setImageResource(R.drawable.bell_5);
                             buzzerStatus = false;
 
                         } else {
-                            openBuzzer.setImageResource(R.drawable.bell_3);
+                            foundCar.setImageResource(R.drawable.bell_4);
                             buzzerStatus = true;
                         }
                     } else {
@@ -536,12 +536,12 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
                    if(buzzerStatus)
                    {
-                       openBuzzer.setImageResource(R.drawable.bell_3);
+                       foundCar.setImageResource(R.drawable.bell_4);
                    }else
                    {
-                       openBuzzer.setImageResource(R.drawable.bell_5);
+                       foundCar.setImageResource(R.drawable.bell_5);
                    }
-                    openBuzzer.setClickable(true);
+                    foundCar.setClickable(true);
 
                     carLocation.setClickable(true);
                     carLocation.setImageResource(R.drawable.bike);
@@ -745,7 +745,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 //        setMapCustomStyleFile(this);
 
         alwaysSracking = (ImageButton) findViewById(R.id.alwaysSracking);
-        openBuzzer = (ImageButton) findViewById(R.id.openBuzzer);
+        foundCar = (ImageButton) findViewById(R.id.found_car);
         followMe = (ImageButton) findViewById(R.id.followMe);
 //        netWork = (ImageButton) findViewById(R.id.network);
         extBtn = (ImageButton) findViewById(R.id.mapactivity_ext);
@@ -755,7 +755,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
         alwaysSracking.setOnClickListener(this);
         carLocation.setOnClickListener(this);
-        openBuzzer.setOnClickListener(this);
+        foundCar.setOnClickListener(this);
         followMe.setOnClickListener(this);
 //        netWork.setOnClickListener(this);
 
@@ -951,7 +951,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
                     break;
 
-                case R.id.openBuzzer:
+                case R.id.found_car:
 
 
                     popopWindow.showPopopWindow(context, mapView);
@@ -969,7 +969,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
                     }
 
-                    name = "openBuzzer";
+                    name = "foundCar";
                     Log.d("MapActivity", "发送的蜂鸣器指令 :" + operation);
                     Log.d("MapActivity", "postRequestClasz.getBuzzerStatus() :" + postRequestClasz.getBuzzerStatus());
 //                postRequestClasz = new PostRequestClasz(context, EBikeConstant.BUZZER, handler);
