@@ -670,3 +670,87 @@ baseService.prototype.luuu = function(){
 //
 //    return q.promise;
 //}
+
+//限速接口 2017年3月21日 11:28:50
+baseService.prototype.speedlimit = function(obj) {
+    var that= this;
+    var congfigthr={
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            'Token':window.sessionStorage.getItem("Utoken")
+        },
+        timeout:16000
+    };
+    var q = that.$q.defer();
+    that.$http.post(that.baseUrl+'/rest/cmd/limitSpeed/',obj,congfigthr)
+        .then(function (e) {
+            q.resolve(e.data);
+        },function (err) {
+            q.reject(err);
+        });
+
+    return q.promise;
+};
+
+//断电/油 接口 2017年3月21日 15:28:20
+baseService.prototype.breakPower = function(obj) {
+    var that= this;
+    var congfigthr={
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            'Token':window.sessionStorage.getItem("Utoken")
+        },
+        timeout:16000
+    };
+    var q = that.$q.defer();
+    that.$http.post(that.baseUrl+'/rest/cmd/breakPower/',obj,congfigthr)
+        .then(function (e) {
+            q.resolve(e.data);
+        },function (err) {
+            q.reject(err);
+        });
+
+    return q.promise;
+};
+
+//断电/油 接口 2017年3月21日 15:30:02
+baseService.prototype.controlLight = function(obj) {
+    var that= this;
+    var congfigthr={
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            'Token':window.sessionStorage.getItem("Utoken")
+        },
+        timeout:16000
+    };
+    var q = that.$q.defer();
+    that.$http.post(that.baseUrl+'/rest/cmd/controlLight/',obj,congfigthr)
+        .then(function (e) {
+            q.resolve(e.data);
+        },function (err) {
+            q.reject(err);
+        });
+
+    return q.promise;
+};
+
+//车辆状态自检 接口 2017年3月21日 16:49:03
+baseService.prototype.selfInspection = function(obj) {
+    var that= this;
+    var congfigthr={
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            'Token':window.sessionStorage.getItem("Utoken")
+        },
+        timeout:16000
+    };
+    var q = that.$q.defer();
+    that.$http.post(that.baseUrl+'/rest/cmd/selfInspection/',obj,congfigthr)
+        .then(function (e) {
+            q.resolve(e.data);
+        },function (err) {
+            q.reject(err);
+        });
+
+    return q.promise;
+};

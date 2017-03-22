@@ -83,7 +83,7 @@ public class PostHttpRequest {
     private void doRequest(String url, String termId, String token, int type, String json) {
         MediaType JSON = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(JSON, json);
-        L.i("json:"+json);
+
         builder = new Request.Builder();
         Request request = builder.url(url).addHeader("Token", token).post(body).build();
 
@@ -104,9 +104,9 @@ public class PostHttpRequest {
 
     public void doTEstsadad(String url)
     {
-        String utl = "350000000000001";
+//        String utl = "350000000000001";
         FormBody body = new FormBody.Builder()
-                .add("termId", utl)
+                .add("termId", "参数")
                 .build();
         Request request = builder.url(url).post(body).build();
         executeResponse(request , 10000);

@@ -15,7 +15,7 @@ import com.phonegap.natives.bean.MapActivityBean;
 import com.phonegap.natives.bean.Push;
 import com.phonegap.natives.bean.PushIdBean;
 import com.phonegap.natives.httptool.PostHttpRequest;
-import com.phonegap.natives.httptool.PostRequest.PostRequestClasz;
+
 import com.phonegap.natives.tool.DeleterInterface;
 import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.EBikeSever;

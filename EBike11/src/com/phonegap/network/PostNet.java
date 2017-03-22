@@ -110,16 +110,16 @@ public class PostNet extends Handler {
                 }
             break;
 
-            case EBikeConstant.BUZZER:
+            case EBikeConstant.FOUND_CAR:
 
                 if(msg.arg1 == EBikeConstant.HTTP_SUCCESS)
                 {
-                    toDealWithBUZZER(gson, message,EBikeConstant.BUZZER);
+                    toDealWithBUZZER(gson, message,EBikeConstant.FOUND_CAR);
                 }else
                 {
 //                    commitTimeOut(EBikeConstant.BUZZER);
 //                    errorSend(EBikeConstant.BUZZER);
-                    commitTimeOutHandler(EBikeConstant.BUZZER,(String) msg.obj);
+                    commitTimeOutHandler(EBikeConstant.FOUND_CAR,(String) msg.obj);
                 }
 
             break;

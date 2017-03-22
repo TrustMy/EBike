@@ -5,7 +5,23 @@
         <img src="img/user.png" class="userimgstyle userimgstylejianr"/>
     </p>
     <p class="nicknamestylep" ng-bind="mineusernick"></p>
+
     <div class="divminetablepositiona divminetablepositionajianr">
+        <div class="speedlimitalldiv">
+            <p class="speedlimitleftallp" ng-click = "speedlimitclick()">
+            <span class="speedlimitleftallspan">
+                限速：<span ng-bind="limitspeed"></span>&nbsp;<span class="unitclassspeed">km/h</span>
+            </span>
+
+                <!--ng-bind="speedajaxlimitbind"-->
+            </p>
+        <span class="displayspanleftright allspanwidthallspeed" ng-if="speedlimitif.toggle">
+            <!---->
+            <span class="displayspanleftright fivebtnspeedwidth borderspanspeeda" ng-click="speedlimitchange(30)">30</span>
+            <span class="displayspanleftright fivebtnspeedwidth borderspanspeeda" ng-click="speedlimitchange(35)">35</span>
+            <span class="displayspanleftright fivebtnspeedwidth" ng-click="speedlimitchange(40)">40</span>
+        </span>
+        </div>
         <table class="trmarginmine tablefontsize minetablebordera">
             <tr class="trlineheight minetrborderb" ui-sref="mains.mine.changeiphonenum">
                 <td class="minetablefir ">
@@ -45,11 +61,8 @@
                 <td class="minetablesed">
                     电子邮件
                 </td>
-                <td class="minetablethr" ng-bind="mineuseremail" ng-click="shouldreturnfalse()">
+                <td class="minetablethrall" ng-bind="mineuseremail" ng-click="shouldreturnfalse()">
                     <!--<span"></span>-->
-                </td>
-                <td class="minetablefourright">
-                    <span class="minerightbtnstylea"></span>
                 </td>
             </tr>
         </table>
@@ -86,9 +99,68 @@
             </tr>
 
         </table>
+        <table class="trmarginmine tablefontsize minetablebordera">
+            <tr class="trlineheight minetrborderb">
+                <td class="minetablefir">
+                    <img src="img/oil.png" class="tableicon2"/>
+                </td>
+                <td class="minetablesed">
+                    断油/电
+                </td>
+                <!--heightlinenickstyle-->
+                <td class="minetablethrall " >
+                    <p class="oiltdcolorstyle" ng-class="{'oiltdyellow':oiltdyes,'oiltdgrey':oiltdno}" ng-click="oiloffclick()">
+
+                    </p>
+                </td>
+                <!--<td class="minetablefourright">-->
+                    <!--<span class="minerightbtnstylea"></span>-->
+                <!--</td>-->
+            </tr>
+
+        </table>
+        <table class="trmarginmine tablefontsize minetablebordera">
+            <tr class="trlineheight minetrborderb">
+                <td class="minetablefir">
+                    <img src="img/lightopen.png" class="tableicon2"/>
+                </td>
+                <td class="minetablesed">
+                    开灯
+                </td>
+                <!--heightlinenickstyle-->
+                <td class="minetablethrall " >
+                    <p class="oiltdcolorstyle" ng-class="{'oiltdyellow':lighttdyes,'oiltdgrey':lighttdno}" ng-click="lightoffclick()">
+                    </p>
+                </td>
+                <!--<td class="minetablefourright">-->
+                <!--<span class="minerightbtnstylea"></span>-->
+                <!--</td>-->
+            </tr>
+
+        </table>
     </div>
 
 </div>
+
+<!--模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<div class="toggle model_warning" ng-if="hahaapp.toggle" >
+</div>
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="hahaapp.toggle">
+    <div class="modelPad">
+        <p class="iconhappy"></p>
+        <span class="model_contentspan" ng-bind="submithappy"></span>
+    </div>
+</div>
+
 <!--加载中的模态框-->
 <div class="toggle model_warning" ng-if="loadapp.toggle" >
 </div>

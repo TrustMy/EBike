@@ -51,11 +51,10 @@ import com.phonegap.natives.bean.CarGPSBean;
 import com.phonegap.natives.bean.DialogBean;
 import com.phonegap.natives.bean.TestCheckBean;
 import com.phonegap.natives.httptool.GetHttpRequest;
-import com.phonegap.natives.httptool.GetRequest.GetRequestClasz;
+
 import com.phonegap.natives.httptool.LwaysTrackingLine;
 import com.phonegap.natives.httptool.PostHttpRequest;
-import com.phonegap.natives.httptool.PostRequest.PostRequestClasz;
-import com.phonegap.natives.httptool.PostRequest.TrackPostHtttp;
+
 import com.phonegap.natives.locaction.GPSHistory;
 import com.phonegap.natives.locaction.GPSRoutePlanning;
 import com.phonegap.natives.tool.AndroidCheckVersion;
@@ -124,8 +123,8 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
     private TimeTest timeTest;
 
-    private PostRequestClasz postRequestClasz;
-    private GetRequestClasz carGPSRequest;
+
+
 
     private Context context = MapActivity.this;
 
@@ -255,7 +254,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
                     break;
 
-                case EBikeConstant.BUZZER:
+                case EBikeConstant.FOUND_CAR:
 
                     if (msg.arg1 == EBikeConstant.HTTP_SUCCESS) {
                         //执行成功
@@ -970,15 +969,15 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                     }
 
                     name = "foundCar";
-                    Log.d("MapActivity", "发送的蜂鸣器指令 :" + operation);
-                    Log.d("MapActivity", "postRequestClasz.getBuzzerStatus() :" + postRequestClasz.getBuzzerStatus());
+
+
 //                postRequestClasz = new PostRequestClasz(context, EBikeConstant.BUZZER, handler);
 //                postRequestClasz.execute(EBikeSever.server_url + EBikeSever.open_buzzer, uid, operationType, operation, seq);
 
                    appSN = System.currentTimeMillis()/1000;
 
                     L.i("appSN:"+appSN);
-                    postHttpRequest.doPostBUZZER(EBikeSever.server_url + EBikeSever.car_buzzer,termId,token,userPhone,appSN,isOpenBuzzerStatus,EBikeConstant.BUZZER);
+                    postHttpRequest.doPostBUZZER(EBikeSever.server_url + EBikeSever.car_buzzer,termId,token,userPhone,appSN,isOpenBuzzerStatus,EBikeConstant.FOUND_CAR);
 //                postRequestClasz = new PostRequestClasz(context,EBikeConstant.BUZZER,handler);
 //                postRequestClasz.execute(context.getResources().getString(R.string.server_url)+context.getResources().getString(R.string.test_error_url),"18516236390",123123123);
 

@@ -28,13 +28,15 @@
 }
 .tableicon1 {
     width:0.8rem;
-
+    margin-top:0.5rem;
 }
 .tableicon2 {
     width:1.3rem;
+    margin-top:0.5rem;
 }
 .tableicon3 {
     width:1rem;
+    margin-top:0.5rem;
 }
 .minetablesed {
     width:3.5rem;
@@ -75,10 +77,13 @@
     -webkit-background-size:contain;
     background-size: contain;
 }
+.minetablethrall {
+    width:9.5rem;
+}
 @media(max-device-height: 480px) {
     .divminetablepositiona {
         position: absolute;
-        top:12rem;
+        top:9rem;
         bottom: 2.6rem;
         overflow-y:auto;
     }
@@ -97,7 +102,7 @@
 @media(min-device-height: 481px) and (max-device-height:568px ) {
     .divminetablepositiona {
         position: absolute;
-        top:12rem;
+        top:9rem;
         bottom: 2.6rem;
         overflow-y:auto;
     }
@@ -188,6 +193,81 @@
     background:url("../img/arrow_right.png") no-repeat right;
     -webkit-background-size:contain;
     background-size:contain;
+}
+.oiltdcolorstyle {
+    margin:0 0.6rem 0 0;
+    height:1.2rem;
+}
+.oiltdyellow {
+    background:url("../img/off.png") no-repeat right center;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.oiltdgrey {
+    background:url("../img/on.png") no-repeat right center;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.lighttdyellow {
+    background:url("../img/off.png") no-repeat right center;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.lighttdgrey {
+    background:url("../img/on.png") no-repeat right center;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.speedlimitalldiv {
+    width:15rem;
+    height:2rem;
+    padding:0.5rem 0.5rem 0.5rem;
+
+        /*background:#fff;*/
+}
+.speedlimitleftallp {
+    background:#1b4158;
+    float: left;
+    width:6rem;
+    display: inline-block;
+    font-size: 0.7rem;
+    line-height: 1.2rem;
+    height:1.2rem;
+    padding:0.25rem 0.2rem 0.25rem 0.5rem;
+}
+.speedlimitleftallspan {
+    display: inline-block;
+    height:1.2rem;
+    padding-left:1.5rem;
+    background:url("../img/speed.png") no-repeat left center;
+    -webkit-background-size:contain;
+    background-size:contain;
+
+}
+.unitclassspeed {
+    font-size: 0.5rem;
+}
+.displayspanleftright {
+    display: inline-block;
+    float: left;
+
+}
+.allspanwidthallspeed {
+    width:7rem;
+    margin-left:1rem;
+}
+.turnleftbtnspeed {
+    background: url("../img/leftspeed.png") no-repeat center;
+}
+.fivebtnspeedwidth {
+    width:1.7rem;
+    height:1.7rem;
+    line-height: 1.7rem;
+    background:#1b4158;
+    text-align: center;
+}
+.borderspanspeeda {
+    border-right:1px solid #fff;
 }
 
 

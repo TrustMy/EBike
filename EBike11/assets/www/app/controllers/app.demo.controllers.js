@@ -386,9 +386,9 @@ angular.module("app.demo.controllers",[])
                             //console.log(e.user);
 
                             //console.log($rootScope.mainUsercontent);
-                            navigator.intent.toPush(
-                                {"termId":$window.sessionStorage.getItem("UtermId"),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken"),"pushId": e.content.pushId}
-                            );
+                            //navigator.intent.toPush(
+                            //    {"termId":$window.sessionStorage.getItem("UtermId"),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken"),"pushId": e.content.pushId}
+                            //);
                             if ($scope.noRemember == false){
                                 //存储cookie
                                 registerService.setCookie("CookieUserName", uname);
@@ -1557,11 +1557,15 @@ angular.module("app.demo.controllers",[])
                 if(fromState.name=="mains.home"){
                     console.log($scope.timerr);
                     $interval.cancel($scope.timerr);
+                    $interval.cancel($scope.warningnumtimesa);
+                    console.log("关闭定时获取报警数量！");
                     console.log("关闭定时器,先出来");
                     console.log($scope.timerr);
                 };
                 if(toState.name == "mains.home"){
                     prostatus();
+//                    $scope.warningnumtimesa = $interval(prostatuswarningnum,4000);
+                    console.log("开启定时器获取报警数量")
                 }
 
             });
@@ -1673,7 +1677,7 @@ angular.module("app.demo.controllers",[])
                 }else {
                     //$rootScope.alarmcount = 0;
                 }
-                console.log("$rootScope.alarmcount:"+$rootScope.alarmcount)
+                console.log("$rootScope.alarmcount:"+$rootScope.alarmcount);
                 $scope.timealarmcontenttime = $timeout(function(){
                     if($rootScope.alarmcount >0 || $rootScope.alarmcount == "99+"){
                         console.log("icon显示");
@@ -1725,8 +1729,93 @@ angular.module("app.demo.controllers",[])
                 },2000);
             })
         }
+        function prostatuswarningnum(){
+            console.log("定时器");
+            //$scope.fortificationdis = true;
+            //$scope.orFortification = "获取中";
+            //$scope.loadapp = {"toggle":true};
+            //$scope.timesfortiload = $timeout(function(){
+            //    $scope.loadapp = {"toggle":false};
+            //},3000);
+            //$scope.carstartusbellstarttimehs = new Date().getTime();
+            $scope.carstatusbellObj = {
+                        appSN:parseInt(Number(new Date().getTime())/1000),
+                        termId:Number($window.sessionStorage.getItem("UtermId")),
+                        userCellPhone:Number($window.sessionStorage.getItem("Ucp"))
+                    };
+            registerService.commonUser($scope.carstatusbellObj,$scope.carstatusbellUrl).then(function(e){
+                //$scope.loadapp = {"toggle":false};
+                //$scope.fortificationdis = false;
+                console.log(e);
+                console.log("报警数"+e.totleAlarm);
+                if(e.totleAlarm>=0){
+                    //$window.sessionStorage.setItem("useralarmcount", e.AlarmCount);
+                    if(0<= e.totleAlarm && e.totleAlarm<=99){
+                        $rootScope.alarmcount = e.totleAlarm;
+                    }else {
+                        $rootScope.alarmcount = "99+";
+                    }
+
+                }else {
+                    //$rootScope.alarmcount = 0;
+                }
+                console.log("$rootScope.alarmcount:"+$rootScope.alarmcount);
+                $scope.timealarmcontenttime = $timeout(function(){
+                    if($rootScope.alarmcount >0 || $rootScope.alarmcount == "99+"){
+                        console.log("icon显示");
+                        $rootScope.alarmiconcountnone= false;
+                    }else{
+                        console.log("icon隐藏");
+                        $rootScope.alarmiconcountnone= true;
+                    };
+                },20);
+                //
+                if(e.status == true){
+
+                    if(e.content.lockStatus == 0){
+                        $scope.orFortification = "设防";
+                        $scope.colorfffYes = true;
+                        $scope.coloryyyYes = false;
+                        $scope.colorfffNo= false;
+                        $scope.coloryyyNo = false;
+                    }else if(e.content.lockStatus == 1){
+                        $scope.orFortification = "解防";
+                        $scope.colorfffYes =false ;
+                        $scope.coloryyyYes = false;
+                        $scope.colorfffNo= true;
+                        $scope.coloryyyNo = false;
+                    }
+                }
+                 else{
+                    $scope.orFortification = "点击获取";
+                    //$scope.subapp= {"toggle":true};
+                    //$scope.submitWarning = e.err+"！";
+                    //$scope.timersfreasonload = $timeout(function(){
+                    //    $scope.subapp= {"toggle":false};
+                    //},2000);
+                }
+            },function(err){
+                //$scope.loadapp = {"toggle":false};
+                //$scope.fortificationdis = false;
+                //$scope.orFortification = "点击获取";
+                //$scope.subapp= {"toggle":true};
+                //$scope.carstartusbellendtimehs = new Date().getTime();
+                //console.log("请求时间差："+$scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs);
+                //if($scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs>=6500){
+                //    $scope.submitWarning = "请求超时！";
+                //}else {
+                //    $scope.submitWarning = "网络连接失败！";
+                //}
+                ////$scope.submitWarning = "网络连接失败！";
+                //$scope.timersferrload = $timeout(function(){
+                //    $scope.subapp= {"toggle":false};
+                //},2000);
+            })
+        }
         if($location.path() == "/mains/home"){
             prostatus();
+//            $scope.warningnumtimesa = $interval(prostatuswarningnum,4000);
+            console.log("开启定时器获取报警数量");
         }
         //点击解防或者设防的按钮
         $scope.fortificationStatus = function(){
@@ -2112,6 +2201,70 @@ angular.module("app.demo.controllers",[])
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
+        $scope.bikeyesnormal = true;
+        $scope.bikehandlebug = false;
+        $scope.bikecontrollerbug = false;
+        $scope.bikemotorbug = false;
+
+        //霍尔的图片
+        $scope.hallmortornormal = false;//霍尔正常
+        $scope.hallmotorliproblem = true ;//霍尔故障
+        $scope.hallbindcontent = "故障";
+
+        //电线的图片
+        $scope.wiremortornormal = true;//电线正常
+        $scope.wiremotorliproblem = false;//电线异常
+        $scope.wirebindcontent = "正常";
+
+        //转把的图片
+        $scope.handlemortornormal = true;//转把正常
+        $scope.handlemotorliproblem = false;//转把异常
+        $scope.handlebindcontent = "正常";
+
+        //控制器的图片
+        $scope.controllermortornormal = true;//控制器正常
+        $scope.controllermotorliproblem = false;//控制器异常
+        $scope.controllermotorliprotection = false;//控制器保护异常
+        $scope.controllerbindcontent = "正常";//正常，保护故障，故障
+
+        //点击开始检测 2017年3月21日 16:50:48
+        $scope.selfInspectionclick = function () {
+            $scope.selfInspectionObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                appSN:parseInt(Number(new Date().getTime())/1000)
+            };
+            $scope.loadapp = {"toggle":true};
+            try{
+                registerService.selfInspection($scope.selfInspectionObj).then(
+                    function(e){
+                        $scope.loadapp = {"toggle": false };
+                        if(e.status == true){
+                            console.log("success:",e)
+                        }else {
+                            console.log("error",e)
+                        }
+
+                    },
+                    function (e) {
+                        console.log("error:",e)
+                        $scope.loadapp = {"toggle": false };
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timenoreasontime = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                );
+            }catch (err){
+                $scope.loadapp = {"toggle": false };
+                // $scope.subapp= {"toggle":true};
+                // $scope.submitWarning = "网络连接失败！";
+                // $scope.timenoreasontime = $timeout(function(){
+                //     $scope.subapp= {"toggle":false};
+                // },2000);
+            }
+        }
     })
     //mine页面
     .controller("mineController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window){
@@ -2136,58 +2289,197 @@ angular.module("app.demo.controllers",[])
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
-        //$window.sessionStorage.setItem("Ucp",Number(uname));
-        //$window.sessionStorage.setItem("UtermId", e.content.termId);
-        //$window.sessionStorage.setItem("Uemail", e.content.email);
-        //$window.sessionStorage.setItem("Unick", e.content.nickName);
+
         if(!$rootScope.mineuserphone || $rootScope.mineuserphone == ""){
             $rootScope.mineuserphone = $window.sessionStorage.getItem("Ucp");
-        }
+        };
         if(!$rootScope.mineusertermid || $rootScope.mineusertermid == ""){
             $rootScope.mineusertermid = $window.sessionStorage.getItem("UtermId");
-        }
+        };
         if(!$rootScope.mineuseremail || $rootScope.mineuseremail == ""){
             $rootScope.mineuseremail = $window.sessionStorage.getItem("Uemail");
-        }
+        };
         if(!$rootScope.mineusernick || $rootScope.mineusernick == ""){
             $rootScope.mineusernick = $window.sessionStorage.getItem("Unick");
-        }
+        };
+
         //$rootScope.mineusertermid = e.content.termId;
+        //初始的时候判断断油或者是断点与否
+        $scope.oiltdyes = true;
+        $scope.oiltdno = false;
 
+        //判断开灯与否
+        $scope.lighttdyes = true;
+        $scope.lighttdno = false;
 
-        //if(e.content.email){
-        //    $rootScope.mineuseremail = e.content.email;
-        //}
-        //if(e.content.nickName){
-        //    $rootScope.mineusernick = e.content.nickName;
-        //}
-        //function backappfunction(){
-        //    //function eventBackButton() {
-        //    //    $rootScope.backmodelapp = {"toggle":true};
-        //    //    $timeout(function(){
-        //    //        $rootScope.backmodelapp = {"toggle":false};
-        //    //    },1500);
-        //    //    $window.removeEventListener("backbutton", eventBackButton, false); //注销返回键
-        //    //    //3秒后重新注册
-        //    //    $scope.timers = $interval(
-        //    //        function() {
-        //    //            $interval.cancel($scope.timers);
-        //    //            $window.addEventListener("backbutton", eventBackButton, false); //返回键
-        //    //        },
-        //    //        3000
-        //    //    );
-        //    //}
-        //    //
-        //    //$window.addEventListener('backbutton', eventBackButton, false);
-        //    document.addEventListener('backbutton', eventBackButton, false);
-        //    function eventBackButton(e) {
-        //        e.preventDefault();
-        //        //alert("backClick2");
-        //        navigator.app.exitApp();
-        //    }
-        //
-        //};
-        //backappfunction();
+        //点击限速 2017-3-21
+        $scope.speedlimitif = {};
+        $scope.limitspeed = 0;
+        $scope.speedlimitif.toggle = false;
+        $scope.speedlimitclick = function (event) {
+            $scope.speedlimitif.toggle = !$scope.speedlimitif.toggle;
+        };
+        $scope.speedlimitchange = function (limit) {
+            $scope.speedlimitObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                appSN:parseInt(Number(new Date().getTime())/1000),
+                speed : limit
+            };
+            $scope.loadapp = {"toggle":true};
+            try{
+                registerService.speedlimit($scope.speedlimitObj).then(
+                    function(e){
+                        $scope.loadapp = {"toggle": false };
+                        console.log(e);
+                        if(e.status == true){
+                            if(e.content.result == 0){
+                                $scope.hahaapp= {"toggle":true};
+                                $scope.submithappy = "恭喜您，设置成功！";
+                                $scope.limitspeed = limit;
+                                $scope.speedlimitif.toggle = !$scope.speedlimitif.toggle;
+                                $scope.timehaftime = $timeout(function(){
+                                    $scope.hahaapp= {"toggle":false};
+                                },2000);
+                            }
+                        }else {
+                            $scope.subapp= {"toggle":true};
+                            $scope.submitWarning = e.err+"！";
+                            $scope.timenoreasontime = $timeout(function(){
+                                $scope.subapp= {"toggle":false};
+                            },2000);
+                        }
+
+                    },
+                    function (e) {
+                        console.log("error:",e)
+                        $scope.loadapp = {"toggle": false };
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timenoreasontime = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                );
+            } catch (err) {
+                console.log("error22:",err)
+                $scope.loadapp = {"toggle": false };
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "网络连接失败！";
+                $scope.timenoreasontime = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+        };
+        //点击断油or电
+        $scope.oiloffclick = function () {
+
+            $scope.breakPowerObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                appSN:parseInt(Number(new Date().getTime())/1000),
+                mod: $scope.oiltdyes?1:0
+            };
+            $scope.loadapp = {"toggle":true};
+            try{
+                registerService.breakPower($scope.breakPowerObj).then(
+                    function(e){
+                        $scope.loadapp = {"toggle": false };
+                        if(e.status == true){
+                            if(e.content.result == 0){
+                                $scope.hahaapp= {"toggle":true};
+                                $scope.submithappy = "恭喜您，设置成功！";
+                                $scope.oiltdyes = !$scope.oiltdyes;
+                                $scope.oiltdno = !$scope.oiltdno;
+                                $scope.timehaftime = $timeout(function(){
+                                    $scope.hahaapp= {"toggle":false};
+                                },2000);
+                            }
+                        }else {
+                            $scope.subapp= {"toggle":true};
+                            $scope.submitWarning = e.err+"！";
+                            $scope.timenoreasontime = $timeout(function(){
+                                $scope.subapp= {"toggle":false};
+                            },2000);
+                        }
+
+                    },
+                    function (e) {
+                        console.log("error:",e)
+                        $scope.loadapp = {"toggle": false };
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timenoreasontime = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                );
+            }catch (err){
+                $scope.loadapp = {"toggle": false };
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "网络连接失败！";
+                $scope.timenoreasontime = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            console.log("断油");
+        };
+
+        //开or关灯
+        $scope.lightoffclick = function () {
+            $scope.controlLightObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                appSN:parseInt(Number(new Date().getTime())/1000),
+                mod: $scope.lighttdyes?1:0
+            };
+            $scope.loadapp = {"toggle":true};
+            try{
+                registerService.controlLight($scope.controlLightObj).then(
+                    function(e){
+                        console.log("success:",e)
+                        $scope.loadapp = {"toggle": false };
+                        if(e.status == true){
+                            if(e.content.result == 0){
+                                $scope.hahaapp= {"toggle":true};
+                                $scope.submithappy = "恭喜您，设置成功！";
+                                $scope.lighttdyes = !$scope.lighttdyes;
+                                $scope.lighttdno = !$scope.lighttdno;
+                                $scope.timehaftime = $timeout(function(){
+                                    $scope.hahaapp= {"toggle":false};
+                                },2000);
+                            }
+                        }else {
+                            $scope.subapp= {"toggle":true};
+                            $scope.submitWarning = e.err+"！";
+                            $scope.timenoreasontime = $timeout(function(){
+                                $scope.subapp= {"toggle":false};
+                            },2000);
+                        }
+
+                    },
+                    function (e) {
+                        console.log("error:",e);
+                        $scope.loadapp = {"toggle": false };
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timenoreasontime = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                );
+            }catch (err){
+                console.log("err:",err);
+                $scope.loadapp = {"toggle": false };
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "网络连接失败！";
+                $scope.timenoreasontime = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            console.log("亮灯")
+        }
+
     })
     //用车记录
     .controller("cartripController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout,$location){

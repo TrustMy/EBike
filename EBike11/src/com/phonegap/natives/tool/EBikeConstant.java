@@ -5,7 +5,7 @@ package com.phonegap.natives.tool;
  */
 public  class EBikeConstant {
     public static final  int CAR_LOCATIOM = 0;
-    public static final int BUZZER = 1;
+    public static final int FOUND_CAR = 1;
     public static final int CAR_STATUS = 2;
     public static final int ALWAYS_TRACKING = 3;
     public static final int ALWAYS_TRACKING_LINE = 4;
