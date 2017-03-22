@@ -13,8 +13,11 @@ import com.phonegap.natives.tool.L;
 import com.phonegap.natives.tool.ToastUtil;
 import com.phonegap.network.PostNet;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -130,6 +133,12 @@ public class PostHttpRequest {
         String json  ="{\"termId\":"+termId+",\"startTime\":"+startTime+",\"endTime\":"+endTime+"}";
         L.i("token"+token);
         doRequest(url, termId, token, type, json);
+    }
+
+    public void toRequest(String url ,String token ,Map<String,Object> map,int type)
+    {
+        JSONObject jsonObject = new JSONObject(map);
+        doRequest(url,null,token,type,jsonObject.toString());
     }
 
 

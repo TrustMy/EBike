@@ -82,6 +82,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
@@ -186,7 +188,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     private List<LatLng> cacheMAP = new ArrayList<LatLng>();
 
     private String userPhone,token,termId,seq;
-    private long appSN ;
+    private long appSN , termIdNew ,  userPhoneNew;
     private boolean isOpenBuzzerStatus  = false;
 
 //    public boolean isMapLiner() {
@@ -622,8 +624,10 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
         Intent intent = getIntent();
         uid = intent.getIntExtra("uid", 0);
         termId = intent.getStringExtra("termId");
+        termIdNew = Long.parseLong(termId);
         token = intent.getStringExtra("token");
         userPhone = intent.getStringExtra("userPhone");
+        userPhoneNew = Long.parseLong(userPhone);
         seq = intent.getStringExtra("seq");
 
         L.i("termId:"+termId+"|token:"+token+"|userPhone:"+userPhone+"|seq:"+seq);
@@ -976,11 +980,14 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
                    appSN = System.currentTimeMillis()/1000;
 
-                    L.i("appSN:"+appSN);
-                    postHttpRequest.doPostBUZZER(EBikeSever.server_url + EBikeSever.car_buzzer,termId,token,userPhone,appSN,isOpenBuzzerStatus,EBikeConstant.FOUND_CAR);
-//                postRequestClasz = new PostRequestClasz(context,EBikeConstant.BUZZER,handler);
-//                postRequestClasz.execute(context.getResources().getString(R.string.server_url)+context.getResources().getString(R.string.test_error_url),"18516236390",123123123);
+                    Map<String,Object> map = new WeakHashMap<String, Object>();
+                    map.put("termId",termIdNew);
+                    map.put("userCellPhone",userPhoneNew);
+                    map.put("appSN",appSN);
+                    map.put("on",isOpenBuzzerStatus);
 
+//                    postHttpRequest.doPostBUZZER(EBikeSever.server_url + EBikeSever.car_buzzer,termId,token,userPhone,appSN,isOpenBuzzerStatus,EBikeConstant.FOUND_CAR);
+                    postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_buzzer,token,map,EBikeConstant.FOUND_CAR);
 
                     break;
 
@@ -996,11 +1003,10 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
                     popopWindow.showPopopWindow(context, mapView);
                         followMeStatus = true;
-                        try {
-                            postHttpRequest.doPostCheckCarLcation(EBikeSever.server_url + EBikeSever.car_location_url, termId,token, EBikeConstant.CAR_LOCATIOM);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+
+                        startCarLocation();
+//                            postHttpRequest.doPostCheckCarLcation(EBikeSever.server_url + EBikeSever.car_location_url, termId,token, EBikeConstant.CAR_LOCATIOM);
+
 
 
 
@@ -1027,6 +1033,9 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
     private void doFollowMe() {
         if (carGPSBean != null) {
+            if(startLat != null && startLat.getLongitude() != 0.0)
+            {
+
 
             LatLng gpsEndLatiLng = coordinateTransformation.transformation(new LatLng(carGPSBean.getContent().getLat(),carGPSBean.getContent().getLng()));
 //            LatLng mapEndLatiLng = new LatLng(carGPSBean.getMap().getLat(), carGPSBean.getMap().getLon());
@@ -1077,6 +1086,13 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
             }
 
+            }else
+            {
+                //定位失败
+                L.i("定位失败直接return");
+                return;
+            }
+
         } else {
             followMe.setImageResource(R.drawable.walk);
             followMeStatus = false;
@@ -1090,8 +1106,15 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void startGPSTracking(int duration, int types, int seconds) {
-
-        postHttpRequest.doPostStartTracking(EBikeSever.server_url+EBikeSever.car_time_tracking_lcation_url, termId,token,userPhone,appSN,seconds,duration,types);
+        appSN = System.currentTimeMillis()/1000;
+        Map<String , Object> map = new WeakHashMap<String, Object>();
+        map.put("termId",termIdNew);
+        map.put("userCellPhone",userPhoneNew);
+        map.put("appSN",appSN);
+        map.put("interval",seconds);
+        map.put("duration",duration);
+        postHttpRequest.toRequest(EBikeSever.server_url+EBikeSever.car_time_tracking_lcation_url,token,map,types);
+//        postHttpRequest.doPostStartTracking(EBikeSever.server_url+EBikeSever.car_time_tracking_lcation_url, termId,token,userPhone,appSN,seconds,duration,types);
 
 
     }
@@ -1234,11 +1257,12 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
     public void startCarLocation()
     {
-        try {
-            postHttpRequest.doPostCheckCarLcation(EBikeSever.server_url + EBikeSever.car_location_url, termId,token, EBikeConstant.CAR_LOCATIOM);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+//            postHttpRequest.doPostCheckCarLcation(EBikeSever.server_url + EBikeSever.car_location_url, termId,token, EBikeConstant.CAR_LOCATIOM);
+            Map<String,Object> map = new WeakHashMap<String, Object>();
+            map.put("termId",termIdNew);
+              postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_location_url,token,map ,EBikeConstant.CAR_LOCATIOM);
+
     }
 
     public void amapClear()

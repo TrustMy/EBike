@@ -55,6 +55,8 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.zip.GZIPOutputStream;
@@ -102,7 +104,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
     private PostHttpRequest postHttpRequest;
 
     private String termId,token;
-
+    private long termIdNew;
     private int mapType = 0;//0 是GPS   1是基站
 
     private ImageView ext;
@@ -231,11 +233,13 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
     };
 
     private void stratHttp() {
-        try {
-            postHttpRequest.doPostCheckCarHistoryLocation(EBikeSever.server_url+EBikeSever.car_history_location_url,termId,token,startTime,endTime,EBikeConstant.CAR_LOCATION_HISTORICAL);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Map<String,Object> map  = new WeakHashMap<String, Object>();
+        map.put("termId",termIdNew);
+        map.put("startTime",startTime);
+        map.put("endTime",endTime);
+        postHttpRequest.toRequest(EBikeSever.server_url+EBikeSever.car_history_location_url,token,map,EBikeConstant.CAR_LOCATION_HISTORICAL);
+//            postHttpRequest.doPostCheckCarHistoryLocation(EBikeSever.server_url+EBikeSever.car_history_location_url,termId,token,startTime,endTime,EBikeConstant.CAR_LOCATION_HISTORICAL);
+
     }
 
 
@@ -298,6 +302,9 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         endName = intent.getStringExtra("endName");
         seq = intent.getIntExtra("seq", 0);
         termId = intent.getStringExtra("termId");
+
+        termIdNew = Long.parseLong(termId);
+
         token = intent.getStringExtra("token");
 
 
