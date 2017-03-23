@@ -19,6 +19,7 @@ import com.phonegap.natives.httptool.PostHttpRequest;
 import com.phonegap.natives.tool.DeleterInterface;
 import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.EBikeSever;
+import com.phonegap.natives.tool.EbFunction;
 import com.phonegap.natives.tool.L;
 import com.phonegap.natives.tool.NetWorkeAvailable;
 import com.phonegap.natives.tool.ToastUtil;
@@ -36,6 +37,7 @@ public class Hub extends CordovaPlugin {
     private Gson gson ;
     private MapActivityBean mapActivityBean;
     private GPSHistoryActivityBean gpsHistoryActivityBean;
+    private String function;
     Push push;
     NetWorkeAvailable netWorkeAvailable;
     int num = 1;
@@ -148,12 +150,14 @@ public class Hub extends CordovaPlugin {
             L.i("Delete  Activity");
         }else if(action.equals("Push"))
         {
-             String test =hexString2binaryString("FFFFFFFFFFFFFFFF");
+
             netWorkeAvailable = new NetWorkeAvailable();
             gson = new Gson();
             String token ;
             String msg =  toStringJson(args);
             push = gson.fromJson(msg,Push.class);
+
+            checkFunction(push.getFunction());
             L.i("Push:"+msg);
             if(PushId.ID != null)
             {
@@ -173,6 +177,19 @@ public class Hub extends CordovaPlugin {
         // 执行js传过来的success方法
         callbackContext.success();
         return true;
+    }
+
+    private void checkFunction(String function) {
+
+
+        EbFunction.Function_Car_Open = Integer.
+                parseInt(function.substring(function.length()-5,function.length()-4));
+        EbFunction.Function_Car_Close = Integer.
+                parseInt(function.substring(function.length()-6),function.length()-5);
+        EbFunction.Function_Tracking =
+                Integer.parseInt(function.substring(function.length()-7),function.length()-6);
+
+        L.i("Function_Car_Open:"+ EbFunction.Function_Car_Open);
     }
 
     private void toPush() {
@@ -229,7 +246,7 @@ public class Hub extends CordovaPlugin {
         return netWorkeAvailable.isNetworkAvailable(cordova.getActivity());
     }
 
-
+    /*
     public static String hexString2binaryString(String hexString)
     {
         if (hexString == null || hexString.length() % 2 != 0)
@@ -244,6 +261,7 @@ public class Hub extends CordovaPlugin {
         }
         return bString;
     }
+    */
 
 
 }

@@ -7,16 +7,18 @@ public class Push {
 
 
     /**
-     * termId : 860337030343524
-     * userPhone : 13296669048
-     * token : Bearer k9tKrdfSW7fmpYSPbjw7lobThCo+NX8dKU6NXyUVew1lcwby4Z4U/6R5GljEVtHxzkHDt4dxVKGXxkKGrJ1ypw==
-     * pushId : 4524144079028499864
+     * termId : 860337030431873
+     * userPhone : 17700000004
+     * token : Bearer RmACrKJ+Dcd0eQe5BzEYLobThCo+NX8dKU6NXyUVew1Z4MVCS5xe6m9ynlX2iPc+sDM+17fsumq3DcOdrNSycA==
+     * pushId : 4153813734706548115
+     * function : FFFFFFFFFFFFFFFF
      */
 
     private String termId;
     private String userPhone;
     private String token;
     private String pushId;
+    private String function;
 
     public void setTermId(String termId) {
         this.termId = termId;
@@ -34,6 +36,10 @@ public class Push {
         this.pushId = pushId;
     }
 
+    public void setFunction(String function) {
+        this.function = function;
+    }
+
     public String getTermId() {
         return termId;
     }
@@ -48,5 +54,9 @@ public class Push {
 
     public String getPushId() {
         return pushId;
+    }
+
+    public String getFunction() {
+        return function;
     }
 }

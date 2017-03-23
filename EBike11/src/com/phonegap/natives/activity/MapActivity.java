@@ -62,6 +62,7 @@ import com.phonegap.natives.tool.CoordinateTransformation;
 import com.phonegap.natives.tool.DeleterInterface;
 import com.phonegap.natives.tool.EBikeConstant;
 import com.phonegap.natives.tool.EBikeSever;
+import com.phonegap.natives.tool.EbFunction;
 import com.phonegap.natives.tool.ErrorPopopWindow;
 import com.phonegap.natives.tool.L;
 import com.phonegap.natives.tool.MenyPopupWindow;
@@ -859,6 +860,9 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
             switch (v.getId()) {
                 case R.id.alwaysSracking:
 
+                    if(EbFunction.Function_Tracking == EbFunction.Function_ON)
+                    {
+
 
                     popopWindow.showPopopWindow(context, mapView);
 
@@ -907,45 +911,51 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                     name = "alwaysSracking";
 
                     Log.d("MapActivity", "当前按钮状态" + trackStatus);
-
+                    }else
+                    {
+                        startErrorPopopWindow(EbFunction.Function_ERR);
+                    }
 
                     break;
 
                 case R.id.found_car:
+                    if (EbFunction.Function_Car_Open == EbFunction.Function_ON) {
+                        popopWindow.showPopopWindow(context, mapView);
+                        if (buzzerStatus) {
 
+                            operation = EBikeConstant.CLOSE_BUZZER;
 
-                    popopWindow.showPopopWindow(context, mapView);
-                    if (buzzerStatus) {
+                            isOpenBuzzerStatus = false;
 
-                        operation = EBikeConstant.CLOSE_BUZZER;
+                        } else {
 
-                        isOpenBuzzerStatus = false;
+                            operation = EBikeConstant.OPEN_BUZZER;
 
-                    } else {
+                            isOpenBuzzerStatus = true;
 
-                        operation = EBikeConstant.OPEN_BUZZER;
+                        }
 
-                        isOpenBuzzerStatus = true;
-
-                    }
-
-                    name = "foundCar";
+                        name = "foundCar";
 
 
 //                postRequestClasz = new PostRequestClasz(context, EBikeConstant.BUZZER, handler);
 //                postRequestClasz.execute(EBikeSever.server_url + EBikeSever.open_buzzer, uid, operationType, operation, seq);
 
-                    appSN = System.currentTimeMillis() / 1000;
+                        appSN = System.currentTimeMillis() / 1000;
 
-                    Map<String, Object> map = new WeakHashMap<String, Object>();
-                    map.put("termId", termIdNew);
-                    map.put("userCellPhone", userPhoneNew);
-                    map.put("appSN", appSN);
-                    map.put("on", isOpenBuzzerStatus);
+                        Map<String, Object> map = new WeakHashMap<String, Object>();
+                        map.put("termId", termIdNew);
+                        map.put("userCellPhone", userPhoneNew);
+                        map.put("appSN", appSN);
+                        map.put("on", isOpenBuzzerStatus);
 
 //                    postHttpRequest.doPostBUZZER(EBikeSever.server_url + EBikeSever.car_buzzer,termId,token,userPhone,appSN,isOpenBuzzerStatus,EBikeConstant.FOUND_CAR);
-                    postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_buzzer, token, map, EBikeConstant.FOUND_CAR);
-
+                        postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_buzzer, token, map, EBikeConstant.FOUND_CAR);
+                    }
+                    else
+                    {
+                        startErrorPopopWindow(EbFunction.Function_ERR);
+                    }
                     break;
 
                 case R.id.followMe:
