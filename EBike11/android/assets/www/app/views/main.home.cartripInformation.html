@@ -1,7 +1,7 @@
-<div class="searchPassBack" ng-style="winHeight" ui-view="tab-cartrip">
-    <p class="searchPassTitle">
-        <button class="searchBackBtn" ng-click="searchPassBackBtn()"></button>
-        <span class="searchPassTitleContent">用车信息</span>
+<div class="searchPassBack" ng-style="winHeight">
+    <p class="searchPassTitle searchpasstitlejianr">
+        <button class="searchBackBtn searchBackbtnjianr" ng-click="searchPassBackBtn()"></button>
+        <span class="searchPassTitleContent searchpasstitlecontentjianr">用车信息</span>
     </p>
     <div class="cartripContent">
         <div class="currentcartrip">
@@ -12,8 +12,9 @@
                     <span class="currentspan">今天&nbsp;&nbsp;<span ng-bind="currentdate | date:'yyyy-MM-dd'"></span></span>
                     <!---->
                     <button ng-click="currentdatebtn()" class="currentupdateicon"></button>
-                    <div class="colcontent">
-                        <table ng-repeat="info in todaytripinfo" ng-click="firsttripbtn($index)" ui-sref="mains.home.cartripInformation.tripmap">
+                    <div class="colcontentn colcontentnjianr">
+                        <!--ui-sref="mains.home.cartripInformation.tripmap"-->
+                        <table ng-repeat="info in todaytripinfo" ng-click="firsttripbtn($index)" >
                             <tr>
                                 <td class="tdfir" rowspan="2"><span ng-bind="info.starttime"></span><br/>- <br/><span ng-bind="info.endtime"></span></td>
                                 <td class="tdsed">起点：</td>
@@ -25,6 +26,20 @@
                             </tr>
 
                         </table>
+                        <table class="todaytabletishistyle">
+                            <tr ng-class="{'clickonloadstoday':clickonloadtoday}" ng-click="clicktodaytripOnload()">
+                                <td>点击加载</td>
+                            </tr>
+                            <tr ng-class="{'cartriploadingstoday':cartriploadingtoday}">
+                                <td>努力加载中...</td>
+                            </tr>
+                            <tr ng-class="{'thelastpagecartripoverstoday':thelastpagecartripovertoday}">
+                                <td>加载完全</td>
+                            </tr>
+                            <tr ng-class="{'clickandaddloadtoday':clickandaddloadstoday}" ng-click="clickAddtodayTriponload()" ng-disabled="todayandloaddis">
+                                <td>点击继续加载</td>
+                            </tr>
+                        </table>
                     </div>
 
                 </div>
@@ -35,17 +50,35 @@
                 <span class="notripspan">今天没有用车...</span>
             </div>
         </div>
-        <div class="datecontent">
-            <p class="searchdateline">
-                <span class="cartrippositionleft" >开始日期：<br/><span >{{ostartTime}}</span></span>
-                <button class="dateicon" ng-click="showdatemodelbtn()"></button>
-                <span class="cartrippositionright">结束日期：<br/><span >{{overTime}}</span></span>
-            </p>
-            <div class="lastdivheight">
+        <div class="datecontent datacontentjianr">
+            <form name="tripinforForm" novalidate>
+                <p class="searchdateline">
+
+                    <p class="cartrippositionleft">
+                        <label for="appDate">开始日期：</label><br>
+                        <input type="text" ng-model="ostartTimes" class="datewidthcj" readonly="readonly" name="appDate" id="appDate" ng-click="starttripclick()"/>
+                    </p>
+
+                    <!--<label for="appDate">日期</label>-->
+
+                    <!--<input value="" class="datewidthcj" readonly="readonly" name="appDate" id="appDate" type="text">-->
+                    <!--<button class="dateicon" ng-click="showdatemodelbtn()"></button>-->
+                    <p class="cartrippositionright">
+                        <label for="appDate">结束日期：</label><br>
+                        <!--<span >{{overTime}}</span> -->
+                        <input type="text" ng-model="overTimes" class="datewidthcj" readonly="readonly" name="appDate" id="appDateover" />
+                    </p>
+                    <button ng-click="changedatebtnsearch()" class="searchdatebtnstyle bottomtripstyle">搜索</button>
+                    <button ng-click="datetripbtninit()" class="searchdatebtnstyleno bottomtripstyle">取消</button>
+
+
+                </p>
+            </form>
+            <div class="lastdivheight lastdivheightjianr">
                 <div class="timeline" ng-repeat="info in lastdateinfo" ng-class="{'infoclass':infoclassnone}">
                     <div class="timeline-date"   >
-                        <!--正常，一天里的第一个，新日期-->
-                        <ul ng-if="info.fir" ng-click="cartripmapbtn($index)" ui-sref="mains.home.cartripInformation.tripmap">
+                        <!--正常，一天里的第一个，新日期ui-sref="mains.home.cartripInformation.tripmap"-->
+                        <ul ng-if="info.fir" ng-click="cartripmapbtn($index)" >
                             <h2 class="second" >
                                 <span ng-bind="info.fir.endeventdate"></span>
                             </h2>
@@ -66,8 +99,8 @@
                             </li>
 
                         </ul>
-                        <!--正常，一天里的第二个，日期重复-->
-                        <ul ng-if="info.sed" ng-click="cartripmapbtn($index)" ui-sref="mains.home.cartripInformation.tripmap">
+                        <!--正常，一天里的第二个，日期重复ui-sref="mains.home.cartripInformation.tripmap"-->
+                        <ul ng-if="info.sed" ng-click="cartripmapbtn($index)" >
                             <li>
                                 <h3 >{{info.sed.laststarttime}}<span ng-bind="info.sed.lastendtime"></span></h3>
                                 <dl class="right">
@@ -84,44 +117,44 @@
                                 </dl>
                             </li>
                         </ul>
-                        <!--跨天，一天里的第二个，但是跨天，开始时间和前一个数据的结束时间一样-->
-                        <ul ng-if="info.thr" ng-click="cartripmapbtn($index)" ui-sref="mains.home.cartripInformation.tripmap">
+                        <!--跨天，一天里的第二个，但是跨天，开始时间和前一个数据的结束时间一样ui-sref="mains.home.cartripInformation.tripmap"-->
+                        <ul ng-if="info.thr" ng-click="cartripmapbtn($index)" >
                             <li>
-                                <h3 >{{info.thr.laststarttime}}<span ng-bind="info.thr.pointpoint"></span></h3>
+                                <h3 >{{info.thr.lastendtime}}<span ng-bind="info.thr.pointpoint"></span></h3>
                                 <dl class="right">
                                     <table>
                                         <tr class="reccenttr">
-                                            <td class="tdsed" ng-bind="info.thr.chinesestart"></td>
-                                            <td class="tdthr" ng-bind="info.startpoint"></td>
+                                            <td class="tdsed" ng-bind="info.thr.chineseend"></td>
+                                            <td class="tdthr" ng-bind="info.endpoint"></td>
                                         </tr>
                                         <tr>
-                                            <td class="tdsed" ng-bind="info.thr.chineseend"></td>
+                                            <td class="tdsed" ng-bind="info.thr.chinesestart"></td>
                                             <td class="tdthr" ng-bind="info.thr.pointpoint"></td>
                                         </tr>
                                     </table>
                                 </dl>
                             </li>
                             <h2 class="second">
-                                <span ng-bind="info.thr.endeventdate"></span>
+                                <span ng-bind="info.thr.starteventdate"></span>
                             </h2>
                             <li>
-                                <h3 >{{info.thr.pointpoint}}<span ng-bind="info.thr.lastendtime"></span></h3>
+                                <h3 >{{info.thr.pointpoint}}<span ng-bind="info.thr.laststarttime"></span></h3>
                                 <dl class="right">
                                     <table>
                                         <tr class="reccenttr">
-                                            <td class="tdsed" ng-bind="info.thr.chinesestart"></td>
+                                            <td class="tdsed" ng-bind="info.thr.chineseend"></td>
                                             <td class="tdthr" ng-bind="info.thr.pointpoint"></td>
                                         </tr>
                                         <tr>
-                                            <td class="tdsed" ng-bind="info.thr.chineseend"></td>
-                                            <td class="tdthr" ng-bind="info.endpoint"></td>
+                                            <td class="tdsed" ng-bind="info.thr.chinesestart"></td>
+                                            <td class="tdthr" ng-bind="info.startpoint"></td>
                                         </tr>
                                     </table>
                                 </dl>
                             </li>
                         </ul>
-                        <!--占了两个新的一天，一天里的第一个，还跨天-->
-                        <ul ng-if="info.four" ng-click="cartripmapbtn($index)" ui-sref="mains.home.cartripInformation.tripmap">
+                        <!--占了两个新的一天，一天里的第一个，还跨天 ui-sref="mains.home.cartripInformation.tripmap"-->
+                        <ul ng-if="info.four" ng-click="cartripmapbtn($index)">
                             <h2 class="second">
                                 <span ng-bind="info.four.endeventdate"></span>
                             </h2>
@@ -137,8 +170,6 @@
                                             <td class="tdsed" ng-bind="info.four.chinesestart"></td>
                                             <td class="tdthr" ng-bind="info.four.pointpoint"></td>
                                         </tr>
-
-
                                     </table>
                                 </dl>
 
@@ -181,6 +212,9 @@
                     <tr ng-class="{'thelastpagecartripovers':thelastpagecartripover}">
                         <td>加载完全</td>
                     </tr>
+                    <tr ng-class="{'clickandaddload':clickandaddloads}" ng-click="clickAddlastTriponload()" ng-disabled="lastandloadtripdis">
+                        <td>点击继续加载</td>
+                    </tr>
                 </table>
             <!--<div ng-class="{'lasthasdate':lasthavedate}" class="lastnodatesstyle">-->
                 <!--该时间段没有报警记录！-->
@@ -189,60 +223,7 @@
     </div>
 </div>
     </div>
-<!--选择日期的模态框 ng-if="datediv.toggle" ng-if="datediv.toggle"-->
-<div class="toggle model_warning" ng-if="datediv.toggle" >
-</div>
-<div class="datemodel_content" ng-style="modelpositionSt" ng-if="datediv.toggle">
-    <form name="timeForm" novalidate>
-        <div class="datemodel_topdiv">
-            <ul class="startDate_ul Date_ul">
-                <li class="datemodel_title">
-                    开始日期
-                </li>
-                <li class="datemodel_inline">
-                    <input type="button" value="+"  class="addbtnfir datemodel_btn datemodel_inputstyle colore" ng-click="startYearadd()"/>
-                    <input type="text" ng-model="udate.modelstartyear" class="startyearnum datemodel_text datemodel_inputstyle colorf" ng-disabled="dateinputdis"/>
-                    <input type="button" value="-"  class="lessbtnfir datemodel_btn datemodel_inputstyle colore" ng-click="startYearless()"/>
-                </li>
-                <li class="datemodel_inline">
-                    <input type="button" value="+"  class="addbtnsed datemodel_btn datemodel_inputstyle colore" ng-click="startMonthadd()"/>
-                    <input type="text" ng-model="udate.modelstartmonth"  class="startmonthnum datemodel_text datemodel_inputstyle colorf" ng-disabled="dateinputdis"/>
-                    <input type="button" value="-"  class="lessbtnsed datemodel_btn datemodel_inputstyle colore" ng-click="startMonthless()"/>
-                </li>
-                <li class="datemodel_inline">
-                    <input type="button" value="+"  class="addbtnsed datemodel_btn datemodel_inputstyle colore" ng-click="startdayadd()"/>
-                    <input type="text" ng-model="udate.modelstartday"  class="startdaynum datemodel_text datemodel_inputstyle colorf" ng-disabled="dateinputdis"/>
-                    <input type="button" value="-"  class="lessbtnsed datemodel_btn datemodel_inputstyle colore" ng-click="startdayless()"/>
-                </li>
-            </ul>
-            <ul class="Date_ul">
-                <li class="datemodel_title">
-                    结束日期
-                </li>
-                <li class="datemodel_inline">
-                    <input type="button" value="+"  class="addbtnfir addbtn datemodel_btn datemodel_inputstyle colore" ng-click="overYearadd()"/>
-                    <input type="text" ng-model="udate.modeloveryear" class="overyearnum datemodel_text datemodel_inputstyle colorf" ng-disabled="dateinputdis"/>
-                    <input type="button" value="-"  class="lessbtnfir addbtn datemodel_btn datemodel_inputstyle colore" ng-click="overYearless()"/>
-                </li>
-                <li class="datemodel_inline">
-                    <input type="button" value="+"  class="addbtnsed addbtn datemodel_btn datemodel_inputstyle colore" ng-click="overMonthadd()"/>
-                    <input type="text" ng-model="udate.modelovermonth"  class="overmonthnum datemodel_text datemodel_inputstyle colorf" ng-disabled="dateinputdis"/>
-                    <input type="button" value="-"  class="lessbtnsed addbtn datemodel_btn datemodel_inputstyle colore" ng-click="overMonthless()"/>
-                </li>
-                <li class="datemodel_inline">
-                    <input type="button" value="+"  class="addbtnsed addbtn datemodel_btn datemodel_inputstyle colore" ng-click="overdayadd()"/>
-                    <input type="text" ng-model="udate.modeloverday"  class="overdaynum datemodel_text datemodel_inputstyle colorf" ng-disabled="dateinputdis"/>
-                    <input type="button" value="-"  class="lessbtnsed addbtn datemodel_btn datemodel_inputstyle colore" ng-click="overdayless()"/>
-                </li>
-            </ul>
-        </div>
-    </form>
-    <div class="datemodel_btnul">
-        <input class="date_divbtn date_btnpadding" type="button" ng-click="date_yes()" value="确定"/>
-        <input class="date_divbtn" type="button" value="取消" ng-click="dateModelhide()"/>
-    </div>
 
-</div>
 <!--warning模态框-->
 <div class="toggle model_warning" ng-if="subapp.toggle" >
 </div>
@@ -265,9 +246,9 @@
 <div class="toggle model_warning" ng-if="loadapp.toggle" >
 </div>
 
-<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+<div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
     <div class="modelPad">
-        <img class="loadiconstyle" src="img/load.gif"/>
+        <img class="loadiconstyle loadiconxuanzhuan" src="img/Shape4.png"/>
     </div>
 </div>
 <!--地图加载失败模态框-->

@@ -3,8 +3,8 @@
     width:100%;
 }
 .registerlogo {
-    margin:3rem 5rem 1rem;
-    width:6rem;
+    margin:2rem 5.5rem 1rem;
+    width:5rem;
 }
 .vercodeStyle {
     /*margin:1rem 0 */
@@ -49,4 +49,30 @@
 }
 .inputregisterwidth {
     width:7rem;
+}
+@media(max-device-height: 480px) {
+
+}
+@media(min-device-height: 481px) and (max-device-height:750px ) {
+
+}
+@media(min-device-height:751px){
+    .registeruserjianr {
+        height:0.8rem;
+        font-size:0.6rem;
+        margin:0.2rem 2rem;
+        padding:0.15rem 0.5rem;
+    }
+    .registerlogojianr {
+        width:5rem;
+        margin:1.2rem 5.5rem 0.9rem;
+    }
+    .registerCodejianr {
+        height:1.2rem;
+    }
+
+}
+.positionabsoluteregback {
+    position:absolute;
+    top:0;
 }

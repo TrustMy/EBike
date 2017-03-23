@@ -148,6 +148,7 @@ public class Hub extends CordovaPlugin {
             L.i("Delete  Activity");
         }else if(action.equals("Push"))
         {
+             String test =hexString2binaryString("FFFFFFFFFFFFFFFF");
             netWorkeAvailable = new NetWorkeAvailable();
             gson = new Gson();
             String token ;
@@ -226,6 +227,22 @@ public class Hub extends CordovaPlugin {
 
 //        Log.d("MapActivity", "检查手机网络 : " + netWorkeAvailable.isMobile(context) + "|" + netWorkeAvailable.isNetworkAvailable(context) + "|" + netWorkeAvailable.isWiFi(context));
         return netWorkeAvailable.isNetworkAvailable(cordova.getActivity());
+    }
+
+
+    public static String hexString2binaryString(String hexString)
+    {
+        if (hexString == null || hexString.length() % 2 != 0)
+            return null;
+        String bString = "", tmp;
+        for (int i = 0; i < hexString.length(); i++)
+        {
+            tmp = "0000"
+                    + Integer.toBinaryString(Integer.parseInt(hexString
+                    .substring(i, i + 1), 16));
+            bString += tmp.substring(tmp.length() - 4);
+        }
+        return bString;
     }
 
 

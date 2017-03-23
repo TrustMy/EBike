@@ -75,26 +75,20 @@ public class PostNet extends Handler {
 
     @Override
     public void handleMessage(Message msg) {
+
         Gson gson = new Gson();
         Message message = new Message();
         res = (String) msg.obj;
-        L.i("res:"+res);
+        error = gson.fromJson(res,Error.class);
+//        boolean isJson = true;
+//        try {
+//            new JSONObject(res);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            isJson = false;
+//        }
 
-        boolean isJson = true;
-        try {
-            new JSONObject(res);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            isJson = false;
-        }
 
-        if(msg.arg2 != 100 && isJson == true)
-        {
-            error = gson.fromJson(res,Error.class);
-        }else
-        {
-            L.i("Error :"+res);
-        }
 
         switch (msg.what)
         {
@@ -106,7 +100,7 @@ public class PostNet extends Handler {
                 }else
                 {
 //                    commitTimeOut(EBikeConstant.CAR_STATUS);
-                    commitTimeOutHandler(EBikeConstant.CAR_STATUS, (String) msg.obj);
+                    commitTimeOutHandler(EBikeConstant.CAR_STATUS, error);
                 }
             break;
 
@@ -119,7 +113,7 @@ public class PostNet extends Handler {
                 {
 //                    commitTimeOut(EBikeConstant.BUZZER);
 //                    errorSend(EBikeConstant.BUZZER);
-                    commitTimeOutHandler(EBikeConstant.FOUND_CAR,(String) msg.obj);
+                    commitTimeOutHandler(EBikeConstant.FOUND_CAR,error);
                 }
 
             break;
@@ -131,7 +125,7 @@ public class PostNet extends Handler {
                 }else
                 {
 //                    commotTimeOut(EBikeConstant.CAR_LOCATIOM);
-                    commitTimeOutHandler(EBikeConstant.CAR_LOCATIOM,(String) msg.obj);
+                    commitTimeOutHandler(EBikeConstant.CAR_LOCATIOM,error);
                 }
 
                 break;
@@ -145,7 +139,7 @@ public class PostNet extends Handler {
                 }else
                 {
                     //超时
-                    commitTimeOutHandler(EBikeConstant.ALWAYS_TRACKING,(String) msg.obj);
+                    commitTimeOutHandler(EBikeConstant.ALWAYS_TRACKING,error);
                 }
                 break;
 
@@ -163,7 +157,7 @@ public class PostNet extends Handler {
 //                    commotTimeOut(EBikeConstant.ALWAYS_TRACKING_LINE);
 
 //                    errorSend(EBikeConstant.ALWAYS_TRACKING_LINE);
-                    commitTimeOutHandler(EBikeConstant.ALWAYS_TRACKING_LINE,(String) msg.obj);
+                    commitTimeOutHandler(EBikeConstant.ALWAYS_TRACKING_LINE,error);
                 }
                 break;
 
@@ -174,7 +168,7 @@ public class PostNet extends Handler {
                 }else
                 {
 //
-                    commitTimeOutHandler(EBikeConstant.CAR_LOCATION_HISTORICAL,(String) msg.obj);
+                    commitTimeOutHandler(EBikeConstant.CAR_LOCATION_HISTORICAL,error);
                 }
 
             break;
@@ -198,11 +192,12 @@ public class PostNet extends Handler {
                     toPushId(msg,gson,EBikeConstant.PUSH_ID);
                 }else
                 {
-                    commitTimeOutHandler(EBikeConstant.PUSH_ID,(String) msg.obj);
+                    commitTimeOutHandler(EBikeConstant.PUSH_ID,error);
                 }
                 break;
 
         }
+
     }
 
     private void toPushId(Message msg, Gson gson, int type) {
@@ -221,11 +216,8 @@ public class PostNet extends Handler {
 
 
     private void doCarHistoryLocation(Message msg, Gson gson, int type) {
-        Gson gson1 = new Gson();
-        L.i("res:"+res);
-        CarLocationHistorical carLocationHistorical = gson1.fromJson(res,CarLocationHistorical.class);
 
-        L.i("toDealWithCAR_LOCATION_HISTORICAL :"+carLocationHistorical.toString());
+        CarLocationHistorical carLocationHistorical = gson.fromJson((String)msg.obj,CarLocationHistorical.class);
         if(carLocationHistorical.getStatus())
         {
             Message message = new Message();
@@ -234,6 +226,7 @@ public class PostNet extends Handler {
             message.obj = carLocationHistorical;
             Log.d("post ", "log  carLocationHistorical  res" + carLocationHistorical.toString()+res);
             handler.sendMessage(message);
+
         }else
         {
             //返回错误信息
@@ -442,12 +435,12 @@ public class PostNet extends Handler {
     }
 
 
-    public void commitTimeOutHandler(int type , String msg)
+    public void commitTimeOutHandler(int type , Error msg)
     {
         Message message = new Message();
         message.what = type;
         message.arg1 = EBikeConstant.HTTP_EROOR;//失败
-        message.obj = msg;
+        message.obj = msg.getErr();
         handler.sendMessage(message);
     }
 

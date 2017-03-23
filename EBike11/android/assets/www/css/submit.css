@@ -1,11 +1,12 @@
-.submitLogo {
-    width: 8rem;
-    margin:2rem 4rem 1rem;
-}
-.submitbike {
-    width:5rem;
-    margin:1rem 5.5rem 1.5rem;
-}
+/*.submitLogo {*/
+    /*width: 8rem;*/
+    /*margin:2rem 4rem 1rem;*/
+/*}*/
+
+/*.submitbike {*/
+    /*width:5rem;*/
+    /*margin:1rem 5.5rem 1.5rem;*/
+/*}*/
 .submituser {
 
     height:0.9rem;
@@ -113,4 +114,42 @@
 }
 .fastRegister {
     color:#b06e00;
+}
+/*@import url("phone.css") screen and (max-width:900px);*/
+@media(max-device-height: 480px) {
+    .submitLogo {
+        width: 8rem;
+        margin:2rem 4rem 1rem;
+    }
+    .submitbike {
+        width:5rem;
+        margin:1rem 5.5rem 1.5rem;
+    }
+}
+@media(min-device-height: 481px) and (max-device-height:750px ) {
+    .submitLogo {
+        width: 8rem;
+        margin:2rem 4rem 1rem;
+    }
+    .submitbike {
+        width:5rem;
+        margin:1rem 5.5rem 1.5rem;
+    }
+}
+@media(min-device-height:751px){
+    .submitLogo {
+        width: 5rem;
+        margin:1.5rem 5.5rem 0.5rem;
+    }
+    .submitbike {
+        width:4rem;
+        margin:0.5rem 6rem 1rem;
+    }
+    .submituserjianr {
+        height:0.8rem;
+        font-size:0.6rem;
+        /*margin:0.2rem 2rem;*/
+        /*padding:0.15rem 0.5rem;*/
+    }
+
 }

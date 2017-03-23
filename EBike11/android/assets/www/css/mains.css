@@ -3,6 +3,13 @@
     width:100%;
     position: relative;
 }
+/*.main_content {*/
+    /*position: absolute;*/
+    /*top:0;*/
+    /*left:0;*/
+    /*right:0;*/
+    /*bottom: 2.6rem;*/
+/*}*/
 .active {
     background:#00112e;
 }
@@ -11,14 +18,15 @@
     /*height:12%;*/
     width:100%;
     background:#153a45;
-    position: fixed;
+    position: absolute;
     bottom: 0;
     z-index: 1111;
     font-size:0.5rem;
+    overflow: hidden;
 }
 .main_footer li {
     float: left;
-    width:5.33rem;
+    width:33.3%;
     height:100%;
     list-style: none;
     text-align:center;
@@ -177,4 +185,23 @@
 .date_btnpadding {
     margin:0 0.5rem;
     display: inline-block;
+}
+/*div.flicking_con{position:absolute;top:360px;left:50%;z-index:999;width:300px;height:21px;margin:0 0 0 -50px;}*/
+/*div.flicking_con a{float:left;width:21px;height:21px;margin:0;padding:0;background:url('../img/btn_main_img.png') 0 0 no-repeat;display:block;text-indent:-1000px}*/
+/*div.flicking_con a.on{background-position:0 -21px}*/
+/*#btn_prev,#btn_next{z-index:11111;position:absolute;display:block;width:73px!important;height:74px!important;top:50%;margin-top:-37px;display:none;}*/
+/*#btn_prev{background:url(../img/hover_left.png) no-repeat left top;left:100px;}*/
+/*#btn_next{background:url(../img/hover_right.png) no-repeat right top;right:100px;}*/
+@media(max-device-height: 480px) {
+
+}
+@media(min-device-height: 481px) and (max-device-height:750px ) {
+
+}
+@media(min-device-height:751px){
+    .main_footerjianr {
+        height:2.3rem;
+        font-size:0.45rem;
+    }
+
 }

@@ -1,47 +1,75 @@
 <div class="mainContent" ui-view="tab-home" ng-style="winHeight">
-    <div class="autoChangeall home" lunbo>
-        <div class="picstyle autoPic1">
-            <iframe name="weather_inc" class="weatherstyle" src="http://i.tianqi.com/index.php?c=code&id=2&num=1" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" ng-click="iframereturn()"></iframe>
+    <div class="autoChangeall autochangealljianr home main_visual" lunbo>
+        <div class="main_image">
+            <ul>
+                <li class="picstyle autoPic1 picstylejianr">
+                    <div class="allinfoweatherbottomstyle">
+                        <p ng-bind="weathercity" class="weatherlocationstyle" ng-click="ipcityicon()">
+                        </p>
+                        <p class="changelocationinput">
+                            <input type="text" ng-model="weatherinputcity" class="changelocationtext" placeholder="请输入城市名称" ng-blur="changercityweatherblur()">
+                            <input type="button" value="搜索" class="changelocationbutton changgelocationbuyes" ng-click="searchcitybtnyes()">
+                            <input type="button" value="取消" class="changelocationbutton noweatherbtnstyle" ng-click="searchcitybtnno()">
+                        </p>
+                        <!--<iframe name="weather_inc" class="weatherstyle" src="http://i.tianqi.com/index.php?c=code&id=2&num=1" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" ng-click="iframereturn()"></iframe>-->
+                        <p class="weathertemperstyle weathercontentt textshadowstyle" ng-bind="weatherinfot1"><span></span></p>
+                        <p class="weathererrstyle"></p>
+                        <p id="weathericon"></p>
+
+                        <p ng-bind="weatherinfos1" class="weathercontentstyle weatherweathercontent textshadowstyle2 weatherweathercontentjianr"></p>
+                        <p ng-bind="weatherwind" class="weathercontentstyle weathercontentwind textshadowstyle2 weathercontentwindjianr"></p>
+                        <p ng-bind="weathertodayday" class="weathercontentstyle weathercontentdata textshadowstyle2 weathercontentdatajianr"></p>
+
+                    </div>
+
+
+                </li>
+
+                <li class="picstyle autoPic2 picstylejianr">
+
+                </li>
+                <li class="picstyle autoPic3 picstylejianr">
+
+                </li>
+            </ul>
+            <a href="javascript:;" id="btn_prev"></a>
+            <a href="javascript:;" id="btn_next"></a>
         </div>
 
-        <div class="picstyle autoPic2">
 
-        </div>
-        <div class="picstyle autoPic3">
-
-        </div>
-        <div class="autoPointall">
+        <div class="autoPointall autoPointalljianr">
             <span class="pointstyle"></span>
             <span class="pointstyle"></span>
             <span class="pointstyle"></span>
         </div>
 
     </div>
-    <div class="homefunctionBtn">
-        <div class="functionBtnStyle" ng-click="fortificationStatus()" ng-disabled="fortificationdis">
-            <p class="functioniconStyle" ng-class="{'normalfbtnYes':colorfffYes,'clickfbtnYes':coloryyyYes,'normalfbtnNo':colorfffNo,'clickfbtnNo':coloryyyNo}"></p>
+    <div class="homefunctionBtn homefunctionBtnjianr">
+        <div class="functionBtnStyle functionBtnStylejianr" ng-click="fortificationStatus()" ng-disabled="fortificationdis">
+            <p class="functioniconStyle functioniconstylejianr" ng-class="{'normalfbtnYes':colorfffYes,'clickfbtnYes':coloryyyYes,'normalfbtnNo':colorfffNo,'clickfbtnNo':coloryyyNo}"></p>
             <p >{{orFortification}}</p>
         </div>
-        <div class="functionBtnStyle" ui-sref="mains.home.cartripInformation" ng-click="changecolorStatus2()">
-            <p class="functioniconStyle" ng-class="{'normalfbtn2':colorfff2,'clickfbtn2':coloryyy2}"></p>
+        <div class="functionBtnStyle functionBtnStylejianr" ui-sref="mains.home.cartripInformation" ng-click="changecolorStatus2()">
+            <p class="functioniconStyle functioniconstylejianr" ng-class="{'normalfbtn2':colorfff2,'clickfbtn2':coloryyy2}"></p>
             <p >用车记录</p>
         </div>
-        <div class="functionBtnStyle" ui-sref="mains.home.searchCar" ng-click="changecolorStatus3()">
-            <p class="functioniconStyle" ng-class="{'normalfbtn3':colorfff3,'clickfbtn3':coloryyy3}"></p>
-            <p >寻车</p>
+        <!--ui-sref="mains.home.searchCar"-->
+        <div class="functionBtnStyle functionBtnStylejianr" ng-click="changecolorStatus3()" ng-disabled="searchcarhomedis">
+            <p class="functioniconStyle functioniconstylejianr" ng-class="{'normalfbtn3':colorfff3,'clickfbtn3':coloryyy3}"></p>
+            <p >位置服务</p>
         </div>
-        <div class="positionb">
-            <div class="functionBtnStyle " ui-sref="mains.home.vehicleStatus" ng-click="changecolorStatus4()">
-                <p class="functioniconStyle" ng-class="{'normalfbtn4':colorfff4,'clickfbtn4':coloryyy4}"></p>
+        <div class="positionb positonbjianr">
+            <div class="functionBtnStyle functionBtnStylejianr" ui-sref="mains.home.vehicleStatus" ng-click="changecolorStatus4()">
+                <p class="functioniconStyle functioniconstylejianr" ng-class="{'normalfbtn4':colorfff4,'clickfbtn4':coloryyy4}"></p>
                 <p >车辆状态</p>
             </div>
-            <div class="functionBtnStyle " ui-sref="mains.home.alarmRecord" ng-click="changecolorStatus5()">
-                <p class="functioniconStyle" ng-class="{'normalfbtn5':colorfff5,'clickfbtn5':coloryyy5}"></p>
+            <div class="functionBtnStyle functionBtnStylejianr" ui-sref="mains.home.alarmRecord" ng-click="changecolorStatus5()">
+                <p class="functioniconStyle functioniconstylejianr" ng-class="{'normalfbtn5':colorfff5,'clickfbtn5':coloryyy5}"></p>
                 <p >报警记录</p>
                 <p class="alarmcountstyle" ng-class="{'alarmiconcount':alarmiconcountnone}"><span ng-bind="alarmcount"></span></p>
             </div>
-            <div class="functionBtnStyle " ui-sref="mains.home.serviceHelp" ng-click="changecolorStatus6()">
-                <p class="functioniconStyle" ng-class="{'normalfbtn6':colorfff6,'clickfbtn6':coloryyy6}"></p>
+            <div class="functionBtnStyle functionBtnStylejianr" ui-sref="mains.home.serviceHelp" ng-click="changecolorStatus6()">
+                <p class="functioniconStyle functioniconstylejianr" ng-class="{'normalfbtn6':colorfff6,'clickfbtn6':coloryyy6}"></p>
                 <p >帮助和服务</p>
             </div>
         </div>
@@ -70,8 +98,23 @@
 <div class="toggle model_warning" ng-if="loadapp.toggle" >
 </div>
 
-<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+<div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
     <div class="modelPad">
         <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>
+<!--是否退出登录-->
+<div class="toggle model_warning" ng-if="yesOrNo.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="yesOrNo.toggle">
+    <div class="modelPad">
+        <p class="iconSmile"></p>
+        <span class="model_contentspan colorY">确定退出登录？</span>
+    </div>
+
+    <div class="model_bottombtn">
+        <input type="button" class="model_btnleft mode_span" value="确定" ng-click="backappYes()" />
+        <input type="button" class="mode_span" value="取消" ng-click="yesOrnohide()" />
     </div>
 </div>

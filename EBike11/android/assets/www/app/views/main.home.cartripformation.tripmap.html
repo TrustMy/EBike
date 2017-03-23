@@ -23,7 +23,7 @@
 <div class="toggle model_warning" ng-if="loadapp.toggle" >
 </div>
 
-<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+<div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
     <div class="modelPad">
         <img class="loadiconstyle" src="img/load.gif"/>
     </div>
@@ -41,5 +41,14 @@
     <div class="model_bottombtn">
         <input type="button" class="model_btnleft mode_span" value="返回用车信息" ng-click="gotripinformationPage()" />
         <input type="button" class="mode_span" value="返回主页面" ng-click="gomainhomePage()" />
+    </div>
+</div>
+<!--网络状态的模态框-->
+<div class="toggle model_warning" ng-if="intapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="intapp.toggle">
+    <div class="modelPad">
+        <span ng-bind="intappcontent"></span>
     </div>
 </div>

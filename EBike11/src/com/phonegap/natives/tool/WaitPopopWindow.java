@@ -25,24 +25,21 @@ public class WaitPopopWindow {
     private Context context;
     private PopupWindow popupWindow;
     private TextView tv;
-    private String msg ;
+    private String msg;
     private boolean isShow = false;
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what)
-            {
+            switch (msg.what) {
                 case 1:
-                    if(popupWindow != null)
-                    {
+                    if (popupWindow != null) {
 
 
-                            popupWindow.dismiss();
-
+                        popupWindow.dismiss();
 
 
                     }
-                break;
+                    break;
             }
         }
     };
@@ -55,8 +52,7 @@ public class WaitPopopWindow {
         this.msg = msg;
     }
 
-    public synchronized void showPopopWindow (Context context, View v)
-    {
+    public synchronized void showPopopWindow(Context context, View v) {
         isShow = true;
         // 一个自定义的布局，作为显示的内容
         View contentView = LayoutInflater.from(context).inflate(
@@ -68,8 +64,6 @@ public class WaitPopopWindow {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
 
         popupWindow.setTouchable(true);
-
-
 
 
         popupWindow.setTouchInterceptor(new View.OnTouchListener() {
@@ -87,19 +81,16 @@ public class WaitPopopWindow {
         });
 
 
-        Animation rotateAnimation = AnimationUtils.loadAnimation(context,R.anim.animators);
+        Animation rotateAnimation = AnimationUtils.loadAnimation(context, R.anim.animators);
         LinearInterpolator lir = new LinearInterpolator();
         rotateAnimation.setInterpolator(lir);
         rotateAnimation.setRepeatCount(1000);
 
 
-
-
-         ImageView imageView = (ImageView) contentView.findViewById(R.id.loading);
+        ImageView imageView = (ImageView) contentView.findViewById(R.id.loading);
         tv = (TextView) contentView.findViewById(R.id.popupwindow_tv);
 
-        if(msg != null && !msg.equals(""))
-        {
+        if (msg != null && !msg.equals("")) {
             tv.setText(msg);
         }
         imageView.startAnimation(rotateAnimation);
@@ -117,17 +108,14 @@ public class WaitPopopWindow {
 //                R.drawable.selectmenu_bg_downward));
 //
 //         设置好参数之后再show
-        popupWindow.showAtLocation(v, Gravity.CENTER,0,0);
-        new WartTime(15,context,handler,1).startReminder();
+        popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+        new WartTime(15, context, handler, 1).startReminder();
         L.i("开始计时");
     }
 
 
-
-    public void stopPopopWindow()
-    {
-        if(isShow)
-        {
+    public void stopPopopWindow() {
+        if (isShow) {
             popupWindow.dismiss();
             isShow = false;
         }

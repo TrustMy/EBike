@@ -340,6 +340,7 @@ angular.module("app.demo.controllers",[])
                             $window.sessionStorage.setItem("UtermId", e.content.termId);
                             $window.sessionStorage.setItem("Uemail", e.content.email);
                             $window.sessionStorage.setItem("Unick", e.content.nickName);
+                            $window.sessionStorage.setItem("Uspeed", e.content.speed);
                             //$window.sessionStorage.setItem("cellPhone",e.user.celliphone);
                             ////存储用户的密码
                             //$window.sessionStorage.setItem("userpassword", e.user.passWord);
@@ -386,9 +387,14 @@ angular.module("app.demo.controllers",[])
                             //console.log(e.user);
 
                             //console.log($rootScope.mainUsercontent);
-                            //navigator.intent.toPush(
-                            //    {"termId":$window.sessionStorage.getItem("UtermId"),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken"),"pushId": e.content.pushId}
-                            //);
+                           navigator.intent.toPush(
+                             {"termId":$window.sessionStorage.getItem("UtermId"),
+                             "userPhone":$window.sessionStorage.getItem("Ucp"),
+                             "token":$window.sessionStorage.getItem("Utoken"),
+                             "pushId": e.content.pushId ,
+                             "function":e.content.function}
+                           );
+
                             if ($scope.noRemember == false){
                                 //存储cookie
                                 registerService.setCookie("CookieUserName", uname);
@@ -770,7 +776,6 @@ angular.module("app.demo.controllers",[])
             "height":$rootScope.windoWHeihgt
         };
     })
-
 
     //找回密码,输入新密码页面
     //.controller("verCodeNewPassController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window){
@@ -1560,11 +1565,11 @@ angular.module("app.demo.controllers",[])
                     $interval.cancel($scope.warningnumtimesa);
                     console.log("关闭定时获取报警数量！");
                     console.log("关闭定时器,先出来");
-                    console.log($scope.timerr);
+                    console.log($scope.warningnumtimesa);
                 };
                 if(toState.name == "mains.home"){
                     prostatus();
-//                    $scope.warningnumtimesa = $interval(prostatuswarningnum,4000);
+                    $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
                     console.log("开启定时器获取报警数量")
                 }
 
@@ -1739,10 +1744,10 @@ angular.module("app.demo.controllers",[])
             //},3000);
             //$scope.carstartusbellstarttimehs = new Date().getTime();
             $scope.carstatusbellObj = {
-                        appSN:parseInt(Number(new Date().getTime())/1000),
-                        termId:Number($window.sessionStorage.getItem("UtermId")),
-                        userCellPhone:Number($window.sessionStorage.getItem("Ucp"))
-                    };
+                appSN:parseInt(Number(new Date().getTime())/1000),
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp"))
+            };
             registerService.commonUser($scope.carstatusbellObj,$scope.carstatusbellUrl).then(function(e){
                 //$scope.loadapp = {"toggle":false};
                 //$scope.fortificationdis = false;
@@ -1814,7 +1819,7 @@ angular.module("app.demo.controllers",[])
         }
         if($location.path() == "/mains/home"){
             prostatus();
-//            $scope.warningnumtimesa = $interval(prostatuswarningnum,4000);
+            $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
             console.log("开启定时器获取报警数量");
         }
         //点击解防或者设防的按钮
@@ -2189,43 +2194,49 @@ angular.module("app.demo.controllers",[])
     })
     //vehicle页面
     .controller("vehicleController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window){
-        //function backappfunction(){
-        //    document.addEventListener('backbutton', eventBackButton, false);
-        //    function eventBackButton(e) {
-        //        e.preventDefault();
-        //        //alert("backClick2");
-        //        navigator.app.exitApp();
-        //    }
-        //};
-        //backappfunction();
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
+
+        $scope.searchPassBackBtn = function (e) {
+            e.preventDefault();
+            console.log("111111111111111111" , 121231)
+            // window.history.go(-1)
+        };
+
         $scope.bikeyesnormal = true;
         $scope.bikehandlebug = false;
         $scope.bikecontrollerbug = false;
         $scope.bikemotorbug = false;
 
         //霍尔的图片
-        $scope.hallmortornormal = false;//霍尔正常
-        $scope.hallmotorliproblem = true ;//霍尔故障
-        $scope.hallbindcontent = "故障";
+        $scope.hallmortornormal = true;//霍尔正常
+        $scope.hallmotorliproblem = false ;//霍尔故障
+        $scope.hallbindcontent = "正常";
+        $scope.hallmortorinfo = "电机霍尔正常";  //检测信息
+        $scope.hallmortorinfoerror = false;  //检测信息正常
 
         //电线的图片
         $scope.wiremortornormal = true;//电线正常
         $scope.wiremotorliproblem = false;//电线异常
         $scope.wirebindcontent = "正常";
+        $scope.wiremortorinfo = "电机电线正常";
+        $scope.wiremortorinfoerror = false;
 
         //转把的图片
         $scope.handlemortornormal = true;//转把正常
         $scope.handlemotorliproblem = false;//转把异常
         $scope.handlebindcontent = "正常";
+        $scope.handlemortorinfo = "车辆转把正常";
+        $scope.handlemortorinfoerror = false;
 
         //控制器的图片
         $scope.controllermortornormal = true;//控制器正常
         $scope.controllermotorliproblem = false;//控制器异常
         $scope.controllermotorliprotection = false;//控制器保护异常
         $scope.controllerbindcontent = "正常";//正常，保护故障，故障
+        $scope.controllermortorinfo = "控制器正常";//控制器正常
+        $scope.controllermortorinfoerror = false;
 
         //点击开始检测 2017年3月21日 16:50:48
         $scope.selfInspectionclick = function () {
@@ -2241,10 +2252,99 @@ angular.module("app.demo.controllers",[])
                         $scope.loadapp = {"toggle": false };
                         if(e.status == true){
                             console.log("success:",e)
-                        }else {
-                            console.log("error",e)
-                        }
+                            if(e.content.fault){
+                                // "fault1": 1,//控制器保护(0：无，1：有)
+                                //"fault2": 1,// 电机相线脱落
+                                //"fault3": 1,//控制器故障
+                                //"fault4": 1 ,//电机霍尔故障
+                                //"fault5": 1 //转把故障
 
+                                //控制器
+                                if(e.content.fault.fault3 == 1){
+                                    $scope.controllermortornormal = false;//控制器正常
+                                    $scope.controllermotorliproblem = true;//控制器异常
+                                    $scope.controllermotorliprotection = false;//控制器保护异常
+                                    $scope.controllerbindcontent = "故障";//正常，保护故障，故障
+                                    $scope.controllermortorinfo = "控制器异常,建议检修";//控制器正常
+                                    $scope.controllermortorinfoerror = true;
+                                }else{
+                                    $scope.controllermortornormal = true;//控制器正常
+                                    $scope.controllermotorliproblem = false;//控制器异常
+                                    $scope.controllermotorliprotection = false;//控制器保护异常
+                                    $scope.controllerbindcontent = "正常";//正常，保护故障，故障
+                                    $scope.controllermortorinfo = "控制器正常";//控制器正常
+                                    $scope.controllermortorinfoerror = false;
+                                }
+
+                                //电机相线
+                                if(e.content.fault.fault2 == 1){
+                                    $scope.wiremortornormal = false;//电线正常
+                                    $scope.wiremotorliproblem = true;//电线异常
+                                    $scope.wirebindcontent = "脱落";
+                                    $scope.wiremortorinfo = "电机相线脱落,建议检修";
+                                    $scope.wiremortorinfoerror = true;
+                                }else{
+                                    $scope.wiremortornormal = true;//电线正常
+                                    $scope.wiremotorliproblem = false;//电线异常
+                                    $scope.wirebindcontent = "正常";
+                                    $scope.wiremortorinfo = "电机电线正常";
+                                    $scope.wiremortorinfoerror = false;
+                                }
+
+                                //控制器保护
+                                if(e.content.fault.fault1 == 1){
+                                    $scope.controllermortornormal = false;//控制器正常
+                                    $scope.controllermotorliproblem = false;//控制器异常
+                                    $scope.controllermotorliprotection = true;//控制器保护异常
+                                    $scope.controllerbindcontent = "故障";//正常，保护故障，故障
+                                    $scope.controllermortorinfo = "控制器保护异常,建议检修";//控制器正常
+                                    $scope.controllermortorinfoerror = true;
+                                }else{
+                                    $scope.controllermortornormal = true;//控制器正常
+                                    $scope.controllermotorliproblem = false;//控制器异常
+                                    $scope.controllermotorliprotection = false;//控制器保护异常
+                                    $scope.controllerbindcontent = "正常";//正常，保护故障，故障
+                                    $scope.controllermortorinfo = "控制器正常";//控制器正常
+                                    $scope.controllermortorinfoerror = false;
+                                }
+
+                                //电机霍尔
+                                if(e.content.fault.fault4 == 1){
+                                    $scope.hallmortornormal = false;//霍尔正常
+                                    $scope.hallmotorliproblem = true ;//霍尔故障
+                                    $scope.hallbindcontent = "故障";
+                                    $scope.hallmortorinfo = "电机霍尔故障,建议检修";  //检测信息
+                                    $scope.hallmortorinfoerror = true;  //检测信息正常
+                                }else{
+                                    $scope.hallmortornormal = true;//霍尔正常
+                                    $scope.hallmotorliproblem = false ;//霍尔故障
+                                    $scope.hallbindcontent = "正常";
+                                    $scope.hallmortorinfo = "电机霍尔正常";  //检测信息
+                                    $scope.hallmortorinfoerror = false;  //检测信息正常
+                                }
+
+                                //转把
+                                if(e.content.fault.fault5 == 1){
+                                    $scope.handlemortornormal = false;//转把正常
+                                    $scope.handlemotorliproblem = true;//转把异常
+                                    $scope.handlebindcontent = "故障";
+                                    $scope.handlemortorinfo = "车辆转把故障,建议检修";
+                                    $scope.handlemortorinfoerror = true;
+                                }else{
+                                    $scope.handlemortornormal = true;//转把正常
+                                    $scope.handlemotorliproblem = false;//转把异常
+                                    $scope.handlebindcontent = "正常";
+                                    $scope.handlemortorinfo = "车辆转把正常";
+                                    $scope.handlemortorinfoerror = false;
+                                }
+                            }
+                        }else {
+                            $scope.subapp= {"toggle":true};
+                            $scope.submitWarning = e.err+"！";
+                            $scope.timenoreasontime = $timeout(function(){
+                                $scope.subapp= {"toggle":false};
+                            },2000);
+                        }
                     },
                     function (e) {
                         console.log("error:",e)
@@ -2258,11 +2358,11 @@ angular.module("app.demo.controllers",[])
                 );
             }catch (err){
                 $scope.loadapp = {"toggle": false };
-                // $scope.subapp= {"toggle":true};
-                // $scope.submitWarning = "网络连接失败！";
-                // $scope.timenoreasontime = $timeout(function(){
-                //     $scope.subapp= {"toggle":false};
-                // },2000);
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "网络连接失败！";
+                $scope.timenoreasontime = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
             }
         }
     })
@@ -2303,6 +2403,8 @@ angular.module("app.demo.controllers",[])
             $rootScope.mineusernick = $window.sessionStorage.getItem("Unick");
         };
 
+        //限速值
+
         //$rootScope.mineusertermid = e.content.termId;
         //初始的时候判断断油或者是断点与否
         $scope.oiltdyes = true;
@@ -2314,7 +2416,12 @@ angular.module("app.demo.controllers",[])
 
         //点击限速 2017-3-21
         $scope.speedlimitif = {};
-        $scope.limitspeed = 0;
+
+        $scope.limitspeed = 0 ;
+        $scope.limitspeed = $window.sessionStorage.getItem("Uspeed");
+        if($scope.limitspeed == ""){
+            $scope.limitspeed = 0 ;
+        }
         $scope.speedlimitif.toggle = false;
         $scope.speedlimitclick = function (event) {
             $scope.speedlimitif.toggle = !$scope.speedlimitif.toggle;
@@ -2326,6 +2433,7 @@ angular.module("app.demo.controllers",[])
                 appSN:parseInt(Number(new Date().getTime())/1000),
                 speed : limit
             };
+            console.log($scope.speedlimitObj);
             $scope.loadapp = {"toggle":true};
             try{
                 registerService.speedlimit($scope.speedlimitObj).then(
@@ -2337,6 +2445,7 @@ angular.module("app.demo.controllers",[])
                                 $scope.hahaapp= {"toggle":true};
                                 $scope.submithappy = "恭喜您，设置成功！";
                                 $scope.limitspeed = limit;
+                                $window.sessionStorage.setItem("Uspeed", limit);
                                 $scope.speedlimitif.toggle = !$scope.speedlimitif.toggle;
                                 $scope.timehaftime = $timeout(function(){
                                     $scope.hahaapp= {"toggle":false};
@@ -2424,7 +2533,6 @@ angular.module("app.demo.controllers",[])
             }
             console.log("断油");
         };
-
         //开or关灯
         $scope.lightoffclick = function () {
             $scope.controlLightObj = {
@@ -5979,23 +6087,146 @@ angular.module("app.demo.controllers",[])
         $scope.searchPassBackBtn = function(){
             window.history.go(-1);
         };
-        //function prostatus(){
-        //    return false;
-        //}
-        //prostatus()
-        //$scope.backappfunctionsmall = function(){
-        //    registerService.removeevent();
-        //};
-        //$scope.backappfunctionsmall();
         //$http获取数据
         $scope.vehiclestatusf = function(){
+            //获取车辆状态信息 2017年3月22日 15:13:00
+            $scope.carstatusUrl = "/rest/cmd/queryStatus/";
+            $scope.carstatusObj = {
+                appSN:parseInt(Number(new Date().getTime())/1000),
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp"))
+            };
+            $scope.loadapp = {"toggle":true};
+            registerService.getcarstatus($scope.carstatusObj,$scope.carstatusUrl).then(
+                function(e){
+                    console.log("success:",e);
+                    $scope.loadapp = {"toggle": false };
+                    if(e.status){
+                        $scope.dateee = e.content.voltagePercent;
+                        $scope.degspeedpoint =$scope.dateee* 3+'deg';
+                        $scope.pointerstyle = {
+                            "-webkit-transform": 'rotate('+$scope.degspeedpoint+')',
+                            "-moz-transform": 'rotate('+$scope.degspeedpoint+')',
+                            "-o-transform":'rotate('+$scope.degspeedpoint+')',
+                            "-ms-transform":'rotate('+$scope.degspeedpoint+')',
+                            "transform":'rotate('+$scope.degspeedpoint+')'
+                        }
+                        if(90<$scope.dateee && $scope.dateee<=100){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch100.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(80<$scope.dateee && $scope.dateee<=90){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch90.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(70<$scope.dateee && $scope.dateee<=80){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch80.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(60<$scope.dateee && $scope.dateee<=70){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch70.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(50<$scope.dateee && $scope.dateee<=60){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch60.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(40<$scope.dateee && $scope.dateee<=50){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch50.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(30<$scope.dateee && $scope.dateee<=40){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch40.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(20<$scope.dateee && $scope.dateee<=30){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch30.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(10<$scope.dateee && $scope.dateee<=20){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch20.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(0<$scope.dateee && $scope.dateee<=10){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch10.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else{
+                            $scope.fulldegree = {
+                                "background":'url(img/watch0.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }
+                        $scope.elenum = $scope.dateee+"%";
 
-        }
-        $scope.vehiclestatusf();
-        //点击更新
-        $scope.searchPassupdateBtn = function(){
-            $scope.vehiclestatusf();
-        }
+                        if(e.content.voltagePercent < 50){
+                            $scope.elestatue= "电量不足";
+                            $scope.elenumfull= false;
+                            $scope.elenumless = true;
+                        }else{
+                            $scope.elestatue= "电量充足";
+                            $scope.elenumfull= true;
+                            $scope.elenumless = false;
+                        }
+                        if(e.content.plugOutAlarm == 1){
+                            $scope.batteystatue= "电池拔出";
+                            $scope.batteyyes= false;
+                            $scope.batteyno = true;
+                        }else{
+                            $scope.batteystatue= "电池插入";
+                            $scope.batteyyes= true;
+                            $scope.batteyno = false;
+                        }
+                        if((e.content.fault.fault1 == 1)||(e.content.fault.fault2 == 1)||(e.content.fault.fault3 == 1)||(e.content.fault.fault4 == 1)||(e.content.fault.fault5 == 1)){
+                            $scope.vibrationstatue= "车辆异常";
+                            $scope.vibrationgood = false;
+                            $scope.vibrationfalse = true;
+                        }else{
+                            $scope.vibrationstatue= "车辆正常";
+                            $scope.vibrationgood = true;
+                            $scope.vibrationfalse = false;
+                        }
+                    }else{
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timenoreasontime = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                },
+                function (e) {
+                    $scope.loadapp = {"toggle": false };
+                    $scope.subapp= {"toggle":true};
+                    console.log("error:",e);
+                    $scope.submitWarning = "网络连接失败!";
+                    $scope.timenoreasontime = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                }
+            )
+        };
+
         //旋转的度数
         $scope.dateee = 0;//后台获取的数据
         $scope.degspeedpoint =$scope.dateee* 3+'deg';
@@ -6084,6 +6315,13 @@ angular.module("app.demo.controllers",[])
         $scope.batteyno = false;
         $scope.vibrationgood= true;
         $scope.vibrationfalse = false;
+
+        $scope.vehiclestatusf();
+        //点击更新
+        $scope.searchPassupdateBtn = function(){
+            console.log("searchPassupdateBtnclick");
+            $scope.vehiclestatusf();
+        }
     })
     //服务与帮助
     .controller("serviceHelpController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout){
@@ -6685,6 +6923,83 @@ angular.module("app.demo.controllers",[])
                         $scope.subapp= {"toggle":false};
                     },2000);
                 })
+            }
+        }
+    })
+    //修改限速
+    .controller("changelimitspeedController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout){
+        $scope.searchPassBackBtn = function(){
+            window.history.go(-1);
+        };
+        var defalutspeed = Number($window.sessionStorage.getItem("Uspeed"));
+        if(defalutspeed == 35){
+            $("input[name='changeSpeedLimit'][value='35']").attr('checked','true');
+        }else if(defalutspeed == 40){
+            $("input[name='changeSpeedLimit'][value='40']").attr('checked','true');
+        }else{
+            $("input[name='changeSpeedLimit'][value='30']").attr('checked','true');
+        }
+
+        $scope.changeSpeedDIS = false;
+        $scope.winHeight = {
+            "height":$rootScope.windoWHeihgt
+        };
+        $scope.changelimitspeedbtn = function(){
+            var changelimit = $("input[name='changeSpeedLimit']:checked").attr("value");
+            $scope.changeSpeedDIS = true;
+            $scope.speedlimitObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                appSN:parseInt(Number(new Date().getTime())/1000),
+                speed : Number(changelimit)
+            };
+            console.log($scope.speedlimitObj);
+            $scope.loadapp = {"toggle":true};
+            try{
+                registerService.speedlimit($scope.speedlimitObj).then(
+                    function(e){
+                        $scope.loadapp = {"toggle": false };
+                        $scope.changeSpeedDIS = false;
+                        console.log(e);
+                        if(e.status == true){
+                            if(e.content.result == 0){
+                                $scope.hahaapp= {"toggle":true};
+                                $scope.submithappy = "恭喜您，设置成功！";
+                                $window.sessionStorage.setItem("Uspeed", Number(changelimit));
+                                $scope.$parent.limitspeed = Number(changelimit);
+                                $scope.timehaftime = $timeout(function(){
+                                    $scope.hahaapp= {"toggle":false};
+                                    // window.history.go(-1);
+                                },2000);
+                            }
+                        }else {
+                            $scope.subapp= {"toggle":true};
+                            $scope.submitWarning = e.err+"！";
+                            $scope.timenoreasontime = $timeout(function(){
+                                $scope.subapp= {"toggle":false};
+                            },2000);
+                        }
+
+                    },
+                    function (e) {
+                        console.log("error:",e)
+                        $scope.changeSpeedDIS = false;
+                        $scope.loadapp = {"toggle": false };
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = "网络连接失败！";
+                        $scope.timenoreasontime = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                );
+            } catch (err) {
+                $scope.changeSpeedDIS = false;
+                $scope.loadapp = {"toggle": false };
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "网络连接失败！";
+                $scope.timenoreasontime = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
             }
         }
     })

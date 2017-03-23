@@ -1,26 +1,143 @@
 /**
  * Created by dong on 2016/8/15.
  */
+var mybridge;
+initwebbridge = function(){
+    function setupWebViewJavascriptBridge(callback) {
+        
+        if (window.WebViewJavascriptBridge) { return callback(WebViewJavascriptBridge); }
+        if (window.WVJBCallbacks) { return window.WVJBCallbacks.push(callback); }
+        window.WVJBCallbacks = [callback];
+        var WVJBIframe = document.createElement('iframe');
+        WVJBIframe.style.display = 'none';
+        WVJBIframe.src = 'https://__bridge_loaded__';
+        document.documentElement.appendChild(WVJBIframe);
+        setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0)
+    }
+    setupWebViewJavascriptBridge(function(bridge) {
+                                 var uniqueId = 1
+                                 function log(message, data) {
+                                 var log = document.getElementById('log')
+                                 var el = document.createElement('div')
+                                 el.className = 'logLine'
+                                 el.innerHTML = uniqueId++ + '. ' + message + ':<br/>' + JSON.stringify(data)
+                                 if (log.children.length) { log.insertBefore(el, log.children[0]) }
+                                 else { log.appendChild(el) }
+                                 }
+                                 mybridge = bridge;
+                                 bridge.registerHandler('testJavascriptHandler', function(data, responseCallback)
+                                                        {
+                                                        //log('ObjC called testJavascriptHandler with', data)
+                                                        //var responseData = { 'Javascript Says':'Right back atcha!' }
+                                                        ////log('JS responding with', responseData)
+                                                        //responseCallback(responseData)
+                                                        
+                                                        
+                                                        
+                                                        //log('ObjC called testJavascriptHandler with', data)
+                                                        var responseData = { 'Javascript Says':'Right back atcha!' }
+                                                        $(".vehiclenumvalclass").val(data.deviceid);
+                                                        
+                                                        
+                                                        //log('JS responding with', responseData)
+                                                        responseCallback(responseData)
+                                                        
+                                                        })
+                                 
+                                 
+                                 }
+                                 
+                                 
+                                 )
+    
+    
+}
+
 angular.module("app.demo.controllers",[])
-    //初始app
+//初始app
     .controller("indexcontroller",function($scope,$rootScope,$state,registerService,$timeout,$interval,$window){
-        $rootScope.windoWHeihgt = ($(window).height())*1+"px";
+
+        //console.log("看看md5："+$.md5("Hello,Liehuo.Net"));
+        console.log(new Date().getTime());
+
+        //判断当前设备的类型
+        try{
+            console.log(navigator);
+            if(navigator.platform =='iPhone'){
+                $rootScope.phonetyperoot = 4;
+                $rootScope.windoWHeihgt = ($(window).height())*1+"px";
+                   initwebbridge();
+            }else {
+                $rootScope.phonetyperoot = 3;
+                $rootScope.windoWHeihgt = ($(window).height())*1+"px";
+            }
+        }catch(err){
+            $rootScope.phonetyperoot = 3;
+            //console.log("判断设备类型报错");
+            //alert("判断设备类型报错");
+        }
+        
+
+
 
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
+        document.addEventListener('deviceready', function () {
+//            alert("indexcontroller:"+document.documentElement.clientHeight)
+            if((document.documentElement.clientHeight + "px") != $rootScope.windoWHeihgt){
+                if(navigator.platform =='iPhone'){
+                    //$rootScope.windoWHeihgt=parseFloat(document.documentElement.clientHeight)-20 + "px";
+                }else {
+                    $rootScope.windoWHeihgt=document.documentElement.clientHeight + "px";
+                }
+
+                $scope.$apply(function(){
+                    $scope.winHeight = {
+                        "height":$rootScope.windoWHeihgt
+                    };
+                });
+            }
+        }, false);
+        console.log(333333,new Date(1488983606000));
+        console.log(333333222,new Date(1488983606000));
+        //console.log(22222,new Date(1484495999000));
+        //console.log(44445,new Date("2012/12/25 20:11:11").getTime() - new Date("2012/12/18 20:11:11").getTime());
 
     })
     //登录部分
-    .controller("submitsController",["$scope","$state","$rootScope","registerService","$window","$timeout",function($scope,$state,$rootScope,registerService,$window,$timeout){
+    .controller("submitsController",["$scope","$state","$rootScope","registerService","$window","$timeout","$location",function($scope,$state,$rootScope,registerService,$window,$timeout,$location){
         //模态框部分
-        $rootScope.windoWHeihgt = ($(window).height())*1+"px";
+        //$rootScope.windoWHeihgt = ($(window).height())*1+"px";
+         function backappfunctionsubmit(){
+            //document.addEventListener('backbutton', eventBackButton, false);
+             $(document).unbind("backbutton");
+             $(document).bind('backbutton', eventBackButton);
+            function eventBackButton(e) {
+                if($location.path() == "/submits"){
+                    e.preventDefault();
+                    navigator.app.exitApp();
+                }else {
+                    window.history.go(-1);
+                }
 
+            }
+        }
+
+        backappfunctionsubmit();
+        //$scope.loadapp = {"toggle":true};
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
         function iosstyle(){
             document.addEventListener('deviceready', function () {
+                if($scope.winHeight.height != $rootScope.windoWHeihgt){
+                    $scope.$apply(function(){
+                        $scope.winHeight = {
+                            "height":$rootScope.windoWHeihgt
+                        };
+                    })
+                }
                 $('#all_content').css("height",$rootScope.windoWHeihgt);
             }, false);
 
@@ -29,8 +146,8 @@ angular.module("app.demo.controllers",[])
         // console.log("登录的时候设置的值推送："+$rootScope.pushyesorno);
         iosstyle();
 
-        $scope._top=($(window).height() - 150)/2 +"px";
-        $scope._topnot=($(window).height() - 120)/2 +"px";
+        $scope._top=(parseFloat($rootScope.windoWHeihgt) - 150)/2 +"px";
+        $scope._topnot=(parseFloat($rootScope.windoWHeihgt) - 120)/2 +"px";
         //console.log($scope._top);
 
         $scope.modelpositionStnot = {
@@ -64,33 +181,6 @@ angular.module("app.demo.controllers",[])
         //console.log();
         $scope.subaccountdis = false;
         $scope.subpassdis = false;
-        //function backappfunction(){
-        //    //function eventBackButton() {
-        //    //    $rootScope.backmodelapp = {"toggle":true};
-        //    //    $timeout(function(){
-        //    //        $rootScope.backmodelapp = {"toggle":false};
-        //    //    },1500);
-        //    //    $window.removeEventListener("backbutton", eventBackButton, false); //注销返回键
-        //    //    //3秒后重新注册
-        //    //    $scope.timers = $interval(
-        //    //        function() {
-        //    //            $interval.cancel($scope.timers);
-        //    //            $window.addEventListener("backbutton", eventBackButton, false); //返回键
-        //    //        },
-        //    //        3000
-        //    //    );
-        //    //}
-        //    //
-        //    //$window.addEventListener('backbutton', eventBackButton, false);
-        //    document.addEventListener('backbutton', eventBackButton, false);
-        //    function eventBackButton(e) {
-        //        e.preventDefault();
-        //        //alert("backClick2");
-        //        navigator.app.exitApp();
-        //    }
-        //
-        //};
-        //backappfunction();
 
 
         //$scope.loadapp = {"toggle":true};
@@ -127,26 +217,49 @@ angular.module("app.demo.controllers",[])
             }
         };
         $scope.oinit();
-        //验证手机验证码
-        //$scope.regphone = '[0-9]{11}';
-        ////验证手机号码的格式
-        //$scope.subphonePatStyle = function(isValid){
-        //    if(isValid){
-        //        console.log("手机号码格式正确");
-        //    }else{
-        //        console.log("手机号码格式错误");
-        //        $scope.subapp= {"toggle":true};
-        //        $scope.submitWarning = "手机号码格式错误！";
-        //    }
-        //};
+        //验证手机验证码/(^\s*)|(\s*$)/g
+        $scope.regphone = "[0-9]{11}";
+        //验证手机号码的格式
+        $scope.subphonePatStyle = function(isValid){
+            //var uname = $scope.submitForm.subaccount.$modelValue;
+            //var s = uname;
+            //console.log(uname.length);
+            if(isValid){
+                //console.log("手机号码格式正确",uname);
+                console.log("成功")
+            }else{
+                //console.log("手机号码格式错误");
+                //$scope.subapp= {"toggle":true};
+                //$scope.submitWarning = "手机号码格式错误！";
+                //$timeout(function(){
+                //    $scope.subapp= {"toggle":false};
+                //},2000)
+            }
+
+            //$scope.regphone = /\\s/;
+            //if($scope.regphone.test(=====)){
+            //
+            //}
+        };
+
         //点击登录
         $scope.submitBtn = function(){
+            var sss = $(".accountinputclass").val();
+            console.log(sss.length);
+
             var uname = $scope.submitForm.subaccount.$modelValue;
             var upass = $scope.submitForm.subpass.$modelValue;
+            //var parteenyan = "^[0-9]{11}";
+            //var sssss = uname;
             console.log(uname);
             $scope.submitdis = true;
             $scope.submitBtnblue = false;
             $scope.submitBtngrey = true;
+            $scope.hideKeyboard = function() {
+                document.activeElement.blur();
+                $("input").blur();
+            };
+            $scope.hideKeyboard();
             if(!uname && !upass ){
 
                 $scope.submitdis = false;
@@ -162,7 +275,7 @@ angular.module("app.demo.controllers",[])
                 $scope.submitdis = false;
                 $scope.submitBtnblue = true;
                 $scope.submitBtngrey = false;
-                $scope.submitWarning = "请您输入手机号！";
+                $scope.submitWarning = "请确认您的手机号！";
                 $scope.subapp= {"toggle":true};
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
@@ -179,109 +292,164 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000)
-            }else{
+            }
+            else if(sss.length != 11){
+                //console.log(/(^\s*)|(\s*$)/g.test(uname));
+                $scope.submitdis = false;
+                $scope.submitBtnblue = true;
+                $scope.submitBtngrey = false;
+
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000)
+            }
+            else{
                 //$state.go("submits");
 
-                $scope.subaccountdis = true;
-                $scope.subpassdis = true;
-                $scope.loadapp = {"toggle":true};
-                registerService.submits($scope.sub).then(function(e){
-                    $scope.subaccountdis = false;
-                    $scope.subpassdis = false;
-                    $scope.loadapp = {"toggle":false};
-                    $scope.submitdis = false;
-                    $scope.submitBtnblue = true;
-                    $scope.submitBtngrey = false;
-                    console.log("收到结果正确，可以点击");
-                    console.log("e:"+JSON.stringify(e));
-                    if (e.status==true){
-                        // $rootScope.gaodemapscriptclass = {
-                        //    "src":"http://webapi.amap.com/maps?v=1.3&key=42340a04401555924d3b73340e423748"
-                        // };
-                        // document.write("<script src='http://webapi.amap.com/maps?v=1.3&key=42340a04401555924d3b73340e423748'></script>");
+                $timeout(function(){
+                    $scope.subaccountdis = true;
+                    $scope.subpassdis = true;
+                    $scope.loadapp = {"toggle":true};
+                    $scope.subObj = {
+                        cp:Number(uname),
+                        pw: $.md5(upass)
 
-                        registerService.scriptret();
-                        $window.sessionStorage.setItem("Uid",e.user.uid);//sessionStorage的存储方法
-                        //$window.sessionStorage.setItem("cellPhone",e.user.celliphone);
-                        ////存储用户的密码
-                        //$window.sessionStorage.setItem("userpassword", e.user.passWord);
-                        console.log(e.AlarmCount);
-                        console.log(e.user.celliphone);
-                        console.log(e.user.emali);
-                        console.log(e.user.nickName);
-                        //存储用户的报警数
-                        if(e.AlarmCount){
-                            //$window.sessionStorage.setItem("useralarmcount", e.AlarmCount);
-                            $rootScope.alarmcount = e.AlarmCount;
+                    };
+                    $scope.substarttimehs = new Date().getTime();
+                    console.log(333333,$scope.substarttimehs);
+                    registerService.submits($scope.subObj).then(function(e){
+                        $scope.subaccountdis = false;
+                        $scope.subpassdis = false;
+                        $scope.loadapp = {"toggle":false};
+                        $scope.submitdis = false;
+                        $scope.submitBtnblue = true;
+                        $scope.submitBtngrey = false;
+                        console.log("收到结果正确，可以点击");
+                        console.log("e:"+JSON.stringify(e));
+                        if (e.status==true){
+                            // $rootScope.gaodemapscriptclass = {
+                            //    "src":"http://webapi.amap.com/maps?v=1.3&key=42340a04401555924d3b73340e423748"
+                            // };
+                            // document.write("<script src='http://webapi.amap.com/maps?v=1.3&key=42340a04401555924d3b73340e423748'></script>");
+
+                            registerService.scriptret();
+                            //$window.sessionStorage.setItem("Uid",e.user.uid);//sessionStorage的存储方法
+                            $window.sessionStorage.setItem("Ucp",Number(uname));
+                            $window.sessionStorage.setItem("UtermId", e.content.termId);
+                            $window.sessionStorage.setItem("Uemail", e.content.email);
+                            $window.sessionStorage.setItem("Unick", e.content.nickName);
+                            $window.sessionStorage.setItem("Uspeed", e.content.speed);
+                            //$window.sessionStorage.setItem("cellPhone",e.user.celliphone);
+                            ////存储用户的密码
+                            //$window.sessionStorage.setItem("userpassword", e.user.passWord);
+                            //console.log(e.AlarmCount);
+                            //console.log(e.user.celliphone);
+                            //console.log(e.user.emali);
+                            //console.log(e.user.nickName);
+                            //存储用户的报警数
+
+
+                            //console.log($rootScope.alarmcount);
+                            //
+                            //iOS push regiser
+
+
+
+                            if($rootScope.phonetyperoot == 4){
+                            mybridge.callHandler('loginsucessObjcCallback', {"termId":$window.sessionStorage.getItem("UtermId"),"seq":registerService.randomsix(),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken")}, function(response) {
+                                log('JS got response', response)
+                            })
+                                                                }
+
+                            $rootScope.mineuserphone = uname;
+
+                                $rootScope.mineusertermid = e.content.termId;
+
+
+                            if(e.content.email){
+                                $rootScope.mineuseremail = e.content.email;
+                            }
+                            if(e.content.nickName){
+                                $rootScope.mineusernick = e.content.nickName;
+                            }
+                            //$state.go("mains.home");//e.user;
+                            //$rootScope.user =
+                            //{
+                            //    "uID": e.user.uid,
+                            //    "unickName":e.user.uname,
+                            //    "uphone": e.user.ciphone,
+                            //    "uemile": e.user.emali,
+                            //    "ucompany": e.user.cname,
+                            //    "uaddress": e.user.caddress
+                            //};
+                            //console.log(e.user);
+
+                            //console.log($rootScope.mainUsercontent);
+                            navigator.intent.toPush(
+                                                         {"termId":$window.sessionStorage.getItem("UtermId"),
+                                                         "userPhone":$window.sessionStorage.getItem("Ucp"),
+                                                         "token":$window.sessionStorage.getItem("Utoken"),
+                                                         "pushId": e.content.pushId ,
+                                                         "function":e.content.function}
+                                                       );
+                            if ($scope.noRemember == false){
+                                //存储cookie
+                                registerService.setCookie("CookieUserName", uname);
+                                registerService.setCookie("CookieUserPwd", upass);
+                                registerService.setCookie("CookieIsRemember", $scope.remember = true);
+                                console.log("保存密码");
+                            } else if($scope.noRemember == true) {
+                                registerService.delCookie("CookieUserName");
+                                registerService.delCookie("CookieUserPwd");
+                                registerService.delCookie("CookieIsRemember");
+                                console.log("删除密码");
+                            }
+                            if(e.content.termId == 0){
+                                $rootScope.lastPage = "登录";
+                                $state.go("vehiclebind");
+                            }else {
+                                $state.go("mains.home");
+                            }
+
+                        } else if(e.status==false){
+                            //判断用户是否该跳转到绑定设备页面
+                            ///if(e.reason == "用户已停用"){
+
+                            //}else{
+                                $scope.subapp= {"toggle":true};
+                                $scope.submitWarning = e.err+"！";
+                                $timeout(function(){
+                                    $scope.subapp= {"toggle":false};
+                                },2000);
+                            //}
+
+
                         }
-
-                        console.log($rootScope.alarmcount);
-
-                        if(e.user.celliphone){
-                            //$window.sessionStorage.setItem("useralarmcount", e.AlarmCount);
-                           $rootScope.mineuserphone = e.user.celliphone;
+                    },function(err){
+                        $scope.subendtimehs = new Date().getTime();
+                        $scope.subaccountdis = false;
+                        $scope.subpassdis = false;
+                        $scope.loadapp = {"toggle":false};
+                        $scope.submitdis = false;
+                        $scope.submitBtnblue = true;
+                        $scope.submitBtngrey = false;
+                        $scope.subapp= {"toggle":true};
+                        console.log(222222,$scope.subendtimehs);
+                        console.log(12222222,$scope.subendtimehs - $scope.substarttimehs);
+                        if($scope.subendtimehs - $scope.substarttimehs>=6500){
+                            $scope.submitWarning = "请求超时！";
+                        }else {
+                            $scope.submitWarning = "网络连接失败！";
                         }
-                        if(e.user.emali){
-                            $rootScope.mineuseremail = e.user.emali;
-                        }
-                        if(e.user.uname){
-                            $rootScope.mineusernick =  e.user.uname;
-                        }
-                        //$state.go("mains.home");//e.user;
-                        //$rootScope.user =
-                        //{
-                        //    "uID": e.user.uid,
-                        //    "unickName":e.user.uname,
-                        //    "uphone": e.user.ciphone,
-                        //    "uemile": e.user.emali,
-                        //    "ucompany": e.user.cname,
-                        //    "uaddress": e.user.caddress
-                        //};
-                        //console.log(e.user);
+                        $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000)
 
-                        //console.log($rootScope.mainUsercontent);
-                        if ($scope.noRemember == false){
-                            //存储cookie
-                            registerService.setCookie("CookieUserName", uname);
-                            registerService.setCookie("CookieUserPwd", upass);
-                            registerService.setCookie("CookieIsRemember", $scope.remember = true);
-                            console.log("保存密码");
-                        } else if($scope.noRemember == true) {
-                            registerService.delCookie("CookieUserName");
-                            registerService.delCookie("CookieUserPwd");
-                            registerService.delCookie("CookieIsRemember");
-                            console.log("删除密码");
-                        }
-                        $state.go("mains.home");
-                    } else if(e.status==false){
-                        //判断用户是否该跳转到绑定设备页面
-                        if(e.reason == "用户已停用"){
-                            $rootScope.lastPage = "登录";
-                            $state.go("vehiclebind");
-                        }else{
-                            $scope.subapp= {"toggle":true};
-                            $scope.submitWarning = e.reason+"！";
-                            $timeout(function(){
-                                $scope.subapp= {"toggle":false};
-                            },2000)
-                        }
+                    });
+                },250)
 
-
-                    }
-                },function(err){
-                    $scope.subaccountdis = false;
-                    $scope.subpassdis = false;
-                    $scope.loadapp = {"toggle":false};
-                    $scope.submitdis = false;
-                    $scope.submitBtnblue = true;
-                    $scope.submitBtngrey = false;
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "登录失败！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000)
-
-                });
             }
 
 
@@ -298,12 +466,22 @@ angular.module("app.demo.controllers",[])
         };
         //跳往忘记密码
         $scope.forgetPassbtn = function(){
+            $scope.hideKeyboard = function() {
+                document.activeElement.blur();
+                $("input").blur();
+            };
+            $scope.hideKeyboard();
             $scope.subaccountdis = true;
             $scope.subpassdis = true;
             $state.go("searchp");
-        }
+        };
         //跳往注册页面
         $scope.clickRegister = function(){
+            $scope.hideKeyboard = function() {
+                document.activeElement.blur();
+                $("input").blur();
+            };
+            $scope.hideKeyboard();
             $scope.subaccountdis = true;
             $scope.subpassdis = true;
             $state.go("registers");
@@ -317,6 +495,7 @@ angular.module("app.demo.controllers",[])
         $scope.searchPassBackBtn = function(){
             window.history.go(-1);
         };
+
         $scope.searchpaccountdis = false;
         $scope.searchpvercodedis = false;
         //手机号码的验证
@@ -326,7 +505,7 @@ angular.module("app.demo.controllers",[])
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
-        $scope._topnot=($(window).height() - 120)/2 +"px";
+        $scope._topnot=(parseFloat($rootScope.windoWHeihgt) - 120)/2 +"px";
         //console.log($scope._top);
 
         $scope.modelpositionStnot = {
@@ -334,7 +513,8 @@ angular.module("app.demo.controllers",[])
         };
         $scope.vercodeBtnContent = "点击获取验证码";
         //手机验证码的正则表达式
-        $scope.regphone = '[0-9]{11}';
+        $scope.regphone = "[0-9]{11}";
+        $scope.searchPcondepat= '[0-9]{6}';
         //验证手机号码的格式
         $scope.phonePatStyle = function(isValid){
             //var regaccount = $scope.registerForm.regaccount.$modelValue;
@@ -350,8 +530,12 @@ angular.module("app.demo.controllers",[])
             }
         };
         //点击获取验证码
+        //var parteenyan = /(^\s*)|(\s*$)/g;
+        //parteenyan.test(regaccount
+        $scope.passnew = {"toggle":false};
         $scope.getVercode = function(){
             //$Http
+            var rrrr = $(".searchiaccoutpow").val();
             var regaccount = $scope.searchPassForm.searchPaccount.$modelValue;
             console.log(regaccount);
             if(!regaccount){
@@ -360,19 +544,35 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(rrrr.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            //else if(parteenyan.test(regaccount)){
+            //    $scope.subapp= {"toggle":true};
+            //    $scope.submitWarning = "手机号码不能含有空格！";
+            //    $timeout(function(){
+            //        $scope.subapp= {"toggle":false};
+            //    },2000);
+            //}
+            else{
                 $scope.verCodedis = true;//不能再次点击，直到ajax结束
                 var verCodeObj = {
-                    "cellphone":regaccount,
-                    "time":registerService.getcurrentTime()
+                    "cp":Number(regaccount)
                 };
-                var verCodeUrl = "/rest/user/getMessage/";
+                var verCodeUrl = "/register/applySmsCode/";
                 $scope.loadapp = {"toggle":true};
+                $scope.vercodestarttimehs = new Date().getTime();
+                console.log("请求开始时间："+$scope.vercodestarttimehs);
                 registerService.commonUser(verCodeObj,verCodeUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     //当status正确的时候，
                     if(e.status == true){
-                        var s = 300;
+                        $scope.passnew = {"toggle":true};
+                        var s = 60;
                         $scope.vercodeBtnContent = s+"秒" ;
                         var regVertimer = $interval(function(){
                             s--;
@@ -389,18 +589,27 @@ angular.module("app.demo.controllers",[])
                     }else{
                         $scope.verCodedis = false;
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.reason+"！";
+                        $scope.submitWarning = e.err+"！";
                         $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000);
-                        console.log(e.reason);
+                        console.log(e.err);
                     }
 
                 },function(err){
+                    $scope.vercodeendtimehs = new Date().getTime();
+                    console.log("请求结束时间："+$scope.vercodeendtimehs);
+
                     $scope.loadapp = {"toggle":false};
                     $scope.verCodedis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    console.log("请求时间差："+$scope.vercodeendtimehs - $scope.vercodestarttimehs);
+                    if($scope.vercodeendtimehs - $scope.vercodestarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -416,8 +625,20 @@ angular.module("app.demo.controllers",[])
         $scope.searchvercodedis = false;
         //获取验证码页面，点击确认按钮
         $scope.verCodegoNewPassPage = function(){
+            var rrrr = $(".searchiaccoutpow").val();
+            var searchpinputcodeval = $(".searchpinputcodeclass").val();
             var regaccount = $scope.searchPassForm.searchPaccount.$modelValue;
             var searchPverCodeContent = $scope.searchPassForm.searchPverCodeContent.$modelValue;
+            try {
+                var searchPnewpassm = $scope.searchPassForm.searchPnewpass.$modelValue;
+                var searchPagapassm = $scope.searchPassForm.searchPagapass.$modelValue;
+                var pagepasswordyes = true;
+            }catch (err){
+                var searchPnewpassm = "";
+                var searchPagapassm = "";
+                var pagepasswordyes = false;
+            }
+
             if(!regaccount){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请确认您的手机号！";
@@ -425,144 +646,242 @@ angular.module("app.demo.controllers",[])
                     $scope.subapp= {"toggle":false};
                 },2000);
             }else if(!searchPverCodeContent){
+                console.log("验证码的值："+searchPverCodeContent);
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请确认您的验证码！";
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(!searchPnewpassm && !pagepasswordyes){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请点击获取验证码！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else if(!searchPnewpassm){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的新密码！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(!searchPagapassm){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请输入确认密码！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(searchPnewpassm != searchPagapassm){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "两次输入密码不一致！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(searchPnewpassm.indexOf(" ")!=-1){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "新密码内容不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(rrrr.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(searchpinputcodeval.length != 6){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "验证码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
                 $scope.searchpaccountdis = true;
                 $scope.searchpvercodedis = true;
                 $scope.searchvercodedis = true;
+                $scope.searchPnewdis= true;
+                $scope.searchPolddis= true;
                 $scope.loadapp = {"toggle":true};
-                registerService.confirmvercodes($scope.searchP).then(function(e){
+                $scope.searchPobj = {
+                    cp:Number(regaccount),
+                    code:Number(searchPverCodeContent),
+                    pwd:$.md5(searchPnewpassm)
+                };
+                $scope.searchpstarttimehs = new Date().getTime();
+                registerService.confirmvercodes($scope.searchPobj).then(function(e){
+                    console.log(e);
                     $scope.searchpaccountdis = false;
                     $scope.searchpvercodedis = false;
                     $scope.loadapp = {"toggle":false};
                     $scope.searchvercodedis = false;
+                    $scope.searchPnewdis= false;
+                    $scope.searchPolddis= false;
                     if(e.status == true){
                         //对话保存手机号码
-                        $window.sessionStorage.setItem("cellPhone",regaccount);
-                        $state.go("codenewpass");
+                        //$window.sessionStorage.setItem("cellPhone",regaccount);
+
+
+                        $scope.hahaapp= {"toggle":true};
+                        $scope.submithappy = "恭喜您，设置新密码成功！";
+                        $timeout(function(){
+                            $scope.hahaapp= {"toggle":false};
+                            $state.go("submits");
+                            $scope.passnew = {"toggle":false};
+
+                        },2000);
+
                         //$interval.cancel(regVertimer);
                     }else{
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.reason+"！";
+                        $scope.submitWarning = e.err+"！";
                         $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000);
                     }
                 },function(err){
+                    $scope.searchpendtimehs = new Date().getTime();
                     $scope.searchpaccountdis = false;
                     $scope.searchpvercodedis = false;
+                    $scope.searchPnewdis= false;
+                    $scope.searchPolddis= false;
                     $scope.loadapp = {"toggle":false};
                     $scope.searchvercodedis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+
+                    console.log("请求时间差："+$scope.searchpendtimehs - $scope.searchpstarttimehs);
+                    if($scope.searchpendtimehs - $scope.searchpstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
                 })
             }
-
-
+        };
+        $scope.forgetpassiphonenumbtna = function(){
+            console.log("hahhah");
+            $state.go("searchpforgetiphone");
         }
     })
-    //找回密码,输入新密码页面
-    .controller("verCodeNewPassController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window){
-        //返回按钮
+     //找回密码，更换手机号
+    .controller("searchpforgetiphonecontroller",function($scope,$rootScope,$state,registerService,$interval,$timeout){
         $scope.searchPassBackBtn = function(){
             window.history.go(-1);
         };
-        $scope.searchnewpnewdis = false;
-        $scope.searchnewpolddis = false;
-        //$scope.windoWHeihgt = ($(window).height())*1+"px";
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
-        $scope._topnot=($(window).height() - 120)/2 +"px";
-        //console.log($scope._top);
-
-        $scope.modelpositionStnot = {
-            "top":$scope._topnot
-        };
-        $scope.codeagaPassdis = false;
-        //点击确定
-        $scope.vercodeNewpassBtn = function(){
-            var searchnewPnewpass = $scope.searchnewPassForm.searchnewPnewpass.$modelValue;
-            var searchnewPagapass = $scope.searchnewPassForm.searchnewPagapass.$modelValue;
-            //这个时候按钮不能再次点击
-            //$scope.codeagaPassdis = true;
-            if(searchnewPnewpass == searchnewPagapass){
-                $scope.codeagaPassdis = true;
-                //执行ajax：参数phone， new aga
-                codenewpassObj = {
-                    "cellphone":$window.sessionStorage.getItem("cellPhone"),
-                    "npwd":searchnewPnewpass
-                };
-                codenewpassUrl = "/rest/user/forgotPW/";
-                //console.log($window.sessionStorage.getItem("cellPhone"));
-                $scope.loadapp = {"toggle":true};
-                $scope.searchnewpnewdis = true;
-                $scope.searchnewpolddis = true;
-                registerService.commonUser(codenewpassObj,codenewpassUrl).then(function(e){
-                    $scope.searchnewpnewdis = false;
-                    $scope.searchnewpolddis = false;
-                    $scope.loadapp = {"toggle":false};
-                    $scope.codeagaPassdis = false;
-                    if(e.status == true){
-                        $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = "新密码设置成功！";
-                        $timeout(function(){
-                            $scope.subapp= {"toggle":false};
-                            $state.go("submits");
-                        },2000);
-                    }else{
-                        $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.reason+"！";
-                        $timeout(function(){
-                            $scope.subapp= {"toggle":false};
-                        },2000);
-                    }
-                },function(err){
-                    $scope.searchnewpnewdis = false;
-                    $scope.searchnewpolddis = false;
-                    $scope.loadapp = {"toggle":false};
-                    $scope.codeagaPassdis = false;
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                });
-
-                //$http执行结束后，，
-                //
-            }else{
-                //$scope.codeagaPassdis = false;
-                //弹出模态框
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "两次密码输入不一致！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-            }
-        }
     })
+
+    //找回密码,输入新密码页面
+    //.controller("verCodeNewPassController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window){
+    //    //返回按钮
+    //    //$scope.searchPassBackBtn = function(){
+    //    //    window.history.go(-1);
+    //    //};
+    //    //
+    //    //$scope.searchnewpnewdis = false;
+    //    //$scope.searchnewpolddis = false;
+    //    ////$scope.windoWHeihgt = ($(window).height())*1+"px";
+    //    //$scope.winHeight = {
+    //    //    "height":$rootScope.windoWHeihgt
+    //    //};
+    //    //$scope._topnot=(parseFloat($rootScope.windoWHeihgt) - 120)/2 +"px";
+    //    ////console.log($scope._top);
+    //    //
+    //    //$scope.modelpositionStnot = {
+    //    //    "top":$scope._topnot
+    //    //};
+    //    //$scope.codeagaPassdis = false;
+    //    //点击确定
+    //    $scope.vercodeNewpassBtn = function(){
+    //        var searchnewPnewpass = $scope.searchnewPassForm.searchnewPnewpass.$modelValue;
+    //        var searchnewPagapass = $scope.searchnewPassForm.searchnewPagapass.$modelValue;
+    //        //var regNull=/(^\s*)|(\s*$)/g;
+    //        //这个时候按钮不能再次点击
+    //        //$scope.codeagaPassdis = true;
+    //        if(searchnewPnewpass.indexOf(" ")!=-1){
+    //            $scope.subapp= {"toggle":true};
+    //            $scope.submitWarning = "新密码内容中不能有空格！";
+    //            $timeout(function(){
+    //                $scope.subapp= {"toggle":false};
+    //            },2000);
+    //        }else if(searchnewPnewpass == searchnewPagapass){
+    //            $scope.codeagaPassdis = true;
+    //            //执行ajax：参数phone， new aga
+    //            codenewpassObj = {
+    //                "cellphone":$window.sessionStorage.getItem("cellPhone"),
+    //                "npwd":searchnewPnewpass
+    //            };
+    //            codenewpassUrl = "/rest/user/forgotPW/";
+    //            //console.log($window.sessionStorage.getItem("cellPhone"));
+    //            $scope.loadapp = {"toggle":true};
+    //            $scope.searchnewpnewdis = true;
+    //            $scope.searchnewpolddis = true;
+    //            registerService.commonUser(codenewpassObj,codenewpassUrl).then(function(e){
+    //                $scope.searchnewpnewdis = false;
+    //                $scope.searchnewpolddis = false;
+    //                $scope.loadapp = {"toggle":false};
+    //                $scope.codeagaPassdis = false;
+    //                if(e.status == true){
+    //                    $scope.subapp= {"toggle":true};
+    //                    $scope.submitWarning = "新密码设置成功！";
+    //                    $timeout(function(){
+    //                        $scope.subapp= {"toggle":false};
+    //                        $state.go("submits");
+    //                    },2000);
+    //                }else{
+    //                    $scope.subapp= {"toggle":true};
+    //                    $scope.submitWarning = e.err+"！";
+    //                    $timeout(function(){
+    //                        $scope.subapp= {"toggle":false};
+    //                    },2000);
+    //                }
+    //            },function(err){
+    //                $scope.searchnewpnewdis = false;
+    //                $scope.searchnewpolddis = false;
+    //                $scope.loadapp = {"toggle":false};
+    //                $scope.codeagaPassdis = false;
+    //                $scope.subapp= {"toggle":true};
+    //                $scope.submitWarning = "网络连接失败！";
+    //                $timeout(function(){
+    //                    $scope.subapp= {"toggle":false};
+    //                },2000);
+    //            });
+    //
+    //            //$http执行结束后，，
+    //            //
+    //        }else{
+    //            //$scope.codeagaPassdis = false;
+    //            //弹出模态框
+    //            $scope.subapp= {"toggle":true};
+    //            $scope.submitWarning = "两次密码输入不一致！";
+    //            $timeout(function(){
+    //                $scope.subapp= {"toggle":false};
+    //            },2000);
+    //        }
+    //    }
+    //})
+
     //注册
     .controller("registercontroller",function($scope,$rootScope,$state,registerService,$interval,$timeout){
         //背景的高度
-
+        $scope.searchPassBackBtn = function(){
+            window.history.go(-1);
+        };
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
-        $scope._topnot=($(window).height() - 120)/2 +"px";
+        $scope._topnot=(parseFloat($rootScope.windoWHeihgt) - 120)/2 +"px";
         //console.log($scope._top);
 
         $scope.modelpositionStnot = {
             "top":$scope._topnot
         };
-        $scope._top=($(window).height() - 150)/2 +"px";
+        $scope._top=(parseFloat($rootScope.windoWHeihgt) - 150)/2 +"px";
 
         //console.log($scope._top);
         $scope.modelpositionSt = {
@@ -577,7 +896,10 @@ angular.module("app.demo.controllers",[])
         //获取验证码的文字
         $scope.vercodeBtnContent = "获取验证码";
         //验证手机验证码
-        $scope.regphone = '[0-9]{11}';
+        $scope.regphone = "[0-9]{11}";
+        $scope.searchPcondepat = '[0-9]{6}';
+        //var parteenyan = /(^\s*)|(\s*$)/g;
+        //parteenyan.test(regaccount)
         //验证手机号码的格式
         $scope.phonePatStyle = function(isValid){
             //var regaccount = $scope.registerForm.regaccount.$modelValue;
@@ -593,9 +915,71 @@ angular.module("app.demo.controllers",[])
             }
         };
         //点击获取验证码
+        //$scope.getVercode = function(){
+        //    //$Http
+        //    var regaccount = $scope.registerForm.regaccount.$modelValue;
+        //    console.log(regaccount);
+        //    if(!regaccount){
+        //        $scope.subapp= {"toggle":true};
+        //        $scope.submitWarning = "请确认您的手机号！";
+        //        $timeout(function(){
+        //            $scope.subapp= {"toggle":false};
+        //        },2000);
+        //    }else{
+        //        $scope.verCodedis = true;//不能再次点击，直到ajax结束
+        //        var verCodeObj = {
+        //            "cellphone":regaccount,
+        //            "time":registerService.getcurrentTime()
+        //        };
+        //        var verCodeUrl = "/rest/user/getMessage/";
+        //        $scope.loadapp = {"toggle":true};
+        //        registerService.commonUser(verCodeObj,verCodeUrl).then(function(e){
+        //            $scope.loadapp = {"toggle":false};
+        //            //当status正确的时候，
+        //            if(e.status == true){
+        //                var s = 300;
+        //                $scope.vercodeBtnContent = s+"秒" ;
+        //                var regVertimer = $interval(function(){
+        //                    s--;
+        //                    if(s>0){
+        //                        $scope.vercodeBtnContent = s+"秒" ;
+        //                        //console.log(s);
+        //                    }else{
+        //                        $scope.verCodedis = false;
+        //                        $scope.vercodeBtnContent = "重新获取验证码" ;
+        //                        $interval.cancel(regVertimer);
+        //                        //console.log(s);
+        //                    }
+        //                },2000)
+        //            }else{
+        //                $scope.verCodedis = false;
+        //                $scope.subapp= {"toggle":true};
+        //                $scope.submitWarning = e.reason+"！";
+        //                $timeout(function(){
+        //                    $scope.subapp= {"toggle":false};
+        //                },2000);
+        //                console.log(e.reason);
+        //            }
+        //
+        //        },function(err){
+        //            $scope.loadapp = {"toggle":false};
+        //            $scope.verCodedis = false;
+        //            $scope.subapp= {"toggle":true};
+        //            $scope.submitWarning = "网络连接失败！";
+        //            $timeout(function(){
+        //                $scope.subapp= {"toggle":false};
+        //            },2000);
+        //        });
+        //
+        //
+        //    }
+        //};
+        //点击注册
         $scope.getVercode = function(){
             //$Http
+            var regaccountval = $(".inputregisteraccountr").val();
             var regaccount = $scope.registerForm.regaccount.$modelValue;
+            var regsecordorder = $(".inputregsecretordert").val();
             console.log(regaccount);
             if(!regaccount){
                 $scope.subapp= {"toggle":true};
@@ -603,19 +987,39 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(regaccountval.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(!regsecordorder){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的密令！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(regsecordorder.indexOf(" ") != -1){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "密令中不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
                 $scope.verCodedis = true;//不能再次点击，直到ajax结束
                 var verCodeObj = {
-                    "cellphone":regaccount,
-                    "time":registerService.getcurrentTime()
+                    "cp":Number(regaccount)
                 };
-                var verCodeUrl = "/rest/user/getMessage/";
+                var verCodeUrl = "/register/applySmsCode/";
                 $scope.loadapp = {"toggle":true};
+                $scope.vercodestarttimehs = new Date().getTime();
                 registerService.commonUser(verCodeObj,verCodeUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     //当status正确的时候，
                     if(e.status == true){
-                        var s = 300;
+                        $scope.passnew = {"toggle":true};
+                        var s = 60;
                         $scope.vercodeBtnContent = s+"秒" ;
                         var regVertimer = $interval(function(){
                             s--;
@@ -624,7 +1028,7 @@ angular.module("app.demo.controllers",[])
                                 //console.log(s);
                             }else{
                                 $scope.verCodedis = false;
-                                $scope.vercodeBtnContent = "重新获取验证码" ;
+                                $scope.vercodeBtnContent = "重新获取" ;
                                 $interval.cancel(regVertimer);
                                 //console.log(s);
                             }
@@ -632,18 +1036,24 @@ angular.module("app.demo.controllers",[])
                     }else{
                         $scope.verCodedis = false;
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.reason+"！";
+                        $scope.submitWarning = e.err+"！";
                         $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000);
-                        console.log(e.reason);
+                        console.log(e.err);
                     }
 
                 },function(err){
                     $scope.loadapp = {"toggle":false};
                     $scope.verCodedis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.vercodeendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.vercodeendtimehs - $scope.vercodestarttimehs);
+                    if($scope.vercodeendtimehs - $scope.vercodestarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -652,13 +1062,15 @@ angular.module("app.demo.controllers",[])
 
             }
         };
-        //点击注册
         $scope.registerdis = false;
         $scope.registerBtn = function(){
+            var regaccountval = $(".inputregisteraccountr").val();
+            var regcodeval = $(".registercodeclassa").val();
             var regaccount = $scope.registerForm.regaccount.$modelValue;
             var regpass = $scope.registerForm.regpass.$modelValue;
             var regemail = $scope.registerForm.regemail.$modelValue;
             var regverCode = $scope.registerForm.regverCode.$modelValue;
+            //var regNull=/(^\s*)|(\s*$)/g;
             if(!regaccount){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请确认您的手机号！";
@@ -671,19 +1083,40 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else if(!regemail){
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "请确认您的邮箱！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-            }else if(!regverCode){
+            }
+            //else if(!regemail){
+            //    $scope.subapp= {"toggle":true};
+            //    $scope.submitWarning = "请确认您的邮箱！";
+            //    $timeout(function(){
+            //        $scope.subapp= {"toggle":false};
+            //    },2000);
+            //}
+            else if(!regverCode){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请确认您的验证码！";
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(regpass.indexOf(" ")!=-1){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "密码内容中不能有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(regaccountval.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(regcodeval.length != 6){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "验证码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
                 console.log("可以注册");
                 $scope.regaccountdis = true;
                 $scope.regpassdis = true;
@@ -691,7 +1124,18 @@ angular.module("app.demo.controllers",[])
                 $scope.regvercodedis = true;
                 $scope.registerdis = true;
                 $scope.loadapp = {"toggle":true};
-                registerService.registers($scope.reg).then(function(e){
+
+
+                $scope.regObj = {
+                    cp:Number(regaccount),
+                    pw:$.md5(regpass),
+                    phoneType:Number($rootScope.phonetyperoot),
+                    //nickName:"用户",
+                    code:Number(regverCode),
+                    email:regemail
+                };
+                $scope.regstarttimehs = new Date().getTime();
+                registerService.registers($scope.regObj).then(function(e){
                     $scope.regaccountdis = false;
                     $scope.regpassdis = false;
                     $scope.regemaildis = false;
@@ -700,11 +1144,18 @@ angular.module("app.demo.controllers",[])
                     $scope.registerdis = false;
                     if(e.status == true){
                         $rootScope.lastPage = "注册";
-                        $scope.regSuccessapp = {"toggle":true};
+                        //$scope.regSuccessapp = {"toggle":true};
+                        $scope.hahaapp = {"toggle":true};
+                        $scope.submithappy = "恭喜您，注册成功，稍后进入登录页面！";
+                        $scope.regisertruetime = $timeout(function(){
+                            $scope.hahaapp = {"toggle":true};
+                            $state.go("submits");
+                        },2000);
+
                     }else{
 
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.reason+"！";
+                        $scope.submitWarning = e.err+"！";
                         $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000);
@@ -718,7 +1169,14 @@ angular.module("app.demo.controllers",[])
                     $scope.loadapp = {"toggle":false};
                     $scope.registerdis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.regendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.regendtimehs - $scope.regstarttimehs);
+                    if($scope.regendtimehs - $scope.regstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -727,19 +1185,20 @@ angular.module("app.demo.controllers",[])
         };
 
         //模态框返回登录
-        $scope.gosubmitPage = function(){
-            $state.go("submits");
-        };
-        //模态框去绑定
-        $scope.gobindPage = function(){
-            $state.go("vehiclebind");
-        }
+        //$scope.gosubmitPage = function(){
+        //    $state.go("submits");
+        //};
+        ////模态框去绑定
+        //$scope.gobindPage = function(){
+        //    $state.go("vehiclebind");
+        //}
     })
     //车辆绑定
-    .controller("vehiclebindController",function($scope,$rootScope,$state,registerService,$interval,$timeout){
+    .controller("vehiclebindController",function($scope,$rootScope,$window,$state,registerService,$interval,$timeout){
         $scope.searchPassBackBtn = function(){
             window.history.go(-1);
         };
+
         $rootScope.pushyesorno = true;
         console.log("绑定页面："+$rootScope.lastPage);
         $scope.vercodeBtnContent = "点击获取验证码";
@@ -747,7 +1206,7 @@ angular.module("app.demo.controllers",[])
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
-        $scope._topnot=($(window).height() - 120)/2 +"px";
+        $scope._topnot=(parseFloat($rootScope.windoWHeihgt) - 120)/2 +"px";
         //console.log($scope._top);
 
         $scope.modelpositionStnot = {
@@ -762,7 +1221,9 @@ angular.module("app.demo.controllers",[])
         $scope.vehiclebinddis = false;
         $scope.bindverCodedis= false;
         //手机验证码的正则表达式
-        $scope.regphone = '[0-9]{11}';
+        $scope.regphone = "[0-9]{11}";
+        $scope.bindvehiclepattcode = "[0-9]{6}";
+        $scope.vehiclenumpatt= "[0-9]{15}";
         //验证手机号码的格式
         $scope.phonePatStyle = function(isValid){
             //var regaccount = $scope.registerForm.regaccount.$modelValue;
@@ -781,30 +1242,44 @@ angular.module("app.demo.controllers",[])
         };
         //点击扫码
         $scope.vehiclenumbtn = function(){
-            console.log("点击扫码")
-            cordova.plugins.barcodeScanner.scan(
-                function (result) {
-                    //alert("We got a barcode\n" +
-                    //    "Result: " + result.text + "\n" +
-                    //    "Format: " + result.format + "\n" +
-                    //    "Cancelled: " + result.cancelled);
-                    $scope.vehiclebind = {"divicenum":result.text};
-                },
-                function (error) {
-                    //alert("Scanning failed: " + error);
-                    //$scope.verCodedis = false;
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = error+"！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                }
-            );
+            console.log("点击扫码");
+            if($rootScope.phonetyperoot == 4){
+                mybridge.callHandler('cameraObjcCallback', {"termId":$window.sessionStorage.getItem("UtermId")}, function(response) {
+                    log('JS got response', response)
+
+
+                })
+
+            }else {
+                cordova.plugins.barcodeScanner.scan(
+                    function (result) {
+                        //alert("We got a barcode\n" +
+                        //    "Result: " + result.text + "\n" +
+                        //    "Format: " + result.format + "\n" +
+                        //    "Cancelled: " + result.cancelled);
+                        //$scope.$apply(function(){
+                            $(".vehiclenumvalclass").val(result.text);
+                        //})
+
+                    },
+                    function (error) {
+                        //alert("Scanning failed: " + error);
+                        //$scope.verCodedis = false;
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = error+"！";
+                        $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                );
+            }
+
 
         }
         //点击获取验证码
         $scope.getVercode = function(){
             //$Http
+            var vehicleaccountval = $(".bindvehicleaccountval").val();
             var vehiclebindaccount = $scope.vehiclebindForm.vehiclebindaccount.$modelValue;
             console.log(vehiclebindaccount);
             if(!vehiclebindaccount){
@@ -813,19 +1288,26 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(vehicleaccountval.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
                 $scope.bindverCodedis = true;//不能再次点击，直到ajax结束
                 var verCodeObj = {
-                    "cellphone":vehiclebindaccount,
-                    "time":registerService.getcurrentTime()
+                    "cp":Number(vehiclebindaccount)
                 };
-                var verCodeUrl = "/rest/user/getMessage/";
+                var verCodeUrl = "/register/applySmsCode/";
                 $scope.loadapp = {"toggle":true};
+                $scope.vercodestarttimehs = new Date().getTime();
                 registerService.commonUser(verCodeObj,verCodeUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     //当status正确的时候，
                     if(e.status == true){
-                        var s = 300;
+                        var s = 60;
                         $scope.vercodeBtnContent = s+"秒" ;
                         var regVertimer = $interval(function(){
                             s--;
@@ -842,18 +1324,25 @@ angular.module("app.demo.controllers",[])
                     }else{
                         $scope.bindverCodedis = false;
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.reason+"！";
+                        $scope.submitWarning = e.err+"！";
                         $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000);
-                        console.log(e.reason);
+                        console.log(e.err);
                     }
 
                 },function(err){
                     $scope.loadapp = {"toggle":false};
                     $scope.bindverCodedis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.vercodeendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.vercodeendtimehs - $scope.vercodestarttimehs);
+                    if($scope.vercodeendtimehs - $scope.vercodestarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -863,6 +1352,9 @@ angular.module("app.demo.controllers",[])
             }
         };
         $scope.gomainPage = function(){
+            var bindvehiclecodeval = $(".bindvehiclecodea").val();
+            var vehicleaccountval = $(".bindvehicleaccountval").val();
+            var vehiclenumvala = $(".bindvehiclevehiclenumval").val();
             var vehiclebindaccount = $scope.vehiclebindForm.vehiclebindaccount.$modelValue;
             var vehiclebinddivicenum = $scope.vehiclebindForm.vehiclebinddivicenum.$modelValue;
             var vehiclebindverCodeContent = $scope.vehiclebindForm.vehiclebindverCodeContent.$modelValue;
@@ -872,7 +1364,7 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else if(!vehiclebinddivicenum){
+            }else if(!vehiclenumvala){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请确认您的设备号！";
                 $timeout(function(){
@@ -884,20 +1376,41 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(vehicleaccountval.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(vehiclenumvala.length != 15){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "设备号必须是15位数字且前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else if(bindvehiclecodeval.length != 6){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "验证码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
                 $scope.bindphonedis = true;
                 $scope.bindvehiclenumdis = true;
                 $scope.bindvercodedis = true;
                 $scope.vehiclebinddis = true;
                 var vehiclebindObj = {
-                    cellphone:vehiclebindaccount,
-                    type:1,
-                    imsi:vehiclebinddivicenum,
-                    code:vehiclebindverCodeContent
+                    cp:Number(vehiclebindaccount),
+                    //type:1,
+                    termId:Number(vehiclenumvala),
+                    code:Number(vehiclebindverCodeContent)
 
                 }
-                var vehiclebindUrl = "/rest/Vehicle/Binding";
+                var vehiclebindUrl = "/rest/user/bind/";
                 $scope.loadapp = {"toggle":true};
+                $scope.vehiclebindstarttimehs = new Date().getTime();
                 registerService.commonUser(vehiclebindObj,vehiclebindUrl).then(function(e){
                     $scope.bindphonedis = false;
                     $scope.bindvehiclenumdis = false;
@@ -906,33 +1419,52 @@ angular.module("app.demo.controllers",[])
                     $scope.vehiclebinddis = false;
                     console.log(e);
                     if(e.status == true){
+                        $window.sessionStorage.setItem("UUcp", Number(vehiclebindaccount));
+                        $window.sessionStorage.setItem("UtermId", vehiclenumvala);
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = "恭喜您，绑定设备成功！";
+                        $scope.submitWarning = "绑定设备成功！";
                         $timeout(function(){
                             $scope.subapp= {"toggle":false};
+
+                            $rootScope.mineusertermid = vehiclenumvala;
+
+
                             //判断之前的页面是什么页面
                             if($rootScope.lastPage == "注册"){
                                 //跳转到登录页面
                                 $state.go("submits");
                             }else{
                                 //跳转到主页面
-                                $state.go("mains.home");
+                                if($window.sessionStorage.getItem("UUcp") == $window.sessionStorage.getItem("Ucp")){
+                                    $state.go("mains.home");
+                                }else {
+                                    $state.go("submits");
+                                }
+
                             }
                         },2000);
                     }else{
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.reason+"！";
+                        $scope.submitWarning = e.err+"！";
                         $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000);
                     }
                 },function(err){
+                    $scope.vehiclebinddis = false;
                     $scope.bindphonedis = false;
                     $scope.bindvehiclenumdis = false;
                     $scope.bindvercodedis = false;
                     $scope.loadapp = {"toggle":false};
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.vehiclebindendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.vehiclebindendtimehs - $scope.vehiclebindstarttimehs);
+                    if($scope.vehiclebindendtimehs - $scope.vehiclebindstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -944,23 +1476,60 @@ angular.module("app.demo.controllers",[])
     })
     //主页面
     .controller("mainsController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window,$location){
-        //加载高德AMap
-        //var script = $script;
-        //script();
-
+//        $scope.shishizuizoObj = {
+//            appSN:parseInt(Number(new Date().getTime())/1000),
+//            termId:Number($window.sessionStorage.getItem("UtermId")),
+//            userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+//            interval:5,
+//            duration:300
+//        };
+//        $scope.shishizuizongUrl = "/rest/cmd/track/";
+//        registerService.commonUser($scope.shishizuizoObj,$scope.shishizuizongUrl).then(function(e){
+//            console.log("实时追踪："+JSON.stringify(e));
+//        },function(err){
+//            console.log("实时追踪："+JSON.stringify(err));
+//        })
+//        //$scope.shishizuizoObj = {
+//        //    //appSN:parseInt(Number(new Date().getTime())/1000),
+//        //    termId:Number($window.sessionStorage.getItem("UtermId"))
+//        //    //userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+//        //    //interval:5,
+//        //    //duration:300
+//        //};
+//        //$scope.shishizuizongUrl = "/rest/gps/latest/";
+//        //registerService.commonUser($scope.shishizuizoObj,$scope.shishizuizongUrl).then(function(e){
+//        //    console.log("gps测试："+JSON.stringify(e));
+//        //},function(err){
+//        //    console.log("gps测试："+JSON.stringify(err));
+//        //});
+//        $scope.shishizuizoObj = {
+//            //appSN:parseInt(Number(new Date().getTime())/1000),
+//            termId:Number($window.sessionStorage.getItem("UtermId")),
+//            startTime:new Date("2017/01/11 12:32:02").getTime(),
+//            endTime:new Date("2017/01/11 16:32:02").getTime()
+//        //new Date("2012/12/25 20:11:11").getTime()
+//            //userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+//            //interval:5,
+//            //duration:300
+//        };
+//        $scope.shishizuizongUrl = "/rest/gps/period/";
+//        registerService.commonUser($scope.shishizuizoObj,$scope.shishizuizongUrl).then(function(e){
+//            console.log("gps："+JSON.stringify(e));
+//        },function(err){
+//            console.log("gps："+JSON.stringify(err));
+//        })
         $scope.$state = $state;
-        //$scope.windoWHeihgt = ($(window).height())*1+"px";
+
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
-        $scope._topnot=($(window).height() - 120)/2 +"px";
+        $scope._topnot=(parseFloat($rootScope.windoWHeihgt) - 120)/2 +"px";
         //console.log($scope._top);
-
         $scope.modelpositionStnot = {
             "top":$scope._topnot
         };
         //日期模态框
-        $scope._top=($(window).height() - 300)/2 +"px";
+        $scope._top=(parseFloat($rootScope.windoWHeihgt) - 300)/2 +"px";
         //if(!AMap){
         //   console.log("错误,没有地图");
         //}
@@ -968,166 +1537,89 @@ angular.module("app.demo.controllers",[])
         $scope.modelpositionSt = {
             "top":$scope._top
         };
-        //$rootScope.maploadfun = function(obj,centerpoint){
-        //    new AMap.Map(obj,{
-        //        zoom:20,
-        //        center: centerpoint
-        //    });
-        //};
-        $scope.udate = {'modelstartyear':registerService.getdateYear()+"年",'modelstartmonth':registerService.getdateMonth()+'月','modelstartday':registerService.getdateday()+'日','modeloveryear':registerService.getdateYear()+"年",'modelovermonth':registerService.getdateMonth()+'月','modeloverday':registerService.getdateday()+'日'};
-        //加年
-        $scope.startYearadd = function(){
-            var numstarty = parseInt($(".startyearnum").val()) ;
-            numstarty++;
-            //parseInt($(".startmonthnum").val())>=registerService.getdateMonth() || parseInt($(".startdaynum").val()) >=registerService.getdateday()
 
-                if((numstarty-1) == registerService.getdateYear()){
-                    numstarty--;
-                    //console.log("第二个")
-
-            }
-            $(".startyearnum").val(numstarty+"年");
-        }
-        //减年
-        $scope.startYearless = function(){
-            var numstarty = parseInt($(".startyearnum").val()) ;
-            numstarty--;
-            $(".startyearnum").val(numstarty+"年");
-        };
-        //减月
-        $scope.startMonthless = function(){
-            var numstartm = parseInt($(".startmonthnum").val()) ;
-            numstartm--;
-            if(numstartm==0){
-                numstartm = 1;
-            }
-            $(".startmonthnum").val(registerService.autoaddZero(numstartm)+"月");
-        };
-        //加月
-        $scope.startMonthadd = function(){
-            var numstartm = parseInt($(".startmonthnum").val()) ;
-            numstartm++;
-            if(numstartm==13){
-                numstartm = 12;
-            //&& parseInt($(".startdaynum").val()) ==registerService.getdateday()
-            }else if(parseInt($(".startyearnum").val()) ==registerService.getdateYear()  ){
-                if((numstartm-1) == registerService.getdateMonth()){
-                    numstartm--;
-                    //console.log("第二个")
-                }
-            }
-            $(".startmonthnum").val(registerService.autoaddZero(numstartm)+"月");
-        }
-        //减日
-        $scope.startdayless = function(){
-            var numstartm = parseInt($(".startdaynum").val()) ;
-            numstartm--;
-            if(numstartm==0){
-                numstartm = 1;
-            }
-            $(".startdaynum").val(registerService.autoaddZero(numstartm)+"日");
-        };
-        //加日
-        $scope.startdayadd = function(){
-            var numstartm = parseInt($(".startdaynum").val()) ;
-            numstartm++;
-            if(numstartm==32){
-                numstartm = 31;
-            }else if(parseInt($(".startmonthnum").val())== registerService.getdateMonth() && parseInt($(".startyearnum").val()) ==registerService.getdateYear()){
-                if((numstartm-1) == registerService.getdateday()){
-                    numstartm--;
-                    //console.log("第二个")
-                }
-            }
-            $(".startdaynum").val(registerService.autoaddZero(numstartm)+"日");
-        }
-        //加年
-        $scope.overYearadd = function(){
-            var numstarty = parseInt($(".overyearnum").val()) ;
-            numstarty++;
-            //if(parseInt($(".overmonthnum").val())==registerService.getdateMonth() && parseInt($(".overdaynum").val())==registerService.getdateday()){
-                if((numstarty-1) == registerService.getdateYear()){
-                    numstarty--;
-                    //console.log("第二个")
-                }
-            //}
-            $(".overyearnum").val(numstarty+"年");
-        }
-        //减年
-        $scope.overYearless = function(){
-            var numstarty = parseInt($(".overyearnum").val()) ;
-            numstarty--;
-            $(".overyearnum").val(numstarty+"年");
-        };
-        //减月
-        $scope.overMonthless = function(){
-            var numstartm = parseInt($(".overmonthnum").val()) ;
-            numstartm--;
-            if(numstartm==0){
-                numstartm = 1;
-            }
-            $(".overmonthnum").val(registerService.autoaddZero(numstartm) +"月");
-        };
-        //加月
-        $scope.overMonthadd = function(){
-            var numstartm = parseInt($(".overmonthnum").val()) ;
-            numstartm++;
-            if(numstartm== 13){
-                numstartm= 12;
-            }
-            //parseInt($(".overdaynum").val())==registerService.getdateday() &&
-            if(parseInt($(".overyearnum").val()) == registerService.getdateYear()){
-                if((numstartm-1) == registerService.getdateMonth()){
-                    numstartm--;
-                    //console.log("第二个")
-                }
-                //console.log("第一个");
-
-            }
-            $(".overmonthnum").val(registerService.autoaddZero(numstartm) +"月");
-        };
-        //减日
-        $scope.overdayless = function(){
-            var numstartm = parseInt($(".overdaynum").val()) ;
-            numstartm--;
-            if(numstartm == 0){
-                numstartm = 1;
-            }
-            $(".overdaynum").val(registerService.autoaddZero(numstartm) +"日");
-        };
-        //加日
-        $scope.overdayadd = function(){
-            var numstartm = parseInt($(".overdaynum").val()) ;
-            numstartm++;
-            if(numstartm== 32){
-                numstartm= 31;
-            }
-            if(parseInt($(".overyearnum").val()) == registerService.getdateYear() && parseInt($(".overmonthnum").val())== registerService.getdateMonth()){
-                if((numstartm-1) == registerService.getdateday()){
-                    numstartm--;
-                    //console.log("第二个")
-                }
-            }
-            $(".overdaynum").val(registerService.autoaddZero(numstartm) +"日");
-        };
-
-        //$scope.datediv = {toggle:true};
-        //$rootScope.againdatewarning = function(){
-        //    $rootScope.datemodel = {datewarningtoggle : false};
-        //}
     })
     //home页面
-    .controller("homeController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window){
+    .controller("homeController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window,$location){
+        $scope.winHeight = {
+            "height":$rootScope.windoWHeihgt
+        };
+        $scope._topnot=(parseFloat($rootScope.windoWHeihgt) - 120)/2 +"px";
+        //console.log($scope._top);
+        $scope.modelpositionStnot = {
+            "top":$scope._topnot
+        };
+        console.log(123399499585858585858,$rootScope.mineusertermid);
+        $scope.$on('$stateChangeStart',
+
+            function(event, toState, toParams, fromState, fromParams){
+                console.log("toState:"+JSON.stringify(toState));
+                console.log("toParams:"+JSON.stringify(toParams));
+                console.log("fromState:"+JSON.stringify(fromState));
+                console.log("fromParams:"+JSON.stringify(fromParams));
+                console.log("获取路由地址："+$location.path());
+                if(fromState.name=="mains.home"){
+                    console.log($scope.timerr);
+                    $interval.cancel($scope.timerr);
+                    $interval.cancel($scope.warningnumtimesa);
+                    console.log("关闭定时获取报警数量！");
+                    console.log("关闭定时器,先出来");
+                    console.log($scope.warningnumtimesa);
+                };
+                if(toState.name == "mains.home"){
+                    prostatus();
+                    $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
+                    console.log("开启定时器获取报警数量")
+                }
+
+            });
+        //$scope.timetimetime = $timeout(function(){
+        //    console.log(333333333333333,$scope.timerr)
+        //},1000);
+        function backappfunction(){
+            $(document).unbind("backbutton");
+            $(document).bind('backbutton', eventBackButton);
+            function eventBackButton(e) {
+                //console.log("event:"+JSON.stringify(e));
+                if($location.path() == "/mains/home"){
+                    console.log("退出登录");
+                    $scope.$apply(function(){
+                        $scope.yesOrNo= {"toggle":true};
+                    })
+                }else {
+                    console.log("非退出按钮!");
+                    window.history.go(-1);
+                }
+
+            }
+        };
+
+
+        backappfunction();
+
+
+
+        $scope.backappYes= function(){
+            //window.location.replace("index.html");
+            $state.go("submits");
+        };
+        $scope.yesOrnohide= function(){
+            $scope.yesOrNo= {"toggle":false};
+        };
+
+
         $scope.iframereturn = function(){
             return false;
         };
+        //$scope.timerr = null;
+        console.log(22222,$scope);
         //总的map
         $rootScope.mapfunc = function(){
             var followmap =  new AMap.Map('tripmapid',{
                 zoom:20,
                 center: [116.397428, 39.90923]
             });
-        }
+        };
         $scope.fortificationdis = false;
         $scope.colorfffYes = true;
         $scope.coloryyyYes = false;
@@ -1143,55 +1635,72 @@ angular.module("app.demo.controllers",[])
         $rootScope.coloryyy5 = false;
         $rootScope.colorfff6 = true;
         $rootScope.coloryyy6 = false;
-        //监听退出app事件
-        //function backappfunction(){
-        //    document.addEventListener('backbutton', eventBackButton, false);
-        //    function eventBackButton(e) {
-        //        e.preventDefault();
-        //        //alert("backClick2");
-        //        navigator.app.exitApp();
-        //    }
-        //};
-        //backappfunction();
 
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
         //未处理的报警的个数
-        $scope.alarmiconcountnone= false;
+        //$rootScope.alarmiconcountnone= false;
         //$window.sessionStorage.setItem("useralarmcount");
         console.log($rootScope.alarmcount);
-        if(Number($rootScope.alarmcount)){
-            console.log("icon显示");
-        }else{
-            console.log("icon隐藏");
-            $scope.alarmiconcountnone= true;
-        }
+        //if($rootScope.alarmcount >0){
+        //    console.log("icon显示");
+        //}else{
+        //    console.log("icon隐藏");
+        //    $rootScope.alarmiconcountnone= true;
+        //}
+        $rootScope.alarmiconcountnone= true;
         //获取解防设防的状态
         $scope.carstatusbellObj = {
-            seq:registerService.randomsix(),
-            uid:$window.sessionStorage.getItem("Uid")
-        }
-        $scope.carstatusbellUrl = "/rest/Vehicles/state";
+            appSN:parseInt(Number(new Date().getTime())/1000),
+            termId:Number($window.sessionStorage.getItem("UtermId")),
+            userCellPhone:Number($window.sessionStorage.getItem("Ucp"))
+        };
+        $scope.carstatusbellUrl = "/rest/cmd/queryStatus/";
         function prostatus(){
             $scope.fortificationdis = true;
             $scope.orFortification = "获取中";
             $scope.loadapp = {"toggle":true};
-            $timeout(function(){
+            $scope.timesfortiload = $timeout(function(){
                 $scope.loadapp = {"toggle":false};
             },3000);
+            $scope.carstartusbellstarttimehs = new Date().getTime();
             registerService.commonUser($scope.carstatusbellObj,$scope.carstatusbellUrl).then(function(e){
                 $scope.loadapp = {"toggle":false};
                 $scope.fortificationdis = false;
                 console.log(e);
+                console.log("报警数"+e.totleAlarm);
+                if(e.totleAlarm>=0){
+                    //$window.sessionStorage.setItem("useralarmcount", e.AlarmCount);
+                    if(0<= e.totleAlarm && e.totleAlarm<=99){
+                        $rootScope.alarmcount = e.totleAlarm;
+                    }else {
+                        $rootScope.alarmcount = "99+";
+                    }
+
+                }else {
+                    //$rootScope.alarmcount = 0;
+                }
+                console.log("$rootScope.alarmcount:"+$rootScope.alarmcount);
+                $scope.timealarmcontenttime = $timeout(function(){
+                    if($rootScope.alarmcount >0 || $rootScope.alarmcount == "99+"){
+                        console.log("icon显示");
+                        $rootScope.alarmiconcountnone= false;
+                    }else{
+                        console.log("icon隐藏");
+                        $rootScope.alarmiconcountnone= true;
+                    };
+                },20);
+
                 if(e.status == true){
-                    if(e.db1 == 0){
+
+                    if(e.content.lockStatus == 0){
                         $scope.orFortification = "设防";
                         $scope.colorfffYes = true;
                         $scope.coloryyyYes = false;
                         $scope.colorfffNo= false;
                         $scope.coloryyyNo = false;
-                    }else if(e.db1 == 1){
+                    }else if(e.content.lockStatus == 1){
                         $scope.orFortification = "解防";
                         $scope.colorfffYes =false ;
                         $scope.coloryyyYes = false;
@@ -1201,8 +1710,8 @@ angular.module("app.demo.controllers",[])
                 }else{
                     $scope.orFortification = "点击获取";
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = e.reason+"！";
-                    $timeout(function(){
+                    $scope.submitWarning = e.err+"！";
+                    $scope.timersfreasonload = $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
                 }
@@ -1211,20 +1720,110 @@ angular.module("app.demo.controllers",[])
                 $scope.fortificationdis = false;
                 $scope.orFortification = "点击获取";
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $timeout(function(){
+                $scope.carstartusbellendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs);
+                if($scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
+                $scope.timersferrload = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
             })
         }
-        prostatus();
-        //解防设防的$http
-        //$scope.fortificationajax = function(){
-        //
-        //
-        //};
+        function prostatuswarningnum(){
+            console.log("定时器");
+            //$scope.fortificationdis = true;
+            //$scope.orFortification = "获取中";
+            //$scope.loadapp = {"toggle":true};
+            //$scope.timesfortiload = $timeout(function(){
+            //    $scope.loadapp = {"toggle":false};
+            //},3000);
+            //$scope.carstartusbellstarttimehs = new Date().getTime();
+            $scope.carstatusbellObj = {
+                appSN:parseInt(Number(new Date().getTime())/1000),
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp"))
+            };
+            registerService.commonUser($scope.carstatusbellObj,$scope.carstatusbellUrl).then(function(e){
+                //$scope.loadapp = {"toggle":false};
+                //$scope.fortificationdis = false;
+                console.log(e);
+                console.log("报警数"+e.totleAlarm);
+                if(e.totleAlarm>=0){
+                    //$window.sessionStorage.setItem("useralarmcount", e.AlarmCount);
+                    if(0<= e.totleAlarm && e.totleAlarm<=99){
+                        $rootScope.alarmcount = e.totleAlarm;
+                    }else {
+                        $rootScope.alarmcount = "99+";
+                    }
+
+                }else {
+                    //$rootScope.alarmcount = 0;
+                }
+                console.log("$rootScope.alarmcount:"+$rootScope.alarmcount);
+                $scope.timealarmcontenttime = $timeout(function(){
+                    if($rootScope.alarmcount >0 || $rootScope.alarmcount == "99+"){
+                        console.log("icon显示");
+                        $rootScope.alarmiconcountnone= false;
+                    }else{
+                        console.log("icon隐藏");
+                        $rootScope.alarmiconcountnone= true;
+                    };
+                },20);
+                //
+                if(e.status == true){
+
+                    if(e.content.lockStatus == 0){
+                        $scope.orFortification = "设防";
+                        $scope.colorfffYes = true;
+                        $scope.coloryyyYes = false;
+                        $scope.colorfffNo= false;
+                        $scope.coloryyyNo = false;
+                    }else if(e.content.lockStatus == 1){
+                        $scope.orFortification = "解防";
+                        $scope.colorfffYes =false ;
+                        $scope.coloryyyYes = false;
+                        $scope.colorfffNo= true;
+                        $scope.coloryyyNo = false;
+                    }
+                }
+                 else{
+                    $scope.orFortification = "点击获取";
+                    //$scope.subapp= {"toggle":true};
+                    //$scope.submitWarning = e.err+"！";
+                    //$scope.timersfreasonload = $timeout(function(){
+                    //    $scope.subapp= {"toggle":false};
+                    //},2000);
+                }
+            },function(err){
+                //$scope.loadapp = {"toggle":false};
+                //$scope.fortificationdis = false;
+                //$scope.orFortification = "点击获取";
+                //$scope.subapp= {"toggle":true};
+                //$scope.carstartusbellendtimehs = new Date().getTime();
+                //console.log("请求时间差："+$scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs);
+                //if($scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs>=6500){
+                //    $scope.submitWarning = "请求超时！";
+                //}else {
+                //    $scope.submitWarning = "网络连接失败！";
+                //}
+                ////$scope.submitWarning = "网络连接失败！";
+                //$scope.timersferrload = $timeout(function(){
+                //    $scope.subapp= {"toggle":false};
+                //},2000);
+            })
+        }
+        if($location.path() == "/mains/home"){
+            prostatus();
+            $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
+            console.log("开启定时器获取报警数量");
+        }
         //点击解防或者设防的按钮
         $scope.fortificationStatus = function(){
+            console.log($location.path());
             $scope.fortificationdis = true;
             if($scope.orFortification == "设防"){
                 $scope.colorfffYes = false;
@@ -1232,18 +1831,20 @@ angular.module("app.demo.controllers",[])
                 $scope.colorfffNo= false;
                 $scope.coloryyyNo = false;
                 $scope.vehiclesoperationObj = {
-                    uid:$window.sessionStorage.getItem("Uid"),
-                    operationType:1,
-                    seq:registerService.randomsix()
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                    appSN:parseInt(Number(new Date().getTime())/1000),
+                    lock:true
                 }
-                $scope.vehiclesoperationUrl = "/rest/Vehicles/operation";
+                $scope.vehiclesoperationUrl = "/rest/cmd/lock/";
                 $scope.loadapp = {"toggle":true};
+                $scope.vehiclesoperationstarttimehs = new Date().getTime();
                 registerService.commonUser($scope.vehiclesoperationObj,$scope.vehiclesoperationUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     $scope.fortificationdis = false;
                     console.log(e);
                     if(e.status == true){
-                        if(e.db1 == 0){
+                        if(e.content.result == 0){
                             $scope.orFortification = "解防";
                             $scope.colorfffYes = false;
                             $scope.coloryyyYes = false;
@@ -1252,7 +1853,7 @@ angular.module("app.demo.controllers",[])
                             $scope.hahaapp= {"toggle":true};
                             $scope.submithappy = "恭喜您，设防成功！";
 
-                            $timeout(function(){
+                            $scope.timenohapptime = $timeout(function(){
                                 $scope.hahaapp= {"toggle":false};
                             },2000);
                         }
@@ -1273,8 +1874,8 @@ angular.module("app.demo.controllers",[])
                         $scope.colorfffNo=false ;
                         $scope.coloryyyNo = false;
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.reason+"！";
-                        $timeout(function(){
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timenoreasontime = $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000);
                     }
@@ -1286,8 +1887,15 @@ angular.module("app.demo.controllers",[])
                     $scope.colorfffNo=false ;
                     $scope.coloryyyNo = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
-                    $timeout(function(){
+                    $scope.vehiclesoperationendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs);
+                    if($scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
+                    $scope.timenoerrtime = $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
                 })
@@ -1298,18 +1906,20 @@ angular.module("app.demo.controllers",[])
                 $scope.colorfffNo= false;
                 $scope.coloryyyNo =true ;
                 $scope.vehiclesoperationObj = {
-                    uid:$window.sessionStorage.getItem("Uid"),
-                    operationType:2,
-                    seq:registerService.randomsix()
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                    appSN:parseInt(Number(new Date().getTime())/1000),
+                    lock:false
                 }
-                $scope.vehiclesoperationUrl = "/rest/Vehicles/operation";
+                $scope.vehiclesoperationUrl = "/rest/cmd/lock/";
                 $scope.loadapp = {"toggle":true};
+                $scope.vehiclesoperationstarttimehs = new Date().getTime();
                 registerService.commonUser($scope.vehiclesoperationObj,$scope.vehiclesoperationUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     console.log(e);
                     $scope.fortificationdis = false;
                     if(e.status == true){
-                        if(e.db1 == 0){
+                        if(e.content.result == 0){
                             $scope.orFortification = "设防";
                             $scope.colorfffYes =true ;
                             $scope.coloryyyYes = false;
@@ -1317,7 +1927,7 @@ angular.module("app.demo.controllers",[])
                             $scope.coloryyyNo = false;
                             $scope.hahaapp= {"toggle":true};
                             $scope.submithappy = "恭喜您，解防成功！";
-                            $timeout(function(){
+                            $scope.timehaftime = $timeout(function(){
                                 $scope.hahaapp= {"toggle":false};
                             },2000);
                         }
@@ -1338,8 +1948,8 @@ angular.module("app.demo.controllers",[])
                         $scope.colorfffNo= true;
                         $scope.coloryyyNo = false;
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.reason+"！";
-                        $timeout(function(){
+                        $scope.submitWarning = e.err+"！";
+                        $scope.ftimereasontime = $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000);
                     }
@@ -1351,8 +1961,15 @@ angular.module("app.demo.controllers",[])
                     $scope.colorfffNo= true;
                     $scope.coloryyyNo = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
-                    $timeout(function(){
+                    $scope.vehiclesoperationendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs);
+                    if($scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
+                    $scope.ftimeerrtime = $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
                 })
@@ -1366,138 +1983,391 @@ angular.module("app.demo.controllers",[])
             $rootScope.colorfff2 = false;
             $rootScope.coloryyy2 =true ;
             console.log(222);
-        }
+        };
         $scope.changecolorStatus3 = function(){
             $rootScope.colorfff3 = false;
             $rootScope.coloryyy3 =true ;
-        }
+            $scope.searchcarhomedis = true;
+            console.log("点击了token:"+$window.sessionStorage.getItem("Utoken"));
+            function intent() {
+
+                <!--alert("this is alert");-->
+
+
+
+                <!--navigator.intent.startGPS("  Json");-->
+                navigator.intent.toMap(
+                    {"termId":$window.sessionStorage.getItem("UtermId"),"seq":registerService.randomsix(),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken")});
+                <!--navigator.intent.toMap("asdasdasdsads");-->
+            }
+
+            $scope.timesearchtimenottwo = $timeout(function(){
+                $rootScope.colorfff3 =true ;
+                $rootScope.coloryyy3 = false;
+                $scope.searchcarhomedis = false;
+            },1000);
+            if($rootScope.phonetyperoot == 3){
+                intent();
+            }else if($rootScope.phonetyperoot == 4){
+                mybridge.callHandler('positionObjcCallback', {"termId":$window.sessionStorage.getItem("UtermId"),"seq":registerService.randomsix(),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken")}, function(response) {
+                    log('JS got response', response)
+                })
+
+            }
+
+        };
         $scope.changecolorStatus4 = function(){
             $rootScope.colorfff4 = false;
             $rootScope.coloryyy4 =true ;
-        }
+        };
         $scope.changecolorStatus5 = function(){
             $rootScope.colorfff5 = false;
             $rootScope.coloryyy5 =true ;
-        }
+        };
         $scope.changecolorStatus6 = function(){
             $rootScope.colorfff6 = false;
             $rootScope.coloryyy6 =true ;
-        }
-
-        $scope.messagepush = function(){
-            document.addEventListener('deviceready', function () {
-                //{
-                //    type: "onBind",
-                //        data:{
-                //    requestId: 123456,
-                //        errorCode: 0,
-                //        appId: "123456",
-                //        channelId: "123456",
-                //        userId: "123456",
-                //        deviceType: 3
-                //}
-                //}
-                if(window.baidupush){
-                    // alert(3);
-                    try {
-                        window.baidupush.startWork("8ulOPgOAf03mhcRTr8Yq0HUY", function(info){
-                            //success callback
-                            //your code here
-                            // alert(4);
-                            // alert("startWork:" + JSON.stringify(info));
-                            if(info.data.errorCode == 0){
-                                var pushinfoObj = {
-                                    uid:$window.sessionStorage.getItem("Uid"),
-                                    channelid:info.data.channelId,
-                                    type:info.data.deviceType
-                                    //channelid:3795525986954054108,
-                                    //type:3
-                                }
-                                var pushinfoUrl = "/rest/user/messagePush/";
-                                registerService.commonUser(pushinfoObj,pushinfoUrl).then(function(e){
-                                    console.log(e);
-                                    if(e.status==true){
-                                        $scope.subapp= {"toggle":true};
-                                        $scope.submitWarning = "链接推送成功！";
-                                        $timeout(function(){
-                                            $scope.subapp= {"toggle":false};
-                                        },2000);
-                                    }else{
-                                        $scope.subapp= {"toggle":true};
-                                        $scope.submitWarning = e.reason+"！";
-                                        $timeout(function(){
-                                            $scope.subapp= {"toggle":false};
-                                        },2000);
-                                    }
-                                },function(err){
-                                    $scope.subapp= {"toggle":true};
-                                    $scope.submitWarning = "网络连接失败！";
-                                    $timeout(function(){
-                                        $scope.subapp= {"toggle":false};
-                                    },2000);
-                                })
-                                window.baidupush.resumeWork(function(info){
-                            }
-                        });
-                        //Resume work, re-bind the ids
-                        // window.baidupush.resumeWork(function(info){
-                        //     //your code here
-                        //     //alert("resumeWork:" + JSON.stringify(info));
-                        // });
-                        window.baidupush.listenMessage(function(info){
-                            //your code here
-                            //channelid接口
-                            //alert("listenMessage:"+ JSON.stringify(info));
-                        });
-                        //Listen notification arrived event, when a notification arrived, the callback function will be called
-                        window.baidupush.listenNotificationArrived(function(info){
-                            //your code here
-                            //alert("listenNotificationArrived:" + JSON.stringify(info));
-                        });
-
-                        //Listen notification clicked event, when a notification is clicked, the callback function will be called
-                        window.baidupush.listenNotificationClicked(function(info){
-                            //your code here
-                            //alert("listenNotificationClicked:" + JSON.stringify(info));
-                        });
-                    }catch (err){
-                        console.log(err.message);
-                        alert("云推送启动失败...")
-                    }
-
-                }else{
-                    alert("推送启动失败..");
-                }
-                //Start work, bind the ids
-                //Only for android
-                //Listen message arrived event, when a message arrived, the callback function will be called
-            }, false);
-            $rootScope.pushyesorno = false;
         };
+        $rootScope.baidupushNum = 0;
+//        $scope.messagepush = function(){
+//            console.log("run here?");
+//            document.addEventListener('deviceready', function () {
+//                if(window.baidupush){
+//                    // alert(3);
+//                    try {
+//                        console.log("pushID here2");
+//                        var baidupushFlag = false;
+//                        window.baidupush.startWork("8ulOPgOAf03mhcRTr8Yq0HUY", function(info){
+//                            //success callback
+//                            //your code here
+//                            // alert(4);
+//                            // alert("startWork:" + JSON.stringify(info));
+////                            console.log("pushID startwork")
+//                            baidupushFlag = true
+//                            if(info.data.errorCode == 0){
+//                                var pushinfoObj = {
+//                                    cp:Number($window.sessionStorage.getItem("Ucp")),
+//                                    pushId:info.data.channelId+"",
+//                                    phoneType:Number(info.data.deviceType)
+//                                    //channelid:3795525986954054108,
+//                                    //type:3
+//                                };
+//                                var pushinfoUrl = "/rest/user/registerPushId/";
+//                                $scope.pushinfostarttimehs = new Date().getTime();
+//                                registerService.commonUser(pushinfoObj,pushinfoUrl).then(function(e){
+//                                    console.log(e);
+//                                    if(e.status==true){
+//                                    }else{
+//                                        $scope.subapp= {"toggle":true};
+//                                        $scope.submitWarning = e.err+"！";
+//                                        $scope.timedontknowreason = $timeout(function(){
+//                                            $scope.subapp= {"toggle":false};
+//                                        },2000);
+//                                    }
+//                                },function(err){
+//                                    $scope.subapp= {"toggle":true};
+//                                    $scope.pushinfoendtimehs = new Date().getTime();
+//                                    console.log("请求时间差："+$scope.pushinfoendtimehs - $scope.pushinfostarttimehs);
+//                                    if($scope.pushinfoendtimehs - $scope.pushinfostarttimehs>=6500){
+//                                        $scope.submitWarning = "请求超时！";
+//                                    }else {
+//                                        $scope.submitWarning = "网络连接失败！";
+//                                    }
+//                                    //$scope.submitWarning = "网络连接失败！";
+//                                    $scope.timedontkonwerr = $timeout(function(){
+//                                        $scope.subapp= {"toggle":false};
+//                                    },2000);
+//                                })
+//                            }
+//                        });
+//                        //解决第一次安装app初次登陆没有绑定的bug
+//                        $timeout(function(){
+//                        console.log("pushID timeout:"+baidupushFlag)
+//                        if (!baidupushFlag){
+//                                $timeout(function(){
+//                                    window.baidupush.startWork("8ulOPgOAf03mhcRTr8Yq0HUY", function(info){
+//                                        baidupushFlag = true
+//                                        if(info.data.errorCode == 0){
+//                                            var pushinfoObj = {
+//                                                cp:Number($window.sessionStorage.getItem("Ucp")),
+//                                                pushId:info.data.channelId+"",
+//                                                phoneType:Number(info.data.deviceType)
+//                                                //channelid:3795525986954054108,
+//                                                //type:3
+//                                            };
+//                                            console.log("pushID:"+pushinfoObj.pushId)
+//                                            var pushinfoUrl = "/rest/user/registerPushId/";
+//                                            $scope.pushinfostarttimehs = new Date().getTime();
+//                                            registerService.commonUser(pushinfoObj,pushinfoUrl).then(function(e){
+//                                                console.log(e);
+//                                                if(e.status==true){
+//                                                }else{
+//                                                    $scope.subapp= {"toggle":true};
+//                                                    $scope.submitWarning = e.err+"！";
+//                                                    $scope.timedontknowreason = $timeout(function(){
+//                                                        $scope.subapp= {"toggle":false};
+//                                                    },2000);
+//                                                }
+//                                            },function(err){
+//                                                $scope.subapp= {"toggle":true};
+//                                                $scope.pushinfoendtimehs = new Date().getTime();
+//                                                console.log("请求时间差："+$scope.pushinfoendtimehs - $scope.pushinfostarttimehs);
+//                                                if($scope.pushinfoendtimehs - $scope.pushinfostarttimehs>=6500){
+//                                                    $scope.submitWarning = "请求超时！";
+//                                                }else {
+//                                                    $scope.submitWarning = "网络连接失败！";
+//                                                }
+//                                                //$scope.submitWarning = "网络连接失败！";
+//                                                $scope.timedontkonwerr = $timeout(function(){
+//                                                    $scope.subapp= {"toggle":false};
+//                                                },2000);
+//                                            })
+//                                        }{
+//                                            alert("云推送启动失败...")
+//                                        }
+//                                    });
+//                                },500)
+//                        }
+//                        },3000)
+//
+//                        //Resume work, re-bind the ids
+//                         window.baidupush.resumeWork(function(info){
+//                             //your code here
+//                             console.log("pushID resume");
+//                             //alert("resumeWork:" + JSON.stringify(info));
+//                         });
+//                        window.baidupush.listenMessage(function(info){
+//                            //your code here
+//                            //channelid接口
+//                            //alert("listenMessage:"+ JSON.stringify(info));
+//                        });
+//                        //Listen notification arrived event, when a notification arrived, the callback function will be called
+//                        window.baidupush.listenNotificationArrived(function(info){
+//                            if(0<=$rootScope.alarmcount && $rootScope.alarmcount<=98){
+//                                $rootScope.alarmcount = Number($rootScope.alarmcount);
+//                                $rootScope.alarmcount++;
+//                            }else if($rootScope.alarmcount>=99) {
+//                                $rootScope.alarmcount = "99+";
+//                            }
+//
+//                            $rootScope.alarmiconcountnone= false;
+//                            //your code here
+//                            //alert("listenNotificationArrived:" + JSON.stringify(info));
+//                        });
+//
+//                        //Listen notification clicked event, when a notification is clicked, the callback function will be called
+//                        window.baidupush.listenNotificationClicked(function(info){
+////                            alert("通知点击了:"+info)
+//
+//                                if($rootScope.baidupushNum>0){
+//                                    navigator.intent.toDelete({"pushclick":true});
+//                                    $state.go("mains.home.alarmRecord")
+//                                }
+//                                $rootScope.baidupushNum++;  //用于防止第一次进入时执行点击事件
+//                            //your code here
+//                            //alert("listenNotificationClicked:" + JSON.stringify(info));
+//                        });
+//                    }catch (err){
+//                        console.log(err.message);
+//                        alert("云推送启动失败...")
+//                    }
+//
+//                }else{
+//                    alert("推送启动失败..");
+//                }
+//                //Start work, bind the ids
+//                //Only for android
+//                //Listen message arrived event, when a message arrived, the callback function will be called
+//            }, false);
+//            $rootScope.pushyesorno = false;
+//        };
         // console.log("看看推送的值:"+$rootScope.pushyesorno);
-        if($rootScope.pushyesorno){
-            $timeout(function(){
-                $scope.messagepush();
-            },500);
-        }
+        //if($rootScope.pushyesorno){
+        //    $scope.timersmessagetime = $timeout(function(){
+        //    console.log("pushID here")
+        //        $scope.messagepush();
+        //    },500);
+        //};
+        $scope.weathertodayday = registerService.weatherdate();
+        $scope.weatherpif = false;
     })
     //vehicle页面
     .controller("vehicleController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window){
-        //function backappfunction(){
-        //    document.addEventListener('backbutton', eventBackButton, false);
-        //    function eventBackButton(e) {
-        //        e.preventDefault();
-        //        //alert("backClick2");
-        //        navigator.app.exitApp();
-        //    }
-        //};
-        //backappfunction();
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
+
+        $scope.searchPassBackBtn = function (e) {
+            e.preventDefault();
+            console.log("111111111111111111" , 121231)
+            // window.history.go(-1)
+        };
+
+        $scope.bikeyesnormal = true;
+        $scope.bikehandlebug = false;
+        $scope.bikecontrollerbug = false;
+        $scope.bikemotorbug = false;
+
+        //霍尔的图片
+        $scope.hallmortornormal = true;//霍尔正常
+        $scope.hallmotorliproblem = false ;//霍尔故障
+        $scope.hallbindcontent = "正常";
+        $scope.hallmortorinfo = "电机霍尔正常";  //检测信息
+        $scope.hallmortorinfoerror = false;  //检测信息正常
+
+        //电线的图片
+        $scope.wiremortornormal = true;//电线正常
+        $scope.wiremotorliproblem = false;//电线异常
+        $scope.wirebindcontent = "正常";
+        $scope.wiremortorinfo = "电机电线正常";
+        $scope.wiremortorinfoerror = false;
+
+        //转把的图片
+        $scope.handlemortornormal = true;//转把正常
+        $scope.handlemotorliproblem = false;//转把异常
+        $scope.handlebindcontent = "正常";
+        $scope.handlemortorinfo = "车辆转把正常";
+        $scope.handlemortorinfoerror = false;
+
+        //控制器的图片
+        $scope.controllermortornormal = true;//控制器正常
+        $scope.controllermotorliproblem = false;//控制器异常
+        $scope.controllermotorliprotection = false;//控制器保护异常
+        $scope.controllerbindcontent = "正常";//正常，保护故障，故障
+        $scope.controllermortorinfo = "控制器正常";//控制器正常
+        $scope.controllermortorinfoerror = false;
+
+        //点击开始检测 2017年3月21日 16:50:48
+        $scope.selfInspectionclick = function () {
+            $scope.selfInspectionObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                appSN:parseInt(Number(new Date().getTime())/1000)
+            };
+            $scope.loadapp = {"toggle":true};
+            try{
+                registerService.selfInspection($scope.selfInspectionObj).then(
+                    function(e){
+                        $scope.loadapp = {"toggle": false };
+                        if(e.status == true){
+                            console.log("success:",e)
+                            if(e.content.fault){
+                                // "fault1": 1,//控制器保护(0：无，1：有)
+                                //"fault2": 1,// 电机相线脱落
+                                //"fault3": 1,//控制器故障
+                                //"fault4": 1 ,//电机霍尔故障
+                                //"fault5": 1 //转把故障
+
+                                //控制器
+                                if(e.content.fault.fault3 == 1){
+                                    $scope.controllermortornormal = false;//控制器正常
+                                    $scope.controllermotorliproblem = true;//控制器异常
+                                    $scope.controllermotorliprotection = false;//控制器保护异常
+                                    $scope.controllerbindcontent = "故障";//正常，保护故障，故障
+                                    $scope.controllermortorinfo = "控制器异常,建议检修";//控制器正常
+                                    $scope.controllermortorinfoerror = true;
+                                }else{
+                                    $scope.controllermortornormal = true;//控制器正常
+                                    $scope.controllermotorliproblem = false;//控制器异常
+                                    $scope.controllermotorliprotection = false;//控制器保护异常
+                                    $scope.controllerbindcontent = "正常";//正常，保护故障，故障
+                                    $scope.controllermortorinfo = "控制器正常";//控制器正常
+                                    $scope.controllermortorinfoerror = false;
+                                }
+
+                                //电机相线
+                                if(e.content.fault.fault2 == 1){
+                                    $scope.wiremortornormal = false;//电线正常
+                                    $scope.wiremotorliproblem = true;//电线异常
+                                    $scope.wirebindcontent = "脱落";
+                                    $scope.wiremortorinfo = "电机相线脱落,建议检修";
+                                    $scope.wiremortorinfoerror = true;
+                                }else{
+                                    $scope.wiremortornormal = true;//电线正常
+                                    $scope.wiremotorliproblem = false;//电线异常
+                                    $scope.wirebindcontent = "正常";
+                                    $scope.wiremortorinfo = "电机电线正常";
+                                    $scope.wiremortorinfoerror = false;
+                                }
+
+                                //控制器保护
+                                if(e.content.fault.fault1 == 1){
+                                    $scope.controllermortornormal = false;//控制器正常
+                                    $scope.controllermotorliproblem = false;//控制器异常
+                                    $scope.controllermotorliprotection = true;//控制器保护异常
+                                    $scope.controllerbindcontent = "保护异常";//正常，保护故障，故障
+                                    $scope.controllermortorinfo = "控制器保护异常,建议检修";//控制器正常
+                                    $scope.controllermortorinfoerror = true;
+                                }else{
+                                    $scope.controllermortornormal = true;//控制器正常
+                                    $scope.controllermotorliproblem = false;//控制器异常
+                                    $scope.controllermotorliprotection = false;//控制器保护异常
+                                    $scope.controllerbindcontent = "正常";//正常，保护故障，故障
+                                    $scope.controllermortorinfo = "控制器正常";//控制器正常
+                                    $scope.controllermortorinfoerror = false;
+                                }
+
+                                //电机霍尔
+                                if(e.content.fault.fault4 == 1){
+                                    $scope.hallmortornormal = false;//霍尔正常
+                                    $scope.hallmotorliproblem = true ;//霍尔故障
+                                    $scope.hallbindcontent = "故障";
+                                    $scope.hallmortorinfo = "电机霍尔故障,建议检修";  //检测信息
+                                    $scope.hallmortorinfoerror = true;  //检测信息正常
+                                }else{
+                                    $scope.hallmortornormal = true;//霍尔正常
+                                    $scope.hallmotorliproblem = false ;//霍尔故障
+                                    $scope.hallbindcontent = "正常";
+                                    $scope.hallmortorinfo = "电机霍尔正常";  //检测信息
+                                    $scope.hallmortorinfoerror = false;  //检测信息正常
+                                }
+
+                                //转把
+                                if(e.content.fault.fault5 == 1){
+                                    $scope.handlemortornormal = false;//转把正常
+                                    $scope.handlemotorliproblem = true;//转把异常
+                                    $scope.handlebindcontent = "故障";
+                                    $scope.handlemortorinfo = "车辆转把故障,建议检修";
+                                    $scope.handlemortorinfoerror = true;
+                                }else{
+                                    $scope.handlemortornormal = true;//转把正常
+                                    $scope.handlemotorliproblem = false;//转把异常
+                                    $scope.handlebindcontent = "正常";
+                                    $scope.handlemortorinfo = "车辆转把正常";
+                                    $scope.handlemortorinfoerror = false;
+                                }
+                            }
+                        }else {
+                            $scope.subapp= {"toggle":true};
+                            $scope.submitWarning = e.err+"！";
+                            $scope.timenoreasontime = $timeout(function(){
+                                $scope.subapp= {"toggle":false};
+                            },2000);
+                        }
+                    },
+                    function (e) {
+                        console.log("error:",e)
+                        $scope.loadapp = {"toggle": false };
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timenoreasontime = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                );
+            }catch (err){
+                $scope.loadapp = {"toggle": false };
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "网络连接失败！";
+                $scope.timenoreasontime = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+        }
     })
     //mine页面
     .controller("mineController",function($scope,$rootScope,$state,registerService,$interval,$timeout,$window){
+        $scope.$state = $state;
         $scope.searchPassBackBtn = function(){
             window.history.go(-1);
             //console.log(window.history);
@@ -1513,54 +2383,220 @@ angular.module("app.demo.controllers",[])
             $scope.yesOrNo= {"toggle":false};
         }
         $scope.backappYes = function(){
-            window.location.replace("index.html");
+            $state.go("submits");
         };
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
-        //function backappfunction(){
-        //    //function eventBackButton() {
-        //    //    $rootScope.backmodelapp = {"toggle":true};
-        //    //    $timeout(function(){
-        //    //        $rootScope.backmodelapp = {"toggle":false};
-        //    //    },1500);
-        //    //    $window.removeEventListener("backbutton", eventBackButton, false); //注销返回键
-        //    //    //3秒后重新注册
-        //    //    $scope.timers = $interval(
-        //    //        function() {
-        //    //            $interval.cancel($scope.timers);
-        //    //            $window.addEventListener("backbutton", eventBackButton, false); //返回键
-        //    //        },
-        //    //        3000
-        //    //    );
-        //    //}
-        //    //
-        //    //$window.addEventListener('backbutton', eventBackButton, false);
-        //    document.addEventListener('backbutton', eventBackButton, false);
-        //    function eventBackButton(e) {
-        //        e.preventDefault();
-        //        //alert("backClick2");
-        //        navigator.app.exitApp();
-        //    }
-        //
-        //};
-        //backappfunction();
+
+        if(!$rootScope.mineuserphone || $rootScope.mineuserphone == ""){
+            $rootScope.mineuserphone = $window.sessionStorage.getItem("Ucp");
+        };
+        if(!$rootScope.mineusertermid || $rootScope.mineusertermid == ""){
+            $rootScope.mineusertermid = $window.sessionStorage.getItem("UtermId");
+        };
+        if(!$rootScope.mineuseremail || $rootScope.mineuseremail == ""){
+            $rootScope.mineuseremail = $window.sessionStorage.getItem("Uemail");
+        };
+        if(!$rootScope.mineusernick || $rootScope.mineusernick == ""){
+            $rootScope.mineusernick = $window.sessionStorage.getItem("Unick");
+        };
+
+        //限速值
+
+        //$rootScope.mineusertermid = e.content.termId;
+        //初始的时候判断断油或者是断点与否
+        $scope.oiltdyes = true;
+        $scope.oiltdno = false;
+
+        //判断开灯与否
+        $scope.lighttdyes = true;
+        $scope.lighttdno = false;
+
+        //点击限速 2017-3-21
+        $scope.speedlimitif = {};
+
+        $scope.limitspeed = 0 ;
+        $scope.limitspeed = $window.sessionStorage.getItem("Uspeed");
+        if($scope.limitspeed == ""){
+            $scope.limitspeed = 0 ;
+        }
+        $scope.speedlimitif.toggle = false;
+        $scope.speedlimitclick = function (event) {
+            $scope.speedlimitif.toggle = !$scope.speedlimitif.toggle;
+        };
+        $scope.speedlimitchange = function (limit) {
+            $scope.speedlimitObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                appSN:parseInt(Number(new Date().getTime())/1000),
+                speed : limit
+            };
+            console.log($scope.speedlimitObj);
+            $scope.loadapp = {"toggle":true};
+            try{
+                registerService.speedlimit($scope.speedlimitObj).then(
+                    function(e){
+                        $scope.loadapp = {"toggle": false };
+                        console.log(e);
+                        if(e.status == true){
+                            if(e.content.result == 0){
+                                $scope.hahaapp= {"toggle":true};
+                                $scope.submithappy = "恭喜您，设置成功！";
+                                $scope.limitspeed = limit;
+                                $window.sessionStorage.setItem("Uspeed", limit);
+                                $scope.speedlimitif.toggle = !$scope.speedlimitif.toggle;
+                                $scope.timehaftime = $timeout(function(){
+                                    $scope.hahaapp= {"toggle":false};
+                                },2000);
+                            }
+                        }else {
+                            $scope.subapp= {"toggle":true};
+                            $scope.submitWarning = e.err+"！";
+                            $scope.timenoreasontime = $timeout(function(){
+                                $scope.subapp= {"toggle":false};
+                            },2000);
+                        }
+
+                    },
+                    function (e) {
+                        console.log("error:",e)
+                        $scope.loadapp = {"toggle": false };
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timenoreasontime = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                );
+            } catch (err) {
+                console.log("error22:",err)
+                $scope.loadapp = {"toggle": false };
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "网络连接失败！";
+                $scope.timenoreasontime = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+        };
+        //点击断油or电
+        $scope.oiloffclick = function () {
+
+            $scope.breakPowerObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                appSN:parseInt(Number(new Date().getTime())/1000),
+                mod: $scope.oiltdyes?1:0
+            };
+            $scope.loadapp = {"toggle":true};
+            try{
+                registerService.breakPower($scope.breakPowerObj).then(
+                    function(e){
+                        $scope.loadapp = {"toggle": false };
+                        if(e.status == true){
+                            if(e.content.result == 0){
+                                $scope.hahaapp= {"toggle":true};
+                                $scope.submithappy = "恭喜您，设置成功！";
+                                $scope.oiltdyes = !$scope.oiltdyes;
+                                $scope.oiltdno = !$scope.oiltdno;
+                                $scope.timehaftime = $timeout(function(){
+                                    $scope.hahaapp= {"toggle":false};
+                                },2000);
+                            }
+                        }else {
+                            $scope.subapp= {"toggle":true};
+                            $scope.submitWarning = e.err+"！";
+                            $scope.timenoreasontime = $timeout(function(){
+                                $scope.subapp= {"toggle":false};
+                            },2000);
+                        }
+
+                    },
+                    function (e) {
+                        console.log("error:",e)
+                        $scope.loadapp = {"toggle": false };
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timenoreasontime = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                );
+            }catch (err){
+                $scope.loadapp = {"toggle": false };
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "网络连接失败！";
+                $scope.timenoreasontime = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            console.log("断油");
+        };
+        //开or关灯
+        $scope.lightoffclick = function () {
+            $scope.controlLightObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                appSN:parseInt(Number(new Date().getTime())/1000),
+                mod: $scope.lighttdyes?1:0
+            };
+            $scope.loadapp = {"toggle":true};
+            try{
+                registerService.controlLight($scope.controlLightObj).then(
+                    function(e){
+                        console.log("success:",e)
+                        $scope.loadapp = {"toggle": false };
+                        if(e.status == true){
+                            if(e.content.result == 0){
+                                $scope.hahaapp= {"toggle":true};
+                                $scope.submithappy = "恭喜您，设置成功！";
+                                $scope.lighttdyes = !$scope.lighttdyes;
+                                $scope.lighttdno = !$scope.lighttdno;
+                                $scope.timehaftime = $timeout(function(){
+                                    $scope.hahaapp= {"toggle":false};
+                                },2000);
+                            }
+                        }else {
+                            $scope.subapp= {"toggle":true};
+                            $scope.submitWarning = e.err+"！";
+                            $scope.timenoreasontime = $timeout(function(){
+                                $scope.subapp= {"toggle":false};
+                            },2000);
+                        }
+
+                    },
+                    function (e) {
+                        console.log("error:",e);
+                        $scope.loadapp = {"toggle": false };
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timenoreasontime = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                );
+            }catch (err){
+                console.log("err:",err);
+                $scope.loadapp = {"toggle": false };
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "网络连接失败！";
+                $scope.timenoreasontime = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            console.log("亮灯")
+        }
+
     })
     //用车记录
-    .controller("cartripController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout){
+    .controller("cartripController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout,$location){
+
+        $scope.timerss = $timeout(function(){
+            registerService.datecommon();
+        },50);
         $scope.dateinputdis = true;
         $rootScope.colorfff2 = true;
         $rootScope.coloryyy2 = false;
-        //$rootScope.checkConnection();
-        //$scope.backappfunctionsmall = function(){
-        //    registerService.removeevent();
-        //};
-        //$scope.backappfunctionsmall();
-        //function prostatus(){
-        //    return false;
-        //}
-        //prostatus();
-
         //返回按钮
         $scope.searchPassBackBtn = function(){
             window.history.go(-1);
@@ -1575,67 +2611,130 @@ angular.module("app.demo.controllers",[])
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
+
+
+        $scope.$watch("ostartTimes",  function(newValue, oldValue) {
+            console.log(22226626266,newValue, oldValue);
+            console.log("出现吧");
+            if (newValue === oldValue){
+                //return;
+            }else {
+                $scope.lastdateinfo = null;
+                $scope.notripcontent = true;//无行程
+                $scope.clickonload = false;//点击加载
+                $scope.cartriploading = true;//加载中
+                $scope.thelastpagecartripover =true ;//加载完全
+                $scope.clickandaddloads = true;//继续加载
+            }
+        });
+        $scope.$watch('overTimes',  function(newValue, oldValue) {
+            console.log("出现吧");
+            if (newValue === oldValue){
+                //return;
+            }else {
+                $scope.lastdateinfo = null;
+                $scope.notripcontent = true;//无行程
+                $scope.clickonload = false;//点击加载
+                $scope.cartriploading = true;//加载中
+                $scope.thelastpagecartripover =true ;//加载完全
+                $scope.clickandaddloads = true;//继续加载
+            }
+        });
         //console.log(registerService.getcurrentTime);
         $scope.currentdate = new Date();
         //当天的行程
         $scope.nocartrip = false;
         $scope.havecartrip = true;
+        //table的四种情况
+        $scope.clickonloadtoday = true;//点击加载
+        $scope.cartriploadingtoday = false;//努力加载中...
+        $scope.thelastpagecartripovertoday = true;//加载完全
+        $scope.clickandaddloadstoday = true;//点击继续加载
+
+        $scope.isandload = false;
         $scope.todayF = function (){
+            //$scope.timertoday = $timeout(function(){
+            //    $rootScope.todaytripinfo = null;
+            //},1);
+            $scope.todayandloaddis = true; //继续加载不可点击
             $scope.loadapp = {"toggle":true};
-            registerService.commonUserget(todaytripObj,todaytripUrl).then(function(e){
-                $scope.loadapp = {"toggle":false};
-                if(e.status == true){
-                    console.log(e);
+            $scope.todaytripstarttimehs = new Date().getTime();
+            registerService.commonUser($scope.todaytripObj,$scope.todaytripUrl).then(function(e){
+                $scope.timersloadapp = $timeout(function(){
+                    $scope.loadapp = {"toggle":false};
+                    if(e.status == true){
+                        console.log(e);
 
-                    if(e.useHistory.length != 0){
-                        $scope.nocartrip = false;
-                        $scope.havecartrip = true;
-                        for(var i in e.useHistory){
-                            e.useHistory[i].startAddresscontent = "正在解析！";
-                            e.useHistory[i].endAddresscontent = "正在解析！";
-                        }
-                        $rootScope.todaytripinfo = e.useHistory;
-                        var j = 0;
-                        $scope.starttransloc = function(){
-                            //console.log("e.useHistory:"+e.useHistory);
-                            var lnglatXY =[e.useHistory[j].startGPSLat/1000000,e.useHistory[j].startGPSLng/1000000];
-                            var endlnglatXY = [e.useHistory[j].endGPSLat/1000000,e.useHistory[j].endGPSLng/1000000];
-                            try {
-                                var lngnum = new AMap.LngLat(e.useHistory[j].startGPSLng/1000000,e.useHistory[j].startGPSLat/1000000);
-                                var latnum =new AMap.LngLat(e.useHistory[j].endGPSLng/1000000,e.useHistory[j].endGPSLat/1000000);
-                                $scope.initfalseapp= {"toggle":false};
-                            }catch (err){
-                                $scope.initfalseapp= {"toggle":true};
-                                //$scope.subapp= {"toggle":true};
+                        if(e.content.currentSize != 0){
+                            $scope.nocartrip = false;
+                            $scope.havecartrip = true;
+                            $scope.todaytripPage ++;
 
-                                $scope.goSubmitPage= function(){
-                                    window.location.replace("index.html");
+                            if(e.content.currentPage == e.content.totalPages-1){
+                                //table的四种情况
+                                $scope.clickonloadtoday = true;//点击加载
+                                $scope.cartriploadingtoday = true;//努力加载中...
+                                $scope.thelastpagecartripovertoday = false;//加载完全
+                                $scope.clickandaddloadstoday = true;//点击继续加载
+                            }else{
+                                //table的四种情况
+                                $scope.clickonloadtoday = true;//点击加载
+                                $scope.cartriploadingtoday =true ;//努力加载中...
+                                $scope.thelastpagecartripovertoday = true;//加载完全
+                                $scope.clickandaddloadstoday = false;//点击继续加载
+                            }
+                            for(var i in e.content.trips){
+                                e.content.trips[i].startAddresscontent = "正在解析！";
+                                e.content.trips[i].endAddresscontent = "正在解析！";
+                            }
+                            if($scope.todaytripPage ==1){
+                                $scope.$apply(function () {
+                                    $scope.todaytripinfo = e.content.trips
+                                });
+
+                            }
+                            //;
+                            var j = 0;
+                            $scope.starttransloc = function(){
+                                //console.log("e.content.trips:"+e.content.trips);
+                                var lnglatXY =[e.content.trips[j].fireOnLng,e.content.trips[j].fireOnLat];
+                                var endlnglatXY = [e.content.trips[j].fireOffLng,e.content.trips[j].fireOffLat];
+                                try {
+                                    var lngnum = new AMap.LngLat(e.content.trips[j].fireOnLng,e.content.trips[j].fireOnLat);
+                                    var latnum =new AMap.LngLat(e.content.trips[j].fireOffLng,e.content.trips[j].fireOffLat);
                                     $scope.initfalseapp= {"toggle":false};
-                                };
-                                $scope.gomainhomePage = function(){
-                                    $state.go("mains.home");
-                                    $scope.initfalseapp= {"toggle":false};
+                                }catch (err){
+                                    $scope.initfalseapp= {"toggle":true};
+                                    //$scope.subapp= {"toggle":true};
+
+                                    $scope.goSubmitPage= function(){
+                                        $state.go("submits");
+                                        $scope.initfalseapp= {"toggle":false};
+                                    };
+                                    $scope.gomainhomePage = function(){
+                                        $state.go("mains.home");
+                                        $scope.initfalseapp= {"toggle":false};
+                                    }
                                 }
-                            }
 
-                            if(e.useHistory[j].startGPSTime){
-                                e.useHistory[j].starttime = registerService.coverdate(e.useHistory[j].startGPSTime);
-                            }else{
-                                e.useHistory[j].starttime = "未获取到数据"
-                            }
+                                if(e.content.trips[j].fireOnTime){
+                                    e.content.trips[j].starttime = registerService.coverdate(e.content.trips[j].fireOnTime);
+                                }else{
+                                    e.content.trips[j].starttime = "未获取到数据"
+                                }
 
-                            console.log(endlnglatXY);
-                            if(e.useHistory[j].endGPSTime){
-                                e.useHistory[j].endtime = registerService.coverdate(e.useHistory[j].endGPSTime);
-                                console.log("时间这块啊，当前报错报错的地方啊："+j)
+                                console.log(endlnglatXY);
+                                if(e.content.trips[j].fireOffTime){
+                                    e.content.trips[j].endtime = registerService.coverdate(e.content.trips[j].fireOffTime);
+                                    console.log("时间这块啊，当前报错报错的地方啊："+j)
 
-                            }else{
-                                e.useHistory[j].endtime = "未获取到数据"
-                            }
+                                }else{
+                                    e.content.trips[j].endtime = "未获取到数据"
+                                }
                                 //console.log(result.locations[0]);
 
 
-                                if(e.useHistory[j].startGPSLat != 0 && e.useHistory[j].endGPSLat != 0){
+                                if(e.content.trips[j].fireOnLat != 0 && e.content.trips[j].fireOffLat != 0){
                                     AMap.convertFrom([lngnum,latnum],"gps",function(status,result){
                                         console.log("todayresult;"+JSON.stringify(result));
                                         function geocodefunallhave(){
@@ -1643,59 +2742,112 @@ angular.module("app.demo.controllers",[])
                                                 $scope.startwarningadd = new AMap.Geocoder({});
                                                 $scope.startwarningadd.getAddress([lngnumstart, latnumend], function (status, result) {
                                                     //console.log("run here:",result,status);
-                                                    console.log("lngnumstart, latnumend:"+lngnumstart, latnumend)
+                                                    console.log("lngnumstart, latnumend:"+lngnumstart, latnumend);
                                                     //console.log("result:"+JSON.stringify(result));
                                                     if (status === 'complete' && result.info === 'OK') {
 
                                                         if (result.regeocodes[0].formattedAddress) {
-                                                            $scope.todayaddressa = result.regeocodes[0].formattedAddress;
+                                                            $scope.todayaddressa = result.regeocodes[0].formattedAddress+"附近";
                                                             console.log("为什么突然报错啊："+$scope.todayaddressa,j);
-                                                            e.useHistory[j].startAddresscontent = $scope.todayaddressa;
+                                                            e.content.trips[j].startAddresscontent = $scope.todayaddressa;
                                                         } else {
                                                             $scope.todayaddressa = "获取地址失败";
                                                             console.log("获取位置fir：1");
-                                                            //console.log("失败:",$scope.todayaddressa,e.useHistory,j)
-                                                            e.useHistory[j].startAddresscontent = $scope.todayaddressa;
+                                                            //console.log("失败:",$scope.todayaddressa,e.content.trips,j)
+                                                            e.content.trips[j].startAddresscontent = $scope.todayaddressa;
                                                         }
                                                         if (result.regeocodes[1].formattedAddress) {
-                                                            $scope.endaddressa = result.regeocodes[1].formattedAddress;
-                                                            e.useHistory[j].endAddresscontent = $scope.endaddressa;
+                                                            $scope.endaddressa = result.regeocodes[1].formattedAddress+"附近";
+                                                            e.content.trips[j].endAddresscontent = $scope.endaddressa;
                                                         } else {
                                                             $scope.todayaddressa = "获取地址失败";
                                                             console.log("获取位置fir：2");
-                                                            //console.log("失败:",$scope.todayaddressa,e.useHistory,j)
-                                                            e.useHistory[j].endAddresscontent = $scope.todayaddressa;
+                                                            //console.log("失败:",$scope.todayaddressa,e.content.trips,j)
+                                                            e.content.trips[j].endAddresscontent = $scope.todayaddressa;
+                                                        }
+                                                        if($scope.todaytripPage ==1){
+
+                                                            $scope.$apply(function () {
+                                                                $scope.todaytripinfo[j]=e.content.trips[j];
+                                                            });
+                                                            j++;
+                                                            console.log("头大的j上面的："+j);
+                                                            if (j < e.content.trips.length) {
+                                                                $scope.starttransloc();
+                                                                console.log(j);
+                                                                console.log("头大的j上面的，要循环了："+j);
+                                                            } else {
+                                                                $scope.todayandloaddis = false; //继续加载可点击
+                                                                console.log("终于结束了头大的j上面的："+j);
+                                                                //$scope.$apply(function () {
+                                                                //    $rootScope.todaytripinfo = e.content.trips;
+                                                                //});
+                                                            }
+                                                        }else {
+                                                            //$scope.timetodayloadfuzhitimea = $timeout(function(){
+                                                                $scope.todaytripinfo.push(e.content.trips[j]);
+                                                                j++;
+                                                                console.log("头大的j上面的："+j);
+                                                                if (j < e.content.trips.length) {
+                                                                    $scope.starttransloc();
+                                                                    console.log(j);
+                                                                    console.log("头大的j上面的，要循环了："+j);
+                                                                } else {
+                                                                    $scope.todayandloaddis = false; //继续加载可点击
+                                                                    console.log("终于结束了头大的j上面的："+j);
+                                                                    //$scope.$apply(function () {
+                                                                    //    $rootScope.todaytripinfo = e.content.trips;
+                                                                    //});
+                                                                }
+                                                            //},20)
+
                                                         }
 
-                                                        $scope.$apply(function () {
-                                                            $rootScope.todaytripinfo = e.useHistory;
-                                                        });
-                                                        j++;
-                                                        console.log("头大的j上面的："+j);
-                                                        if (j < e.useHistory.length) {
-                                                            $scope.starttransloc();
-                                                            console.log(j);
-                                                            console.log("头大的j上面的，要循环了："+j);
-                                                        } else {
-                                                            console.log("终于结束了头大的j上面的："+j);
-                                                            $scope.$apply(function () {
-                                                                $rootScope.todaytripinfo = e.useHistory;
-                                                            });
-                                                        }
+                                                        //$scope.$apply(function () {
+                                                        //    $rootScope.todaytripinfo = e.content.trips;
+                                                        //});
+
                                                     } else {
 
                                                         $scope.todayaddressa = "获取地址失败";
 
-                                                        e.useHistory[j].startAddresscontent = $scope.todayaddressa;
-                                                        e.useHistory[j].endAddresscontent = $scope.todayaddressa;
-
-                                                        j++;
-                                                        $scope.$apply(function () {
-                                                            $rootScope.todaytripinfo = e.useHistory;
-                                                        });
-                                                        if (j < e.useHistory.length) {
-                                                            $scope.starttransloc();
-                                                        } else {
+                                                        e.content.trips[j].startAddresscontent = $scope.todayaddressa;
+                                                        e.content.trips[j].endAddresscontent = $scope.todayaddressa;
+                                                        //$rootScope.todaytripinfo.push(e.content.trips[j]);
+                                                        if($scope.todaytripPage ==1){
+                                                            $scope.$apply(function () {
+                                                                $scope.todaytripinfo[j]=e.content.trips[j];
+                                                            });
+                                                            j++;
+                                                            console.log("头大的j上面的："+j);
+                                                            if (j < e.content.trips.length) {
+                                                                $scope.starttransloc();
+                                                                console.log(j);
+                                                                console.log("头大的j上面的，要循环了："+j);
+                                                            } else {
+                                                                $scope.todayandloaddis = false; //继续加载可点击
+                                                                console.log("终于结束了头大的j上面的："+j);
+                                                                //$scope.$apply(function () {
+                                                                //    $rootScope.todaytripinfo = e.content.trips;
+                                                                //});
+                                                            }
+                                                        }else {
+                                                            //$scope.timetodayloadfuzhitimea = $timeout(function(){
+                                                                $scope.todaytripinfo.push(e.content.trips[j]);
+                                                                j++;
+                                                                console.log("头大的j上面的："+j);
+                                                                if (j < e.content.trips.length) {
+                                                                    $scope.starttransloc();
+                                                                    console.log(j);
+                                                                    console.log("头大的j上面的，要循环了："+j);
+                                                                } else {
+                                                                    $scope.todayandloaddis = false; //继续加载可点击
+                                                                    console.log("终于结束了头大的j上面的："+j);
+                                                                    //$scope.$apply(function () {
+                                                                    //    $rootScope.todaytripinfo = e.content.trips;
+                                                                    //});
+                                                                }
+                                                            //},20)
 
                                                         }
                                                     }
@@ -1715,22 +2867,51 @@ angular.module("app.demo.controllers",[])
                                             geocodefunallhave()
                                         }
                                     });
-                                }else if(e.useHistory[j].startGPSLat == 0 && e.useHistory[j].endGPSLat == 0) {
-                                    e.useHistory[j].startAddresscontent = "获取地址失败";
-                                    e.useHistory[j].endAddresscontent = "获取地址失败";
-
-                                    j++;
-                                    if(j<e.useHistory.length){
-                                        $scope.starttransloc();
+                                }else if(e.content.trips[j].fireOnLat == 0 && e.content.trips[j].fireOffLat == 0) {
+                                    e.content.trips[j].startAddresscontent = "获取地址失败";
+                                    e.content.trips[j].endAddresscontent = "获取地址失败";
+                                    if($scope.todaytripPage ==1){
+                                        $scope.$apply(function () {
+                                            $scope.todaytripinfo[j]=e.content.trips[j];
+                                        });
+                                        j++;
+                                        console.log("头大的j上面的："+j);
+                                        if (j < e.content.trips.length) {
+                                            $scope.starttransloc();
+                                            console.log(j);
+                                            console.log("头大的j上面的，要循环了："+j);
+                                        } else {
+                                            $scope.todayandloaddis = false; //继续加载可点击
+                                            console.log("终于结束了头大的j上面的："+j);
+                                            //$scope.$apply(function () {
+                                            //    $rootScope.todaytripinfo = e.content.trips;
+                                            //});
+                                        }
                                     }else {
+                                        //$scope.timetodayloadfuzhitimea = $timeout(function(){
+                                            $scope.todaytripinfo.push(e.content.trips[j]);
+                                            j++;
+                                            console.log("头大的j上面的："+j);
+                                            if (j < e.content.trips.length) {
+                                                $scope.starttransloc();
+                                                console.log(j);
+                                                console.log("头大的j上面的，要循环了："+j);
+                                            } else {
+                                                $scope.todayandloaddis = false; //继续加载可点击
+                                                console.log("终于结束了头大的j上面的："+j);
+                                                //$scope.$apply(function () {
+                                                //    $rootScope.todaytripinfo = e.content.trips;
+                                                //});
+                                            }
+                                        //},20)
 
                                     }
                                     //$scope.$apply(function () {
-                                    //    $rootScope.todaytripinfo = e.useHistory;
+                                    //    $rootScope.todaytripinfo = e.content.trips;
                                     //});
 
-                                }else if(e.useHistory[j].startGPSLat == 0){
-                                    e.useHistory[j].startAddresscontent = "获取地址失败";
+                                }else if(e.content.trips[j].fireOnLat == 0){
+                                    e.content.trips[j].startAddresscontent = "获取地址失败";
                                     console.log("实现吧");
 
 
@@ -1747,35 +2928,90 @@ angular.module("app.demo.controllers",[])
                                                     //console.log("result:"+JSON.stringify(result));
                                                     if (status === 'complete' && result.info === 'OK') {
 
-                                                        $scope.endaddressa = result.regeocode.formattedAddress;
-                                                        e.useHistory[j].endAddresscontent = $scope.endaddressa;
-
-                                                        $scope.$apply(function () {
-                                                            $rootScope.todaytripinfo = e.useHistory;
-                                                        });
-                                                        j++;
-                                                        if (j < e.useHistory.length) {
-                                                            $scope.starttransloc();
-                                                        } else {
+                                                        $scope.endaddressa = result.regeocode.formattedAddress+"附近";
+                                                        e.content.trips[j].endAddresscontent = $scope.endaddressa;
+                                                        if($scope.todaytripPage ==1){
+                                                            $scope.$apply(function () {
+                                                                $scope.todaytripinfo[j]=e.content.trips[j];
+                                                            });
+                                                            j++;
+                                                            console.log("头大的j上面的："+j);
+                                                            if (j < e.content.trips.length) {
+                                                                $scope.starttransloc();
+                                                                console.log(j);
+                                                                console.log("头大的j上面的，要循环了："+j);
+                                                            } else {
+                                                                $scope.todayandloaddis = false; //继续加载可点击
+                                                                console.log("终于结束了头大的j上面的："+j);
+                                                                //$scope.$apply(function () {
+                                                                //    $rootScope.todaytripinfo = e.content.trips;
+                                                                //});
+                                                            }
+                                                        }else {
+                                                            //$scope.timetodayloadfuzhitimea = $timeout(function(){
+                                                                $scope.todaytripinfo.push(e.content.trips[j]);
+                                                                j++;
+                                                                console.log("头大的j上面的："+j);
+                                                                if (j < e.content.trips.length) {
+                                                                    $scope.starttransloc();
+                                                                    console.log(j);
+                                                                    console.log("头大的j上面的，要循环了："+j);
+                                                                } else {
+                                                                    $scope.todayandloaddis = false; //继续加载可点击
+                                                                    console.log("终于结束了头大的j上面的："+j);
+                                                                    //$scope.$apply(function () {
+                                                                    //    $rootScope.todaytripinfo = e.content.trips;
+                                                                    //});
+                                                                }
+                                                            //},20)
 
                                                         }
                                                     } else {
 
                                                         $scope.todayaddressa = "获取地址失败";
 
-                                                        //e.useHistory[j].startAddresscontent = $scope.todayaddressa;
-                                                        e.useHistory[j].endAddresscontent = $scope.todayaddressa;
-
-                                                        j++;
-                                                        if (j < e.useHistory.length) {
-                                                            $scope.starttransloc();
-                                                        } else {
+                                                        //e.content.trips[j].startAddresscontent = $scope.todayaddressa;
+                                                        e.content.trips[j].endAddresscontent = $scope.todayaddressa;
+                                                        if($scope.todaytripPage ==1){
+                                                            $scope.$apply(function () {
+                                                                $scope.todaytripinfo[j]=e.content.trips[j];
+                                                            });
+                                                            j++;
+                                                            console.log("头大的j上面的："+j);
+                                                            if (j < e.content.trips.length) {
+                                                                $scope.starttransloc();
+                                                                console.log(j);
+                                                                console.log("头大的j上面的，要循环了："+j);
+                                                            } else {
+                                                                $scope.todayandloaddis = false; //继续加载可点击
+                                                                console.log("终于结束了头大的j上面的："+j);
+                                                                //$scope.$apply(function () {
+                                                                //    $rootScope.todaytripinfo = e.content.trips;
+                                                                //});
+                                                            }
+                                                        }else {
+                                                            //$scope.timetodayloadfuzhitimea = $timeout(function(){
+                                                                $scope.todaytripinfo.push(e.content.trips[j]);
+                                                                j++;
+                                                                console.log("头大的j上面的："+j);
+                                                                if (j < e.content.trips.length) {
+                                                                    $scope.starttransloc();
+                                                                    console.log(j);
+                                                                    console.log("头大的j上面的，要循环了："+j);
+                                                                } else {
+                                                                    $scope.todayandloaddis = false; //继续加载可点击
+                                                                    console.log("终于结束了头大的j上面的："+j);
+                                                                    //$scope.$apply(function () {
+                                                                    //    $rootScope.todaytripinfo = e.content.trips;
+                                                                    //});
+                                                                }
+                                                            //},20)
 
                                                         }
                                                     }
-                                                    $scope.$apply(function () {
-                                                        $rootScope.todaytripinfo = e.useHistory;
-                                                    });
+                                                    //$scope.$apply(function () {
+                                                    //    $rootScope.todaytripinfo = e.content.trips;
+                                                    //});
                                                 });
                                             });
                                         }
@@ -1791,8 +3027,8 @@ angular.module("app.demo.controllers",[])
                                             console.log("赋值失败");
                                         }
                                     });
-                                }else if(e.useHistory[j].endGPSLat==0){
-                                    e.useHistory[j].endAddresscontent = "获取地址失败！";
+                                }else if(e.content.trips[j].fireOffLat==0){
+                                    e.content.trips[j].endAddresscontent = "获取地址失败";
 
 
                                     AMap.convertFrom(lngnum,"gps",function(status,result){
@@ -1805,33 +3041,87 @@ angular.module("app.demo.controllers",[])
                                                     //console.log("run here:",result,status);
                                                     //console.log("result:"+JSON.stringify(result));
                                                     if (status === 'complete' && result.info === 'OK') {
-                                                        $scope.todayaddressa = result.regeocode.formattedAddress;
-                                                        e.useHistory[j].startAddresscontent = $scope.todayaddressa;
-
-
-                                                        $scope.$apply(function () {
-                                                            $rootScope.todaytripinfo = e.useHistory;
-                                                        });
-                                                        j++;
-                                                        if (j < e.useHistory.length) {
-                                                            $scope.starttransloc();
-                                                        } else {
+                                                        $scope.todayaddressa = result.regeocode.formattedAddress+"附近";
+                                                        e.content.trips[j].startAddresscontent = $scope.todayaddressa;
+                                                        if($scope.todaytripPage ==1){
+                                                            $scope.$apply(function () {
+                                                                $scope.todaytripinfo[j]=e.content.trips[j];
+                                                            });
+                                                            j++;
+                                                            console.log("头大的j上面的："+j);
+                                                            if (j < e.content.trips.length) {
+                                                                $scope.starttransloc();
+                                                                console.log(j);
+                                                                console.log("头大的j上面的，要循环了："+j);
+                                                            } else {
+                                                                $scope.todayandloaddis = false; //继续加载可点击
+                                                                console.log("终于结束了头大的j上面的："+j);
+                                                                //$scope.$apply(function () {
+                                                                //    $rootScope.todaytripinfo = e.content.trips;
+                                                                //});
+                                                            }
+                                                        }else {
+                                                            //$scope.timetodayloadfuzhitimea = $timeout(function(){
+                                                                $scope.todaytripinfo.push(e.content.trips[j]);
+                                                                j++;
+                                                                console.log("头大的j上面的："+j);
+                                                                if (j < e.content.trips.length) {
+                                                                    $scope.starttransloc();
+                                                                    console.log(j);
+                                                                    console.log("头大的j上面的，要循环了："+j);
+                                                                } else {
+                                                                    $scope.todayandloaddis = false; //继续加载可点击
+                                                                    console.log("终于结束了头大的j上面的："+j);
+                                                                    //$scope.$apply(function () {
+                                                                    //    $rootScope.todaytripinfo = e.content.trips;
+                                                                    //});
+                                                                }
+                                                            //},20)
 
                                                         }
                                                     } else {
                                                         $scope.todayaddressa = "获取地址失败";
-                                                        e.useHistory[j].startAddresscontent = $scope.todayaddressa;
-
-                                                        j++;
-                                                        if (j < e.useHistory.length) {
-                                                            $scope.starttransloc();
-                                                        } else {
+                                                        e.content.trips[j].startAddresscontent = $scope.todayaddressa;
+                                                        if($scope.todaytripPage ==1){
+                                                            $scope.$apply(function () {
+                                                                $scope.todaytripinfo[j]=e.content.trips[j];
+                                                            });
+                                                            j++;
+                                                            console.log("头大的j上面的："+j);
+                                                            if (j < e.content.trips.length) {
+                                                                $scope.starttransloc();
+                                                                console.log(j);
+                                                                console.log("头大的j上面的，要循环了："+j);
+                                                            } else {
+                                                                $scope.todayandloaddis = false; //继续加载可点击
+                                                                console.log("终于结束了头大的j上面的："+j);
+                                                                //$scope.$apply(function () {
+                                                                //    $rootScope.todaytripinfo = e.content.trips;
+                                                                //});
+                                                            }
+                                                        }else {
+                                                            //$scope.timetodayloadfuzhitimea = $timeout(function(){
+                                                                $scope.todaytripinfo.push(e.content.trips[j]);
+                                                                j++;
+                                                                console.log("头大的j上面的："+j);
+                                                                if (j < e.content.trips.length) {
+                                                                    $scope.starttransloc();
+                                                                    console.log(j);
+                                                                    console.log("头大的j上面的，要循环了："+j);
+                                                                } else {
+                                                                    $scope.todayandloaddis = false; //继续加载可点击
+                                                                    console.log("终于结束了头大的j上面的："+j);
+                                                                    //$scope.$apply(function () {
+                                                                    //    $rootScope.todaytripinfo = e.content.trips;
+                                                                    //});
+                                                                }
+                                                            //},20)
 
                                                         }
                                                     }
-                                                    $scope.$apply(function () {
-                                                        $rootScope.todaytripinfo = e.useHistory;
-                                                    });
+                                                    //$scope.$apply(function () {
+                                                    //    $rootScope.todaytripinfo = e.content.trips;
+                                                    //});
                                                 });
                                             });
                                         }
@@ -1850,238 +3140,325 @@ angular.module("app.demo.controllers",[])
                                 }
 
 
-                            console.log(lnglatXY);
-
-                            //$scope.startwarningadd =  new AMap.Geocoder({
-                            //});
-                            //var lnglatXY1 = [121.1111,31.222222];
-                            //var endlnglatXY1= [131.33333,31.22222]
-                            //var arr = new Array();
-                            //console.log(lngnumstart,latnumend)
-                            console.log(lnglatXY,endlnglatXY)
-
+                                console.log(lnglatXY);
+                                console.log(lnglatXY,endlnglatXY)
+                            };
+                            $scope.starttransloc();
+                        }else{
+                            $scope.nocartrip = true;
+                            $scope.havecartrip = false;
+                        }
 
 
-
-                        };
-                        $scope.starttransloc();
                     }else{
-                        $scope.nocartrip = true;
-                        $scope.havecartrip = false;
+                        //table的四种情况
+                        if($scope.isandload == false){
+                            $scope.clickonloadtoday = false;//点击加载
+                            $scope.cartriploadingtoday = true;//努力加载中...
+                            $scope.thelastpagecartripovertoday = true;//加载完全
+                            $scope.clickandaddloadstoday = true;//点击继续加载
+                        }else {
+                            $scope.clickonloadtoday =true ;//点击加载
+                            $scope.cartriploadingtoday = true;//努力加载中...
+                            $scope.thelastpagecartripovertoday = true;//加载完全
+                            $scope.clickandaddloadstoday =false ;//点击继续加载
+                        }
+                        $scope.todayandloaddis = false; //继续加载可点击
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timersstodayerrson = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
                     }
+                },500);
 
-
-                }else{
-                    $rootScope.subapp= {"toggle":true};
-                    $rootScope.submitWarning = e.reason+"！";
-                    $timeout(function(){
-                        $rootScope.subapp= {"toggle":false};
-                    },2000);
-                }
             },function(err){
+                //table的四种情况
+                if($scope.isandload == false){
+                    $scope.clickonloadtoday = false;//点击加载
+                    $scope.cartriploadingtoday = true;//努力加载中...
+                    $scope.thelastpagecartripovertoday = true;//加载完全
+                    $scope.clickandaddloadstoday = true;//点击继续加载
+                }else {
+                    $scope.clickonloadtoday =true ;//点击加载
+                    $scope.cartriploadingtoday = true;//努力加载中...
+                    $scope.thelastpagecartripovertoday = true;//加载完全
+                    $scope.clickandaddloadstoday =false ;//点击继续加载
+                }
+
+                $scope.todayandloaddis = false; //继续加载可点击
                 $scope.loadapp = {"toggle":false};
-                $rootScope.subapp= {"toggle":true};
-                $rootScope.submitWarning = "网络连接失败！";
-                $timeout(function(){
-                    $rootScope.subapp= {"toggle":false};
+                $scope.subapp= {"toggle":true};
+                $scope.todaytripendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.todaytripendtimehs - $scope.todaytripstarttimehs);
+                if($scope.todaytripendtimehs - $scope.todaytripstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$rootScope.submitWarning = "网络连接失败！";
+                $scope.timeerrtodayapp = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
                 },2000);
             });
         };
-        var getcurrent = registerService.getTime();
-        var todaytripObj = {
-            uid:$window.sessionStorage.getItem("Uid"),
-            //startTime:20161113000000,
-            //endTime:20161122235959
-            startTime:getcurrent+"000000",
-            endTime:getcurrent+"235959"
+        var getcurrent = registerService.getTimems();
+
+        //var todaytripObj = {
+        //    termId:Number($window.sessionStorage.getItem("UtermId")),
+        //    //startTime:20161113000000,
+        //    //endTime:20161122235959
+        //    startTime:Number(new Date(getcurrent+" 00:00:00").getTime()),
+        //    endTime:Number(new Date(getcurrent+" 23:59:59").getTime()),
+        //    pageIndex:$scope.todaytripPage,
+        //    pageSize:3
+        //};
+
+        $scope.timeinittodaytrip = $timeout(function(){
+            $rootScope.todaytripinfo = null;
+            $scope.isandload = false;
+            $scope.todaytripPage = 0;
+            $scope.todaytripObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                //startTime:20161113000000,
+                //endTime:20161122235959
+                startTime:Number(new Date(registerService.getdatestrnochinese(0)+" 00:00:00").getTime()),
+                endTime:Number(new Date(registerService.getdatestrnochinese(0)+" 23:59:59").getTime()),
+                pageIndex:$scope.todaytripPage,
+                pageSize:3
+            };
+            $scope.todaytripUrl = "/rest/trips/period/";
+            $scope.todayF();
+        },2);
+        $scope.clicktodaytripOnload = function(){
+            $scope.currentdatebtn();
         };
-        var todaytripUrl = "/rest/vehicles/useHistory/";
-        $scope.todayF();
         $scope.currentdatebtn = function(){
+            $scope.timetodaybtnfir = $timeout(function(){
+                $scope.isandload = false;
+                $rootScope.todaytripinfo = null;
+                $scope.todaytripPage = 0;
+                $scope.todaytripObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    //startTime:20161113000000,
+                    //endTime:20161122235959
+                    startTime:Number(new Date(registerService.getdatestrnochinese(0)+" 00:00:00").getTime()),
+                    endTime:Number(new Date(registerService.getdatestrnochinese(0)+" 23:59:59").getTime()),
+                    pageIndex:$scope.todaytripPage,
+                    pageSize:3
+                };
+                $scope.todaytripUrl = "/rest/trips/period/";
+                $scope.todayF();
+            },2);
+
+        };
+        //today点击继续加载
+        $scope.clickAddtodayTriponload= function(){
+            $scope.isandload = true;
+            $scope.todaytripObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                //startTime:20161113000000,
+                //endTime:20161122235959
+                startTime:Number(new Date(registerService.getdatestrnochinese(0)+" 00:00:00").getTime()),
+                endTime:Number(new Date(registerService.getdatestrnochinese(0)+" 23:59:59").getTime()),
+                pageIndex:$scope.todaytripPage,
+                pageSize:3
+            };
+            $scope.todaytripUrl = "/rest/trips/period/";
             $scope.todayF();
         }
         //前一天的行程
         console.log(registerService.getTime());
-        $scope.ostartTime = registerService.getdatestr(-9);
-        $scope.overTime = registerService.getdatestr(-1);
+        $scope.ostartTimes = registerService.getdatestr(-2);
+        $scope.overTimes = registerService.getdatestr(-1);
         //$scope.lasthavedate = true;
         //$scope.lastdontdate = false;
         //四种样式
+
         $scope.normaldianlastdontdate = true;
         $scope.agadianlastdontdate = true;
         $scope.sbdianlastdontdate = true;
         $scope.moresbdianlastdontdate = true;
         //$scope.dateyeardisnone = true;
-        $scope.ajaxstarttime = $scope.ostartTime.replace('年','').replace('月','').replace('日','');
-        $scope.ajaxendtime = $scope.overTime.replace('年','').replace('月','').replace('日','');
+        $scope.ajaxstarttime = $scope.ostartTimes.replace('-','/').replace('-','/');
+        $scope.ajaxendtime = $scope.overTimes.replace('-','/').replace('-','/');
         console.log($scope.ajaxstarttime);
         //初始的时候table这块，，四种样式
         $scope.notripcontent = true;//无行程
         $scope.clickonload = true;//点击加载
         $scope.cartriploading = true;//加载中
         $scope.thelastpagecartripover = true;//加载完全
+        $scope.clickandaddloads = true;//继续加载
+        $scope.islastandload = false;
         $scope.lastdatepage = 0;
-        console.log("报错结束的日期:"+new Date(1481729098000));
-        console.log("报错开始的日期:"+new Date(1481728966000));
+        //console.log("报错结束的日期:"+new Date(1481729098000));
+        //console.log("报错开始的日期:"+new Date(1481728966000));
         //$scope.infoclassnone = false;
+        $scope.lastdateinfo = null;
+
+        $scope.lasttripUrl = "/rest/trips/period/";
+        //$rootScope.lastdateinfo = null;
         $scope.lastdate = function(){
+            $scope.lastandloadtripdis= true;//last的行程不可点击
             $scope.notripcontent = true;//无行程
             $scope.clickonload = true;//点击加载
             $scope.cartriploading = false;//加载中
             $scope.thelastpagecartripover = true;//加载完全
-            var lasttripObj = {
-                uid:$window.sessionStorage.getItem("Uid"),
-                startTime:$scope.ajaxstarttime+'000000',
-                endTime:$scope.ajaxendtime+'235959'
-                //,pageNumber:$scope.lastdatepage,
-                //limit:2
-            };
-            var lasttripUrl = "/rest/vehicles/useHistory/";
+            $scope.clickandaddloads = true;//继续加载
             if($scope.infoclassnone == 0){
                 $scope.infoclassnone = true;
             }
             $scope.loadapp = {"toggle":true};
-            registerService.commonUserget(lasttripObj,lasttripUrl).then(function(e){
-                $scope.loadapp = {"toggle":false};
-                if(e.status == true){
-                    console.log(e);
-                    console.log(e.useHistory.length);
-                    $scope.lastdatepage ++;
-                    if(e.useHistory.length !=0){
-                        console.log("有数据");
-                        //table的样式 是否最后一页
-                        $rootScope.tripmaplatlng = e.useHistory;
-                        //if(e.isLastpage == true){
-                            $scope.notripcontent = true;//无行程
-                            $scope.clickonload = true;//点击加载
-                            $scope.cartriploading = true;//加载中
-                            $scope.thelastpagecartripover = false;//加载完全
-                        //}else{
-                        //    $scope.notripcontent = true;//无行程
-                        //    $scope.clickonload = false;//点击加载
-                        //    $scope.cartriploading = true;//加载中
-                        //    $scope.thelastpagecartripover =true ;//加载完全
-                        //}
-                        for(var i in e.useHistory){
-                            e.useHistory[i].startpoint = "正在解析！";
-                            e.useHistory[i].endpoint = "正在解析！";
-                        }
-                        $scope.lastdateinfo = e.useHistory;
-                        var j = 0;
-
-                        $scope.laststarttransloc = function(){
-                            //console.log("e.useHistory:",e.useHistory);
-                            var lnglatXY =[e.useHistory[j].startGPSLat/1000000,e.useHistory[j].startGPSLng/1000000];
-                            var coverdatestart = registerService.coverdateyear(e.useHistory[j].startGPSTime);
-                            var coverdateend = registerService.coverdateyear(e.useHistory[j].endGPSTime);
-                            //function  ostarttime(value){
-                            //    if(e.useHistory[j].startGPSTime){
-                            //        e.useHistory[j]["value"]={laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),starteventdate:coverdatestart};
-                            //        console.log("执行了");
-                            //    }else{
-                            //        e.useHistory[j]["value"]={laststarttime:"未获取到数据",starteventdate:"无数据"};
-                            //        //e.useHistory[j]["value"]={};
-                            //    }
-                            //}
-                            //function oendtime(value){
-                            //    if(e.useHistory[j].endGPSTime){
-                            //        e.useHistory[j]["value"].lastendtime = registerService.coverdate(e.useHistory[j].endGPSTime);
-                            //        e.useHistory[j]["value"].endeventdate = registerService.coverdateyear(e.useHistory[j].endGPSTime);
-                            //    }else{
-                            //        e.useHistory[j]["value"].lastendtime = "未获取到数据";
-                            //        e.useHistory[j]["value"].endeventdate = "无数据";
-                            //    }
-                            //}
-                            var endlnglatXY = [e.useHistory[j].endGPSLat/1000000,e.useHistory[j].endGPSLng/1000000];
-                            try {
-                                var lngnum = new AMap.LngLat(e.useHistory[j].startGPSLng/1000000,e.useHistory[j].startGPSLat/1000000);
-                                var latnum =new AMap.LngLat(e.useHistory[j].endGPSLng/1000000,e.useHistory[j].endGPSLat/1000000);
-                                $scope.initfalseapp= {"toggle":false};
-                            }catch(err) {
-                                $scope.initfalseapp= {"toggle":true};
-                                //$scope.subapp= {"toggle":true};
-
-                                $scope.goSubmitPage= function(){
-                                    window.location.replace("index.html");
-                                    $scope.initfalseapp= {"toggle":false};
-                                };
-                                $scope.gomainhomePage = function(){
-                                    $state.go("mains.home");
-                                    $scope.initfalseapp= {"toggle":false};
+            var j = 0;
+            console.log($scope.ajaxstarttime,$scope.ajaxendtime);
+            $scope.lasttripstarttimehs = new Date().getTime();
+            registerService.commonUser($scope.lasttripObj,$scope.lasttripUrl).then(function(e){
+                $scope.timerrlastloadtime = $timeout(function(){
+                    $scope.loadapp = {"toggle":false};
+                    if(e.status == true){
+                        $scope.lastpagenumbera ++;
+                        console.log("页码："+$scope.lastpagenumbera);
+                        console.log(e);
+                        console.log(e.content.trips.length);
+                        //$scope.lastdatepage ++;
+                            if(e.content.currentSize !=0){
+                                console.log("有数据");
+                                //table的样式 是否最后一页
+                                //$rootScope.tripmaplatlng = e.content.trips;
+                                if(e.content.currentPage == e.content.totalPages-1){
+                                    $scope.notripcontent = true;//无行程
+                                    $scope.clickonload = true;//点击加载
+                                    $scope.cartriploading = true;//加载中
+                                    $scope.thelastpagecartripover = false;//加载完全
+                                    $scope.clickandaddloads = true;//继续加载
+                                }else{
+                                    $scope.notripcontent = true;//无行程
+                                    $scope.clickonload = true;//点击加载
+                                    $scope.cartriploading = true;//加载中
+                                    $scope.thelastpagecartripover =true ;//加载完全
+                                    $scope.clickandaddloads =false ;//继续加载
                                 }
-                                $scope.notripcontent = true;//无行程
-                                $scope.clickonload = true;//点击加载
-                                $scope.cartriploading =false ;//加载中
-                                $scope.thelastpagecartripover =true ;//加载完全
-                            }
+                                for(var i in e.content.trips){
+                                    e.content.trips[i].startpoint = "正在解析！";
+                                    e.content.trips[i].endpoint = "正在解析！";
+                                }
+                                $scope.lastdateinfo = e.content.trips;
 
+                                console.log($scope.lastdateinfo);
+                                j = 0;
+                                //$scope.dituiditui = false;
+                                $scope.laststarttransloc = function (){
 
+                                    console.log("看看这个是多少啊j："+j);
+                                    var lnglatXY =[e.content.trips[j].fireOnLng,e.content.trips[j].fireOnLat];
+                                    var coverdatestart = registerService.coverdateyear(e.content.trips[j].fireOnTime);
+                                    var coverdateend = registerService.coverdateyear(e.content.trips[j].fireOffTime);
+                                    var endlnglatXY = [e.content.trips[j].fireOffLng,e.content.trips[j].fireOffLat];
+                                    try {
+                                        var lngnum = new AMap.LngLat(e.content.trips[j].fireOnLng,e.content.trips[j].fireOnLat);
+                                        var latnum =new AMap.LngLat(e.content.trips[j].fireOffLng,e.content.trips[j].fireOffLat);
+                                        console.log(lngnum,latnum);
+                                        $scope.initfalseapp= {"toggle":false};
+                                    }
+                                    catch(err) {
+                                        $scope.initfalseapp= {"toggle":true};
+                                        //$scope.subapp= {"toggle":true};
 
-                                $scope.sbfunction = function(){
-                                    if(e.useHistory[j].startGPSLat != 0 && e.useHistory[j].endGPSLat!=0){
-                                        console.log(j,e.useHistory[j].startGPSLat);
+                                        $scope.goSubmitPage= function(){
+                                            $state.go("submits");
+                                            $scope.initfalseapp= {"toggle":false};
+                                        };
+                                        $scope.gomainhomePage = function(){
+                                            $state.go("mains.home");
+                                            $scope.initfalseapp= {"toggle":false};
+                                        }
+                                        $scope.notripcontent = true;//无行程
+                                        $scope.clickonload = true;//点击加载
+                                        $scope.cartriploading =false ;//加载中
+                                        $scope.thelastpagecartripover =true ;//加载完全
+                                        $scope.clickandaddloads = true;//继续加载
+                                    }
+                                    function sbfunction(){
+                                        if(e.content.trips[j].fireOnLat != 0 && e.content.trips[j].fireOffLat!=0){
+                                            //console.log(j,e.content.trips[j].fireOnLat);
 
                                             AMap.convertFrom([lngnum, latnum], "gps", function (status, result) {
-                                                console.log("现在测试的起点终点：" + lngnum, latnum)
-                                                console.log("现在是这个result：" + JSON.stringify(result));
+                                                //console.log("现在测试的起点终点：" + lngnum, latnum)
+                                                //console.log("现在是这个result：" + JSON.stringify(result));
                                                 function allhavestartend() {
                                                     AMap.service('AMap.Geocoder', function () {
                                                         $scope.startwarningadd = new AMap.Geocoder({});
                                                         $scope.startwarningadd.getAddress([lngnumstart, latnumend], function (status, result) {
-                                                            console.log("lngnumstart；" + lngnumstart);
-                                                            console.log("latnumend：" + latnumend)
-                                                            console.log("run here:", result, status);
-                                                            //console.log("result:"+JSON.stringify(result));
+                                                            console.log("result:"+JSON.stringify(result));
                                                             if (status === 'complete' && result.info === 'OK') {
 
                                                                 if (result.regeocodes[0].formattedAddress) {
-                                                                    $scope.todayaddressa = result.regeocodes[0].formattedAddress;
-                                                                    e.useHistory[j].startpoint = $scope.todayaddressa;
-                                                                    console.log("起点" + $scope.todayaddressa)
+                                                                    $scope.todayaddressa = result.regeocodes[0].formattedAddress+"附近";
+                                                                    e.content.trips[j].startpoint = $scope.todayaddressa;
+                                                                    //console.log("起点" + $scope.todayaddressa)
                                                                 } else {
                                                                     $scope.todayaddressa = "获取地址失败";
-                                                                    console.log("获取位置fir：1");
-                                                                    //console.log("失败:",$scope.todayaddressa,e.useHistory,j)
-                                                                    e.useHistory[j].startpoint = $scope.todayaddressa;
+                                                                    //console.log("获取位置fir：1");
+                                                                    //console.log("失败:",$scope.todayaddressa,e.content.trips,j)
+                                                                    e.content.trips[j].startpoint = $scope.todayaddressa;
                                                                 }
                                                                 if (result.regeocodes[1].formattedAddress) {
-                                                                    $scope.endaddressa = result.regeocodes[1].formattedAddress;
-                                                                    e.useHistory[j].endpoint = $scope.endaddressa;
+                                                                    $scope.endaddressa = result.regeocodes[1].formattedAddress+"附近";
+                                                                    e.content.trips[j].endpoint = $scope.endaddressa;
 
                                                                 } else {
                                                                     $scope.todayaddressa = "获取地址失败";
-                                                                    console.log("获取位置fir：2");
-                                                                    //console.log("失败:",$scope.todayaddressa,e.useHistory,j)
-                                                                    e.useHistory[j].endpoint = $scope.todayaddressa;
+                                                                    //console.log("获取位置fir：2");
+                                                                    //console.log("失败:",$scope.todayaddressa,e.content.trips,j)
+                                                                    e.content.trips[j].endpoint = $scope.todayaddressa;
                                                                 }
-                                                                console.log("开始结束都有的：" + j);
-                                                                j++;
-                                                                console.log(e.useHistory.length);
-                                                                console.log("开始结束都有的：" + j);
-                                                                if (j < e.useHistory.length-1) {
-                                                                    $scope.laststarttransloc();
-                                                                    console.log("执行了啊j++", j)
-                                                                } else {
+                                                                //console.log("开始结束都有的：" + j);
 
-                                                                }
-                                                                //$scope.$apply(function () {
-                                                                //    $rootScope.lastdateinfo = e.useHistory;
-                                                                //});
+
+                                                                $scope.$apply(function () {
+                                                                    $scope.lastdateinfo = e.content.trips;
+                                                                });
+                                                                j++;
+                                                                //console.log(e.content.trips.length);
+                                                                //console.log("开始结束都有的：" + j);
+                                                                //if($scope.dituiditui){
+                                                                //
+                                                                //}else
+                                                                if (j < e.content.trips.length) {
+                                                                    console.log(99555555555,j,e.content.trips.length);
+                                                                    $scope.laststarttransloc();
+                                                                    //console.log("执行了啊j++", j)
+                                                                } else {
+                                                                    $scope.lastandloadtripdis= false;//last的行程可点击
+
+                                                                };
                                                             } else {
 
                                                                 $scope.todayaddressa = "获取地址失败";
-                                                                e.useHistory[j].startpoint = $scope.todayaddressa;
-                                                                e.useHistory[j].endpoint = $scope.todayaddressa;
+                                                                e.content.trips[j].startpoint = $scope.todayaddressa;
+                                                                e.content.trips[j].endpoint = $scope.todayaddressa;
+
+
+                                                                $scope.$apply(function () {
+                                                                    $scope.lastdateinfo = e.content.trips;
+                                                                });
+
+
                                                                 j++;
-                                                                if (j < e.useHistory.length-1) {
+                                                                //if($scope.dituiditui){
+                                                                //
+                                                                //}else
+                                                                if (j < e.content.trips.length) {
+                                                                    console.log(222222222222222222,j,e.content.trips.length);
                                                                     $scope.laststarttransloc();
                                                                 } else {
+                                                                    $scope.lastandloadtripdis= false;//last的行程可点击
 
                                                                 }
                                                             }
-                                                            $scope.$apply(function () {
-                                                                $rootScope.lastdateinfo = e.useHistory;
-                                                            });
+                                                            //$scope.$apply(function () {
+                                                            //    $rootScope.lastdateinfo = e.content.trips;
+                                                            //});
                                                         });
                                                     });
                                                 }
@@ -2099,65 +3476,1298 @@ angular.module("app.demo.controllers",[])
                                             })
 
 
-                                    }else if(e.useHistory[j].startGPSLat == 0 && e.useHistory[j].endGPSLat==0) {
-                                        e.useHistory[j].startpoint = "获取地址失败";
-                                        e.useHistory[j].endpoint = "获取地址失败";
-                                        j++;
-                                        if(j<e.useHistory.length-1){
-                                            $scope.laststarttransloc();
-                                        }else {
+                                        }else if(e.content.trips[j].fireOnLat == 0 && e.content.trips[j].fireOffLat==0) {
+                                            e.content.trips[j].startpoint = "获取地址失败";
+                                            e.content.trips[j].endpoint = "获取地址失败";
+                                            $scope.$apply(function () {
+                                                $scope.lastdateinfo = e.content.trips;
+                                            });
+                                            console.log($scope.lastdateinfo[j]);
+                                            j++;
+                                            //if($scope.dituiditui){
+                                            //
+                                            //}else
+                                            if(j < e.content.trips.length){
+                                                console.log(999999999999999,j,e.content.trips.length);
+                                                $scope.laststarttransloc();
+                                            }else {
+                                                $scope.lastandloadtripdis= false;//last的行程可点击
+
+                                            }
+                                            //$scope.$apply(function () {
+                                            //    $rootScope.lastdateinfo = e.content.trips;
+                                            //});
+
+                                        }else if(e.content.trips[j].fireOnLat == 0){
+                                            e.content.trips[j].startpoint = "获取地址失败";
+                                            //console.log("实现吧");
+                                            //$scope.startwarningadd = new AMap.Geocoder({
+                                            //});
+
+
+                                            AMap.convertFrom(latnum,"gps",function(status,result){
+                                                //console.log("现在是这个result："+JSON.stringify(result));
+                                                function latendcover(){
+                                                    AMap.service('AMap.Geocoder',function() {
+                                                        $scope.startwarningadd = new AMap.Geocoder({
+
+                                                        });
+                                                        $scope.startwarningadd.getAddress(latnumend, function (status, result) {
+                                                            //console.log("latnumend:"+latnumend)
+                                                            //console.log("run here:",result,status);
+                                                            //console.log("result:"+JSON.stringify(result));
+                                                            if (status === 'complete' && result.info === 'OK') {
+                                                                $scope.endaddressa = result.regeocode.formattedAddress+"附近";
+                                                                e.content.trips[j].endpoint = $scope.endaddressa;
+                                                                $scope.$apply(function () {
+                                                                    $scope.lastdateinfo = e.content.trips;
+                                                                });
+                                                                //console.log($scope.lastdateinfo[j]);
+                                                                j++;
+                                                                //if($scope.dituiditui){
+                                                                //
+                                                                //}else
+                                                                if (j < e.content.trips.length) {
+                                                                    $scope.laststarttransloc();
+                                                                    console.log(33333333,j, e.content.trips.length)
+                                                                } else {
+                                                                    $scope.lastandloadtripdis= false;//last的行程可点击
+
+                                                                }
+                                                            } else {
+
+                                                                $scope.todayaddressa = "获取地址失败";
+
+                                                                //e.content.trips[j].startAddresscontent = $scope.todayaddressa;
+                                                                e.content.trips[j].endpoint = $scope.todayaddressa;
+                                                                $scope.$apply(function () {
+                                                                    $scope.lastdateinfo = e.content.trips;
+                                                                });
+                                                                console.log($scope.lastdateinfo[j]);
+                                                                j++;
+                                                                //if($scope.dituiditui){
+                                                                //
+                                                                //}else
+                                                                if (j < e.content.trips.length) {
+                                                                    console.log(44444444444444,j, e.content.trips.length)
+                                                                    $scope.laststarttransloc();
+                                                                } else {
+                                                                    $scope.lastandloadtripdis= false;//last的行程可点击
+
+                                                                }
+                                                            }
+                                                            //$scope.$apply(function () {
+                                                            //    $rootScope.lastdateinfo = e.content.trips;
+                                                            //});
+                                                        });
+                                                    });
+                                                }
+                                                if ( result.info === 'ok') {
+                                                    //var lngnumstart = result.locations[0];
+                                                    var latnumend= result.locations[0];
+                                                    latendcover()
+                                                }else {
+                                                    //var lngnumstart = lngnum;
+                                                    var latnumend= latnum;
+                                                    latendcover()
+                                                }
+                                            });
+                                        }else if(e.content.trips[j].fireOffLat==0){
+                                            e.content.trips[j].endpoint = "获取地址失败";
+                                            //$scope.startwarningadd = new AMap.Geocoder({
+                                            //});
+
+                                            AMap.convertFrom(lngnum,"gps",function(status,result) {
+                                                //console.log("现在是这个result：" + JSON.stringify(result));
+                                                function startcoverlng(){
+                                                    AMap.service('AMap.Geocoder',function() {
+                                                        $scope.startwarningadd = new AMap.Geocoder({});
+                                                        $scope.startwarningadd.getAddress(lngnumstart, function (status, result) {
+                                                            //console.log("lngnumstart:"+lngnumstart);
+                                                            //console.log("run here:",result,status);
+                                                            //console.log("result:"+JSON.stringify(result));
+                                                            if (status === 'complete' && result.info === 'OK') {
+                                                                $scope.todayaddressa = result.regeocode.formattedAddress+"附近";
+                                                                e.content.trips[j].startpoint = $scope.todayaddressa;
+
+                                                                $scope.$apply(function () {
+                                                                    $scope.lastdateinfo = e.content.trips;
+                                                                });
+                                                                //$scope.$apply(function () {
+                                                                //    $rootScope.lastdateinfo = e.content.trips;
+                                                                //});
+                                                                console.log($scope.lastdateinfo[j]);
+                                                                j++;
+                                                                if (j < e.content.trips.length) {
+                                                                    $scope.laststarttransloc();
+                                                                } else {
+                                                                    $scope.lastandloadtripdis= false;//last的行程可点击
+                                                                }
+                                                            } else {
+                                                                $scope.todayaddressa = "获取地址失败";
+                                                                e.content.trips[j].startpoint = $scope.todayaddressa;
+                                                                $scope.$apply(function () {
+                                                                    $scope.lastdateinfo = e.content.trips;
+                                                                });
+                                                                console.log($scope.lastdateinfo[j]);
+                                                                j++;
+                                                                //if($scope.dituiditui){
+                                                                //
+                                                                //}else
+                                                                if (j < e.content.trips.length) {
+                                                                    $scope.laststarttransloc();
+                                                                } else {
+                                                                    $scope.lastandloadtripdis= false;//last的行程可点击
+                                                                }
+                                                            }
+                                                            //$scope.$apply(function () {
+                                                            //    $rootScope.lastdateinfo = e.content.trips;
+                                                            //});
+                                                        });
+                                                    });
+                                                };
+                                                if (result.info === 'ok') {
+                                                    var lngnumstart = result.locations[0];
+                                                    //var latnumend= result.locations[0];
+                                                    startcoverlng()
+                                                }else {
+                                                    var lngnumstart = lngnum;
+                                                    //var latnumend= latnum;
+                                                    startcoverlng()
+                                                }
+                                            });
 
                                         }
+                                    };
+                                    if($scope.lastpagenumbera == 1) {
+                                        console.log("看看这个吧是多少",j,registerService.coverdate(e.content.trips[j].fireOnTime))
+                                        //第一页的数据
+                                        //两种情况
+                                        //console.log("开始结束date："+coverdatestart,coverdateend)
+                                        if(j==0){
+                                            console.log("j:"+j);
+                                            if(coverdatestart == coverdateend){
+                                                //第一种情况
+
+                                                console.log("第一种情况");
+                                                if(e.content.trips[j].fireOnTime !=0 && e.content.trips[j].fireOffTime !=0){
+                                                    e.content.trips[j].fir={
+                                                        laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                        starteventdate:coverdatestart,
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                        endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                    console.log("执行了");
+                                                }else if(e.content.trips[j].fireOnTime==0 && e.content.trips[j].fireOffTime !=0){
+                                                    e.content.trips[j].fir={
+                                                        laststarttime:"无数据",
+                                                        starteventdate:"无数据",
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                        endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                }else if(e.content.trips[j].fireOnTime!=0 && e.content.trips[j].fireOffTime ==0){
+                                                    e.content.trips[j].fir={
+                                                        laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                        starteventdate:coverdatestart,
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:"无数据",
+                                                        endeventdate:"无数据",
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                }else{
+                                                    e.content.trips[j].fir={
+                                                        laststarttime:"无数据",
+                                                        starteventdate:"无数据",
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:"无数据",
+                                                        endeventdate:"无数据",
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                }
+                                                sbfunction();
+                                                //$scope.lastdateinfo = e.content.trips;
+                                                //console.log($scope.lastdateinfo);
+                                            }else{
+                                                //第四种情况
+                                                console.log("第四种情况");
+
+                                                if(e.content.trips[j].fireOnTime !=0 && e.content.trips[j].fireOffTime !=0){
+                                                    e.content.trips[j].four={
+                                                        laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                        starteventdate:coverdatestart,
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                        endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                    console.log("执行了");
+                                                }else if(e.content.trips[j].fireOnTime==0 && e.content.trips[j].fireOffTime !=0){
+                                                    e.content.trips[j].four={
+                                                        laststarttime:"无数据",
+                                                        starteventdate:"无数据",
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                        endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                }else if(e.content.trips[j].fireOnTime!=0 && e.content.trips[j].fireOffTime ==0){
+                                                    e.content.trips[j].four={
+                                                        laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                        starteventdate:coverdatestart,
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:"无数据",
+                                                        endeventdate:"无数据",
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                }else{
+                                                    e.content.trips[j].four={
+                                                        laststarttime:"无数据",
+                                                        starteventdate:"无数据",
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:"无数据",
+                                                        endeventdate:"无数据",
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                }
+                                                sbfunction()
+                                                //$scope.lastdateinfo = e.content.trips;
+
+                                            }
+
+                                            //$scope.lastdateinfo = e.content.trips;
+                                        }
+                                        else if(j>0){
+                                            console.log("j:"+j);
+                                            var coverdateendlaste = registerService.coverdateyear(e.content.trips[j-1].fireOnTime);
+                                            //四种情况
+                                            if(coverdatestart == coverdateend && coverdateend != coverdateendlaste){
+                                                //第一种情况
+                                                console.log("第一种情况");
+
+
+                                                if(e.content.trips[j].fireOnTime !=0 && e.content.trips[j].fireOffTime !=0){
+                                                    e.content.trips[j].fir={
+                                                        laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                        starteventdate:coverdatestart,
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                        endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    $scope.lastdateinfo = e.content.trips;
+                                                    console.log("执行了");
+                                                }else if(e.content.trips[j].fireOnTime==0 && e.content.trips[j].fireOffTime !=0){
+                                                    e.content.trips[j].fir={
+                                                        laststarttime:"无数据",
+                                                        starteventdate:"无数据",
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                        endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    $scope.lastdateinfo = e.content.trips;
+                                                }else if(e.content.trips[j].fireOnTime!=0 && e.content.trips[j].fireOffTime ==0){
+                                                    e.content.trips[j].fir={
+                                                        laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                        starteventdate:coverdatestart,
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:"无数据",
+                                                        endeventdate:"无数据",
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    $scope.lastdateinfo = e.content.trips;
+                                                }else{
+                                                    e.content.trips[j].fir={
+                                                        laststarttime:"无数据",
+                                                        starteventdate:"无数据",
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:"无数据",
+                                                        endeventdate:"无数据",
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    $scope.lastdateinfo = e.content.trips;
+                                                }
+
+                                                sbfunction();
+                                                $scope.lastdateinfo = e.content.trips;
+
+                                            }else if(coverdatestart != coverdateend && coverdateend != coverdateendlaste){
+                                                //第四种情况
+                                                console.log("第四种情况");
+                                                if(e.content.trips[j].fireOnTime !=0 && e.content.trips[j].fireOffTime !=0){
+                                                    e.content.trips[j].four={
+                                                        laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                        starteventdate:coverdatestart,
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                        endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    $scope.lastdateinfo = e.content.trips;
+                                                    console.log("执行了");
+                                                }else if(e.content.trips[j].fireOnTime==0 && e.content.trips[j].fireOffTime !=0){
+                                                    e.content.trips[j].four={
+                                                        laststarttime:"无数据",
+                                                        starteventdate:"无数据",
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                        endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    $scope.lastdateinfo = e.content.trips;
+                                                }else if(e.content.trips[j].fireOnTime!=0 && e.content.trips[j].fireOffTime ==0){
+                                                    e.content.trips[j].four={
+                                                        laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                        starteventdate:coverdatestart,
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:"无数据",
+                                                        endeventdate:"无数据",
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    $scope.lastdateinfo = e.content.trips;
+                                                }else{
+                                                    e.content.trips[j].four={
+                                                        laststarttime:"无数据",
+                                                        starteventdate:"无数据",
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:"无数据",
+                                                        endeventdate:"无数据",
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    $scope.lastdateinfo = e.content.trips;
+                                                }
+                                                sbfunction()
+                                                $scope.lastdateinfo = e.content.trips;
+
+                                            }else if(coverdatestart == coverdateend && coverdateend == coverdateendlaste){
+                                                //第二种情况
+                                                console.log("第二种情况");
+
+                                                console.log(j,e.content.trips[j]);
+                                                if(!e.content.trips[j].fireOnTime && !e.content.trips[j].fireOffTime){
+                                                    e.content.trips[j].sed={
+                                                        laststarttime:"无数据",
+                                                        starteventdate:"无数据",
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:"无数据",
+                                                        endeventdate:"无数据",
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                }else if(e.content.trips[j].fireOnTime !=0 && e.content.trips[j].fireOffTime !=0){
+                                                    e.content.trips[j].sed={
+                                                        laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                        starteventdate:coverdatestart,
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                        endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                    console.log("执行了");
+                                                }else if(e.content.trips[j].fireOnTime==0 && e.content.trips[j].fireOffTime !=0){
+                                                    e.content.trips[j].sed={
+                                                        laststarttime:"无数据",
+                                                        starteventdate:"无数据",
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                        endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                }else if(e.content.trips[j].fireOnTime!=0 && e.content.trips[j].fireOffTime ==0){
+                                                    e.content.trips[j].sed={
+                                                        laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                        starteventdate:coverdatestart,
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:"无数据",
+                                                        endeventdate:"无数据",
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                }else{
+                                                    e.content.trips[j].sed={
+                                                        laststarttime:"无数据",
+                                                        starteventdate:"无数据",
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:"无数据",
+                                                        endeventdate:"无数据",
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                }
+                                                sbfunction();
+                                                //$scope.lastdateinfo = e.content.trips;
+
+
+                                            }else if(coverdatestart != coverdateend && coverdateend == coverdateendlaste){
+                                                //第三种情况
+                                                console.log("第三种情况");
+
+
+                                                if(e.content.trips[j].fireOnTime !=0 && e.content.trips[j].fireOffTime !=0){
+                                                    e.content.trips[j].thr={
+                                                        laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                        starteventdate:coverdatestart,
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                        endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                    console.log("执行了");
+                                                }else if(e.content.trips[j].fireOnTime==0 && e.content.trips[j].fireOffTime !=0){
+                                                    e.content.trips[j].thr={
+                                                        laststarttime:"无数据",
+                                                        starteventdate:"无数据",
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                        endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                }else if(e.content.trips[j].fireOnTime!=0 && e.content.trips[j].fireOffTime ==0){
+                                                    e.content.trips[j].thr={
+                                                        laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                        starteventdate:coverdatestart,
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:"无数据",
+                                                        endeventdate:"无数据",
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                }else{
+                                                    e.content.trips[j].thr={
+                                                        laststarttime:"无数据",
+                                                        starteventdate:"无数据",
+                                                        chinesestart:"起点：",
+                                                        chineseend:"终点：",
+                                                        lastendtime:"无数据",
+                                                        endeventdate:"无数据",
+                                                        startpoint: $scope.todayaddressa,
+                                                        endpoint: $scope.endaddressa,
+                                                        pointpoint:"........."
+                                                    };
+                                                    //$scope.lastdateinfo = e.content.trips;
+                                                }
+                                                sbfunction();
+                                                //$scope.lastdateinfo = e.content.trips;
+
+
+                                            }
+                                        }
+                                    }
+                                };
+                                $scope.laststarttransloc();
+
+                            }else{
+                                //e.length=0的时候
+                                $scope.notripcontent = false;//无行程
+                                $scope.clickonload = true;//点击加载
+                                $scope.cartriploading = true;//加载中
+                                $scope.thelastpagecartripover = true;//加载完全
+                                $scope.clickandaddloads = true;//继续加载
+                                console.log("无数据")
+                            }
+
+
+
+                    }else{
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timerrlasttripreasonapp = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+
+                            $scope.notripcontent = true;//无行程
+                            $scope.clickonload = false;//点击加载
+                            $scope.cartriploading = true;//加载中
+                            $scope.thelastpagecartripover = true;//加载完全
+                            $scope.clickandaddloads = true;//继续加载
+                        $scope.lastandloadtripdis= false;//last的行程可点击
+
+
+                    }
+                },500);
+
+
+            },function(err){
+                $scope.loadapp = {"toggle":false};
+                $scope.subapp= {"toggle":true};
+                $scope.lasttripendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.lasttripendtimehs - $scope.lasttripstarttimehs);
+                if($scope.lasttripendtimehs - $scope.lasttripstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
+                $scope.timerrlasterrtime = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+
+                    $scope.notripcontent = true;//无行程
+                    $scope.clickonload = false;//点击加载
+                    $scope.cartriploading = true;//加载中
+                    $scope.thelastpagecartripover = true;//加载完全
+                    $scope.clickandaddloads = true;//继续加载
+                $scope.lastandloadtripdis= false;//last的行程可点击
+
+
+            });
+        };
+        $scope.timelastnulltime = $timeout(function(){
+            $scope.lastpagenumbera = 0;
+            $scope.lasttripObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                startTime:new Date($scope.ajaxstarttime+' 00:00:00').getTime(),
+                endTime:new Date($scope.ajaxendtime+' 23:59:59').getTime(),
+                pageIndex:$scope.lastpagenumbera,
+                pageSize:3
+                //,pageNumber:$scope.lastdatepage,
+                //limit:2
+            };
+            $scope.islastandload = false;
+            $scope.lastdate();
+        },2);
+        $scope.datetripbtninit = function(){
+            $scope.ostartTimes = registerService.getdatestr(-2);
+            $scope.overTimes = registerService.getdatestr(-1);
+            $scope.ajaxstarttime = $scope.ostartTimes.replace('-','/').replace('-','/');
+            $scope.ajaxendtime = $scope.overTimes.replace('-','/').replace('-','/');
+            $scope.lastdatepage=0;
+            $scope.timelastnulltimedatefir = $timeout(function(){
+                //$scope.dituiditui = true;
+
+                $scope.lastdateinfo = null;
+                $scope.lastpagenumbera = 0;
+                $scope.lasttripObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    startTime:new Date($scope.ajaxstarttime+' 00:00:00').getTime(),
+                    endTime:new Date($scope.ajaxendtime+' 23:59:59').getTime(),
+                    pageIndex:$scope.lastpagenumbera,
+                    pageSize:3
+                    //,pageNumber:$scope.lastdatepage,
+                    //limit:2
+                };
+                $scope.islastandload = false;
+                $scope.lasttripUrl = "/rest/trips/period/";
+                $scope.lastdate();
+            },2);
+        };
+
+        $scope.changedatebtnsearch = function(){
+            $scope.coverostarttime = $("#appDate").val().replace('-','').replace('-','');
+            $scope.coverovertime = $("#appDateover").val().replace('-','').replace('-','');
+            $scope.coverostarttimeeeeee = $("#appDate").val().replace('-','/').replace('-','/');
+            $scope.coverovertimeeeeee = $("#appDateover").val().replace('-','/').replace('-','/');
+            console.log($scope.coverostarttime,$scope.coverovertime);
+            $scope.ajaxstarttime =$scope.coverostarttimeeeeee ;
+            $scope.ajaxendtime = $scope.coverovertimeeeeee;
+            console.log(new Date($scope.coverostarttimeeeeee+" 00:00:00").getTime());
+            console.log(new Date($scope.coverovertimeeeeee+" 00:00:00").getTime());
+            if((new Date($scope.coverovertimeeeeee+" 23:59:59").getTime() - new Date($scope.coverostarttimeeeeee+" 00:00:00").getTime()) >604800000){
+                console.log("时间太长了啊啊啊啊");
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "开始,结束日期不能相差超过7天，请您重新确认！";
+
+                $scope.timesevenoverdate = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+                console.log("看这里啊");
+            } else if($scope.ajaxendtime>= $scope.ajaxstarttime){
+                $scope.lastdatepage=0;
+                $scope.timelastnulltimedatesed = $timeout(function(){
+                    //$scope.dituiditui = true;
+                    $scope.lastdateinfo = null;
+                    $scope.islastandload = false;
+                    $scope.lastpagenumbera = 0;
+                    console.log($scope.ajaxstarttime,$scope.ajaxendtime)
+                    $scope.lasttripObj = {
+                        termId:Number($window.sessionStorage.getItem("UtermId")),
+                        startTime:new Date($scope.ajaxstarttime+' 00:00:00').getTime(),
+                        endTime:new Date($scope.ajaxendtime+' 23:59:59').getTime(),
+                        pageIndex:$scope.lastpagenumbera,
+                        pageSize:3
+                        //,pageNumber:$scope.lastdatepage,
+                        //limit:2
+                    };
+                    $scope.lasttripUrl = "/rest/trips/period/";
+                    $scope.lastdate();
+                },2);
+                console.log("看这里啊");
+            } else {
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "开始日期大于结束日期，请您重新确认！";
+                $scope.timesevenoverdateall = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+                console.log("看这里啊");
+            }
+
+        }
+        $scope.clickLasttripOnload = function(){
+            //$scope.timelastnulltimedatefirbtn = $timeout(function(){
+            //
+            //    $scope.lastdateinfo = null;
+            //    $scope.lastdate();
+            //},2);
+            $scope.changedatebtnsearch();
+        };
+        //$scope.dateModelhide = function(){
+        //    $scope.datediv = {toggle:false};
+        //    console.log(1);
+        //}
+        //$scope.showdatemodelbtn = function(){
+        //    $scope.datediv = {toggle:true};
+        //}
+
+        //点击继续加载
+        //$scope.clickAddlastTriponload = function(){
+        //    $scope.notripcontent = true;//无行程
+        //    $scope.clickonload = true;//点击加载
+        //    $scope.cartriploading = false;//加载中
+        //    $scope.thelastpagecartripover = true;//加载完全
+        //    $scope.clickandaddloads = true;//继续加载
+        //    var lasttripObj = {
+        //        uid:$window.sessionStorage.getItem("Uid"),
+        //        startTime:$scope.ajaxstarttime+'000000',
+        //        endTime:$scope.ajaxendtime+'235959',
+        //        pageNumber:$scope.lastdatepage,
+        //        limit:2
+        //    };
+        //    var lasttripUrl = "/rest/vehicles/useHistory/";
+        //    $scope.loadapp = {"toggle":true};
+        //    registerService.commonUserget(lasttripObj,lasttripUrl).then(function(e){
+        //        $scope.loadapp = {"toggle":false};
+        //        if(e.status == true){
+        //            console.log(e);
+        //            console.log(e.useHistory.length);
+        //            $scope.lastdatepage ++;
+        //            if(e.useHistory.length !=0){
+        //                console.log("有数据");
+        //                //table的样式 是否最后一页
+        //                if(e.isLastpage == true){
+        //                    $scope.notripcontent = true;//无行程
+        //                    $scope.clickonload = true;//点击加载
+        //                    $scope.cartriploading = true;//加载中
+        //                    $scope.thelastpagecartripover = false;//加载完全
+        //                    $scope.clickandaddloads = true;//继续加载
+        //                }else{
+        //                    $scope.notripcontent = true;//无行程
+        //                    $scope.clickonload = false;//点击加载
+        //                    $scope.cartriploading = true;//加载中
+        //                    $scope.thelastpagecartripover =true ;//加载完全
+        //                    $scope.clickandaddloads = true;//继续加载
+        //                }
+        //                for(var i in e.useHistory){
+        //                    e.useHistory[i].startpoint = "正在解析！";
+        //                    e.useHistory[i].endpoint = "正在解析！";
+        //                }
+        //                $scope.lastdateinfo = e.useHistory;
+        //                var j = 0;
+        //
+        //                 $scope.laststarttransloc = function (){
+        //                    console.log("e.useHistory:",e.useHistory);
+        //                    var lnglatXY =[e.useHistory[j].startLat,e.useHistory[j].startLng];
+        //                    var coverdatestart = registerService.coverdateyear(e.useHistory[j].fireOnTime);
+        //                    var coverdateend = registerService.coverdateyear(e.useHistory[j].fireOffTime);
+        //
+        //                    //if(e.useHistory[j].fireOnTime && e.useHistory[j].fireOffTime && coverdatestart==coverdateend){
+        //                    //    e.useHistory[j].laststarttime = registerService.coverdate(e.useHistory[j].fireOnTime);
+        //                    //    e.useHistory[j].eventdate = coverdateend;
+        //                    //    $scope.normaldianlastdontdate = false;
+        //                    //    $scope.sbdianlastdontdate =true ;
+        //                    //    console.log("444444");
+        //                    //}else if(e.useHistory[j].fireOnTime && e.useHistory[j].fireOffTime && coverdatestart!=coverdateend){
+        //                    //    $scope.normaldianlastdontdate =true ;
+        //                    //    $scope.sbdianlastdontdate = false;
+        //                    //    e.useHistory[j].eventdate = coverdateend;
+        //                    //    console.log("不正常");
+        //                    //}else if(!e.useHistory[j].fireOnTime && e.useHistory[j].fireOffTime){
+        //                    //    e.useHistory[j].laststarttime = "无数据";
+        //                    //    e.useHistory[j].lastendtime = registerService.coverdate(e.useHistory[j].fireOffTime);
+        //                    //    e.useHistory[j].eventdate = coverdateend;
+        //                    //    console.log("3333333");
+        //                    //}else if(e.useHistory[j].fireOnTime && !e.useHistory[j].fireOffTime){
+        //                    //    e.useHistory[j].lastendtime = "无数据";
+        //                    //    e.useHistory[j].laststarttime = registerService.coverdate(e.useHistory[j].fireOnTime);
+        //                    //    e.useHistory[j].eventdate = coverdatestart;
+        //                    //    console.log("222222");
+        //                    //}else{
+        //                    //    console.log("111111");
+        //                    //}
+        //                    //console.log(1);
+        //                    //if(j>0){
+        //                    //    if(registerService.coverdateyear(e.useHistory[j].fireOnTime) == registerService.coverdateyear(e.useHistory[j-1].fireOffTime) || registerService.coverdateyear(e.useHistory[j].fireOffTime) == registerService.coverdateyear(e.useHistory[j-1].fireOffTime)){
+        //                    //        $scope.dateyeardisnone = false;
+        //                    //        console.log("j>0,消失");
+        //                    //    }else{
+        //                    //        $scope.dateyeardisnone = false;
+        //                    //        console.log("j>0,显示");
+        //                    //    }
+        //                    //    console.log("f>0");
+        //                    //}else{
+        //                    //    console.log("f=0，显示");
+        //                    //    $scope.dateyeardisnone = true;
+        //                    //}
+        //                    console.log($scope.lastdatepage);
+        //                    if($scope.lastdatepage > 1) {       //第一页的数据
+        //                        console.log("这不是第一页");
+        //                        //两种情况
+        //                        console.log("开始结束date："+coverdatestart,coverdateend);
+        //                        if(j==0){
+        //                            //这个要跟上一页的比较，，
+        //                            if(coverdatestart == coverdateend){
+        //                                //第一种情况
+        //                                $scope.normaldianlastdontdate = false;
+        //                                $scope.agadianlastdontdate = true;
+        //                                $scope.sbdianlastdontdate = true;
+        //                                $scope.moresbdianlastdontdate = true;
+        //                            }else{
+        //                                //第四种情况
+        //                                $scope.normaldianlastdontdate = true;
+        //                                $scope.agadianlastdontdate = true;
+        //                                $scope.sbdianlastdontdate = true;
+        //                                $scope.moresbdianlastdontdate =false ;
+        //                            }
+        //                        }else if(j>0){
+        //                            var coverdateendlaste = registerService.coverdateyear(e.useHistory[j-1].fireOffTime);
+        //                            //四种情况
+        //                            if(coverdatestart == coverdateend && coverdatestart != coverdateendlaste){
+        //                                //第一种情况
+        //                                $scope.normaldianlastdontdate = false;
+        //                                $scope.agadianlastdontdate = true;
+        //                                $scope.sbdianlastdontdate = true;
+        //                                $scope.moresbdianlastdontdate = true;
+        //                            }else if(coverdatestart != coverdateend && coverdatestart != coverdateendlaste){
+        //                                //第四种情况
+        //                                $scope.normaldianlastdontdate = true;
+        //                                $scope.agadianlastdontdate = true;
+        //                                $scope.sbdianlastdontdate = true;
+        //                                $scope.moresbdianlastdontdate =false ;
+        //                            }else if(coverdatestart == coverdateend && coverdatestart == coverdateendlaste){
+        //                                //第二种情况
+        //                                $scope.normaldianlastdontdate = true;
+        //                                $scope.agadianlastdontdate = false;
+        //                                $scope.sbdianlastdontdate = true;
+        //                                $scope.moresbdianlastdontdate =true ;
+        //                            }else if(coverdatestart != coverdateend && coverdatestart == coverdateendlaste){
+        //                                //第三种情况
+        //                                $scope.normaldianlastdontdate = true;
+        //                                $scope.agadianlastdontdate = true;
+        //                                $scope.sbdianlastdontdate =false ;
+        //                                $scope.moresbdianlastdontdate =true ;
+        //                            }
+        //                        }
+        //
+        //
+        //                    }
+        //                    AMap.service('AMap.Geocoder',function() {
+        //                        $scope.laststartwarningadd = new AMap.Geocoder({});
+        //
+        //                        $scope.laststartwarningadd.getAddress(lnglatXY, function (status, result) {
+        //
+        //                            console.log("run here:", result, status);
+        //                            if (status === 'complete' && result.info === 'OK') {
+        //                                $scope.todayaddressa = result.regeocode.formattedAddress;
+        //                                e.useHistory[j].startpoint = $scope.todayaddressa;
+        //                                j++;
+        //                                if (j < e.useHistory.length) {
+        //
+        //                                    $scope.laststarttransloc();
+        //                                } else {
+        //                                }
+        //                            } else {
+        //                                $scope.todayaddressa = "获取地址失败";
+        //                                e.useHistory[j].startpoint = $scope.todayaddressa;
+        //                                j++;
+        //                                if (j < e.useHistory.length) {
+        //                                    $scope.laststarttransloc();
+        //                                } else {
+        //                                }
+        //                            }
+        //
+        //
+        //                            $scope.$apply(function () {
+        //                                $scope.lastdateinfo = e.useHistory;
+        //                            });
+        //                        });
+        //                    });
+        //
+        //                };
+        //                $scope.laststarttransloc();
+        //                var f=0;
+        //                function lastendtransloc() {
+        //                    var endlnglatXY = [e.useHistory[f].endLat,e.useHistory[f].endLng];
+        //                    //var coverdatestart = registerService.coverdateyear(e.useHistory[f].fireOnTime);
+        //                    //var coverdateend = registerService.coverdateyear(e.useHistory[f].fireOffTime);
+        //                    ////e.useHistory[f].lastendtime = registerService.coverdate(e.useHistory[f].fireOffTime);
+        //                    //if(e.useHistory[f].fireOnTime && e.useHistory[f].fireOffTime && coverdatestart==coverdateend){
+        //                    //    e.useHistory[f].lastendtime = registerService.coverdate(e.useHistory[f].fireOffTime);
+        //                    //    e.useHistory[f].eventdate = coverdatestart;
+        //                    //
+        //                    //    $scope.normaldianlastdontdate =false ;
+        //                    //    $scope.sbdianlastdontdate = true;
+        //                    //}else if(e.useHistory[f].fireOnTime && e.useHistory[f].fireOffTime && coverdatestart!=coverdateend){
+        //                    //    $scope.normaldianlastdontdate =true ;
+        //                    //    $scope.sbdianlastdontdate = false;
+        //                    //    e.useHistory[f].eventdate = coverdateend;
+        //                    //}else if(!e.useHistory[f].fireOnTime && e.useHistory[f].fireOffTime){
+        //                    //    e.useHistory[f].laststarttime = "无数据";
+        //                    //    e.useHistory[f].lastendtime = registerService.coverdate(e.useHistory[f].fireOffTime);
+        //                    //    e.useHistory[f].eventdate = coverdateend;
+        //                    //}else if(e.useHistory[f].fireOnTime && !e.useHistory[f].fireOffTime){
+        //                    //    e.useHistory[f].lastendtime = "无数据";
+        //                    //    e.useHistory[f].laststarttime = registerService.coverdate(e.useHistory[f].fireOnTime);
+        //                    //    e.useHistory[f].eventdate = coverdatestart;
+        //                    //}
+        //                    //if(f>0){
+        //                    //    if(registerService.coverdateyear(e.useHistory[f].fireOnTime) == registerService.coverdateyear(e.useHistory[f-1].fireOffTime) || registerService.coverdateyear(e.useHistory[f].fireOffTime) == registerService.coverdateyear(e.useHistory[f-1].fireOffTime)){
+        //                    //        $scope.dateyeardisnone = true;
+        //                    //    }else{
+        //                    //        $scope.dateyeardisnone = false;
+        //                    //
+        //                    //    }
+        //                    //}else{
+        //                    //
+        //                    //
+        //                    //
+        //                    //    $scope.dateyeardisnone = false;
+        //                    //}
+        //
+        //
+        //                    if(endlnglatXY!=[0,0]){
+        //                        AMap.service('AMap.Geocoder',function() {
+        //                            $scope.lastendwarningadd = new AMap.Geocoder({});
+        //
+        //                            $scope.lastendwarningadd.getAddress(endlnglatXY, function (status, result) {
+        //                                if (status === 'complete' && result.info === 'OK') {
+        //                                    $scope.endaddressa = result.regeocode.formattedAddress;
+        //                                    e.useHistory[f].endpoint = $scope.endaddressa;
+        //                                    f++;
+        //                                    if (f < e.useHistory.length) {
+        //                                        lastendtransloc();
+        //                                    } else {
+        //                                    }
+        //                                } else {
+        //                                    $scope.endaddressa = "获取地址失败";
+        //                                    e.useHistory[f].endpoint = $scope.endaddressa;
+        //                                    f++;
+        //                                    if (f < e.useHistory.length) {
+        //                                        lastendtransloc();
+        //                                    } else {
+        //                                    }
+        //                                }
+        //                                $scope.$apply(function () {
+        //                                    $scope.lastdateinfo = e.useHistory;
+        //                                });
+        //                                console.log($scope.lastdateinfo)
+        //
+        //
+        //                            });
+        //                        });
+        //                    }
+        //
+        //                };
+        //
+        //                lastendtransloc();
+        //            }else{
+        //                //e.length=0的时候
+        //                $scope.notripcontent = false;//无行程
+        //                $scope.clickonload = true;//点击加载
+        //                $scope.cartriploading = true;//加载中
+        //                $scope.thelastpagecartripover = true;//加载完全
+        //                  $scope.clickandaddloads = true;//继续加载
+        //                console.log("无数据")
+        //            }
+        //
+        //
+        //        }else{
+        //            $scope.subapp= {"toggle":true};
+        //            $scope.submitWarning = e.reason+"！";
+        //            $scope.timesubreason = $timeout(function(){
+        //                $scope.subapp= {"toggle":false};
+        //            },2000);
+        //            $scope.notripcontent = true;//无行程
+        //            $scope.clickonload = false;//点击加载
+        //            $scope.cartriploading = true;//加载中
+        //            $scope.thelastpagecartripover = true;//加载完全
+        //            $scope.clickandaddloads = true;//继续加载
+        //        }
+        //    },function(err){
+        //        $scope.loadapp = {"toggle":false};
+        //        $scope.subapp= {"toggle":true};
+        //        $scope.submitWarning = "网络连接失败！";
+        //        $scope.timesuberror = $timeout(function(){
+        //            $scope.subapp= {"toggle":false};
+        //        },2000);
+        //        $scope.notripcontent = true;//无行程
+        //        $scope.clickonload = false;//点击加载
+        //        $scope.cartriploading = true;//加载中
+        //        $scope.thelastpagecartripover = true;//加载完全
+        //        $scope.clickandaddloads = true;//继续加载
+        //    });
+        //};
+        //di
+        //dian
+
+        //点击继续加载
+        $scope.clickAddlastTriponload = function(){
+            $scope.lastandloadtripdis= true;//last的行程不可点击
+            $scope.islastandload = true;
+            console.log("点击了继续加载："+$scope.lastpagenumbera);
+            $scope.lasttripObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                startTime:new Date($scope.ajaxstarttime+' 00:00:00').getTime(),
+                endTime:new Date($scope.ajaxendtime+' 23:59:59').getTime(),
+                pageIndex:$scope.lastpagenumbera,
+                pageSize:3
+                //,pageNumber:$scope.lastdatepage,
+                //limit:2
+            };
+            $scope.lasttripUrl = "/rest/trips/period/";
+            $scope.notripcontent = true;//无行程
+            $scope.clickonload = true;//点击加载
+            $scope.cartriploading = false;//加载中
+            $scope.thelastpagecartripover = true;//加载完全
+            $scope.clickandaddloads = true;//继续加载
+            if($scope.infoclassnone == 0){
+                $scope.infoclassnone = true;
+            }
+            $scope.loadapp = {"toggle":true};
+            var j = 0;
+            console.log($scope.ajaxstarttime,$scope.ajaxendtime);
+            $scope.lasttripstarttimehs = new Date().getTime();
+            registerService.commonUser($scope.lasttripObj,$scope.lasttripUrl).then(function(e){
+                $scope.timerrlastloadtime = $timeout(function(){
+                    $scope.loadapp = {"toggle":false};
+                    if(e.status == true){
+                        $scope.lastpagenumbera ++;
+                        console.log("页码："+$scope.lastpagenumbera);
+                        console.log(e);
+                        console.log(e.content.trips.length);
+                        //$scope.lastdatepage ++;
+                        if(e.content.currentSize !=0){
+                            console.log("有数据");
+                            //table的样式 是否最后一页
+                            //$rootScope.tripmaplatlng = e.content.trips;
+                            if(e.content.currentPage == e.content.totalPages-1){
+                                $scope.notripcontent = true;//无行程
+                                $scope.clickonload = true;//点击加载
+                                $scope.cartriploading = true;//加载中
+                                $scope.thelastpagecartripover = false;//加载完全
+                                $scope.clickandaddloads = true;//继续加载
+                            }else{
+                                $scope.notripcontent = true;//无行程
+                                $scope.clickonload = true;//点击加载
+                                $scope.cartriploading = true;//加载中
+                                $scope.thelastpagecartripover =true ;//加载完全
+                                $scope.clickandaddloads =false ;//继续加载
+                            }
+                            //for(var i in e.content.trips){
+                            //    e.content.trips[i].startpoint = "正在解析！";
+                            //    e.content.trips[i].endpoint = "正在解析！";
+                            //}
+                            //if($scope.lastpagenumbera == 1){
+                            //    $scope.lastdateinfo = e.content.trips;
+                            //}
+                            console.log($scope.lastdateinfo);
+                            j = 0;
+                            //$scope.dituiditui = false;
+                            $scope.laststarttranslocand = function (){
+
+                                console.log("看看这个是多少啊j："+j);
+                                var lnglatXY =[e.content.trips[j].fireOnLng,e.content.trips[j].fireOnLat];
+                                var coverdatestart = registerService.coverdateyear(e.content.trips[j].fireOnTime);
+                                var coverdateend = registerService.coverdateyear(e.content.trips[j].fireOffTime);
+                                var endlnglatXY = [e.content.trips[j].fireOffLng,e.content.trips[j].fireOffLat];
+                                try {
+                                    var lngnum = new AMap.LngLat(e.content.trips[j].fireOnLng,e.content.trips[j].fireOnLat);
+                                    var latnum =new AMap.LngLat(e.content.trips[j].fireOffLng,e.content.trips[j].fireOffLat);
+                                    console.log(lngnum,latnum);
+                                    $scope.initfalseapp= {"toggle":false};
+                                }
+                                catch(err) {
+                                    $scope.initfalseapp= {"toggle":true};
+                                    //$scope.subapp= {"toggle":true};
+
+                                    $scope.goSubmitPage= function(){
+                                        $state.go("submits");
+                                        $scope.initfalseapp= {"toggle":false};
+                                    };
+                                    $scope.gomainhomePage = function(){
+                                        $state.go("mains.home");
+                                        $scope.initfalseapp= {"toggle":false};
+                                    }
+                                    $scope.notripcontent = true;//无行程
+                                    $scope.clickonload = true;//点击加载
+                                    $scope.cartriploading =false ;//加载中
+                                    $scope.thelastpagecartripover =true ;//加载完全
+                                    $scope.clickandaddloads = true;//继续加载
+                                }
+                                function sbfunction(){
+                                    if(e.content.trips[j].fireOnLat != 0 && e.content.trips[j].fireOffLat!=0){
+                                        //console.log(j,e.content.trips[j].fireOnLat);
+
+                                        AMap.convertFrom([lngnum, latnum], "gps", function (status, result) {
+                                            //console.log("现在测试的起点终点：" + lngnum, latnum)
+                                            //console.log("现在是这个result：" + JSON.stringify(result));
+                                            function allhavestartend() {
+                                                AMap.service('AMap.Geocoder', function () {
+                                                    $scope.startwarningadd = new AMap.Geocoder({});
+                                                    $scope.startwarningadd.getAddress([lngnumstart, latnumend], function (status, result) {
+                                                        console.log("result:"+JSON.stringify(result));
+                                                        if (status === 'complete' && result.info === 'OK') {
+
+                                                            if (result.regeocodes[0].formattedAddress) {
+                                                                $scope.todayaddressa = result.regeocodes[0].formattedAddress+"附近";
+                                                                e.content.trips[j].startpoint = $scope.todayaddressa;
+                                                                //console.log("起点" + $scope.todayaddressa)
+                                                            } else {
+                                                                $scope.todayaddressa = "获取地址失败";
+                                                                //console.log("获取位置fir：1");
+                                                                //console.log("失败:",$scope.todayaddressa,e.content.trips,j)
+                                                                e.content.trips[j].startpoint = $scope.todayaddressa;
+                                                            }
+                                                            if (result.regeocodes[1].formattedAddress) {
+                                                                $scope.endaddressa = result.regeocodes[1].formattedAddress+"附近";
+                                                                e.content.trips[j].endpoint = $scope.endaddressa;
+
+                                                            } else {
+                                                                $scope.todayaddressa = "获取地址失败";
+                                                                //console.log("获取位置fir：2");
+                                                                //console.log("失败:",$scope.todayaddressa,e.content.trips,j)
+                                                                e.content.trips[j].endpoint = $scope.todayaddressa;
+                                                            }
+
+                                                            //$scope.timelastandloadtimefuzhi = $timeout(function(){
+                                                                $scope.lastdateinfo.push(e.content.trips[j]);
+
+
+                                                                j++;
+                                                                if (j < e.content.trips.length) {
+                                                                    console.log(99555555555,j,e.content.trips.length);
+                                                                    $scope.laststarttranslocand();
+                                                                    //console.log("执行了啊j++", j)
+                                                                } else {
+                                                                    $scope.lastandloadtripdis= false;//last的行程可点击
+                                                                };
+                                                            //},20)
+
+                                                        } else {
+
+                                                            $scope.todayaddressa = "获取地址失败";
+                                                            e.content.trips[j].startpoint = $scope.todayaddressa;
+                                                            e.content.trips[j].endpoint = $scope.todayaddressa;
+                                                            //$scope.timelastandloadtimefuzhi = $timeout(function() {
+                                                                $scope.lastdateinfo.push(e.content.trips[j]);
+
+                                                                console.log($scope.lastdateinfo[j]);
+                                                                j++;
+                                                                //if($scope.dituiditui){
+                                                                //
+                                                                //}else
+                                                                if (j < e.content.trips.length) {
+                                                                    console.log(222222222222222222, j, e.content.trips.length);
+                                                                    $scope.laststarttranslocand();
+                                                                } else {
+                                                                    $scope.lastandloadtripdis= false;//last的行程可点击
+                                                                }
+                                                            //},20);
+                                                        }
+                                                        //$scope.$apply(function () {
+                                                        //    $rootScope.lastdateinfo = e.content.trips;
+                                                        //});
+                                                    });
+                                                });
+                                            }
+
+                                            if (result.info === 'ok') {
+                                                var lngnumstart = result.locations[0];
+                                                var latnumend = result.locations[1];
+                                                allhavestartend();
+                                                console.log("last赋值成功了");
+                                            } else {
+                                                var lngnumstart = lngnum;
+                                                var latnumend = latnum;
+                                                allhavestartend()
+                                            }
+                                        })
+
+
+                                    }else if(e.content.trips[j].fireOnLat == 0 && e.content.trips[j].fireOffLat==0) {
+                                        e.content.trips[j].startpoint = "获取地址失败";
+                                        e.content.trips[j].endpoint = "获取地址失败";
+                                        //$scope.timelastandloadtimefuzhi = $timeout(function() {
+                                            $scope.lastdateinfo.push(e.content.trips[j]);
+
+                                            console.log($scope.lastdateinfo[j]);
+                                            j++;
+                                            //if($scope.dituiditui){
+                                            //
+                                            //}else
+                                            if (j < e.content.trips.length) {
+                                                console.log(222222222222222222, j, e.content.trips.length);
+                                                $scope.laststarttranslocand();
+                                            } else {
+                                                $scope.lastandloadtripdis= false;//last的行程可点击
+                                            }
+                                        //},20);
                                         //$scope.$apply(function () {
-                                        //    $rootScope.lastdateinfo = e.useHistory;
+                                        //    $rootScope.lastdateinfo = e.content.trips;
                                         //});
 
-                                    }else if(e.useHistory[j].startGPSLat == 0){
-                                        e.useHistory[j].startpoint = "获取地址失败";
-                                        console.log("实现吧");
+                                    }else if(e.content.trips[j].fireOnLat == 0){
+                                        e.content.trips[j].startpoint = "获取地址失败";
+                                        //console.log("实现吧");
                                         //$scope.startwarningadd = new AMap.Geocoder({
                                         //});
 
 
                                         AMap.convertFrom(latnum,"gps",function(status,result){
-                                            console.log("现在是这个result："+JSON.stringify(result));
+                                            //console.log("现在是这个result："+JSON.stringify(result));
                                             function latendcover(){
                                                 AMap.service('AMap.Geocoder',function() {
                                                     $scope.startwarningadd = new AMap.Geocoder({
 
                                                     });
                                                     $scope.startwarningadd.getAddress(latnumend, function (status, result) {
-                                                        console.log("latnumend:"+latnumend)
+                                                        //console.log("latnumend:"+latnumend)
                                                         //console.log("run here:",result,status);
                                                         //console.log("result:"+JSON.stringify(result));
                                                         if (status === 'complete' && result.info === 'OK') {
-                                                            $scope.endaddressa = result.regeocode.formattedAddress;
-                                                            e.useHistory[j].endpoint = $scope.endaddressa;
-                                                            $scope.$apply(function () {
-                                                                $rootScope.lastdateinfo = e.useHistory;
-                                                            });
-                                                            j++;
-                                                            if (j < e.useHistory.length) {
-                                                                $scope.laststarttransloc();
-                                                            } else {
+                                                            $scope.endaddressa = result.regeocode.formattedAddress+"附近";
+                                                            e.content.trips[j].endpoint = $scope.endaddressa;
+                                                            //$scope.$apply(function () {
+                                                            //    $rootScope.lastdateinfo = e.content.trips;
+                                                            //});
 
-                                                            }
+                                                            //$scope.timelastandloadtimefuzhi = $timeout(function() {
+                                                                $scope.lastdateinfo.push(e.content.trips[j]);
+
+                                                                console.log($scope.lastdateinfo[j]);
+                                                                j++;
+                                                                //if($scope.dituiditui){
+                                                                //
+                                                                //}else
+                                                                if (j < e.content.trips.length) {
+                                                                    console.log(222222222222222222, j, e.content.trips.length);
+                                                                    $scope.laststarttranslocand();
+                                                                } else {
+                                                                    $scope.lastandloadtripdis= false;//last的行程可点击
+                                                                }
+                                                            //},20);
                                                         } else {
 
                                                             $scope.todayaddressa = "获取地址失败";
 
-                                                            //e.useHistory[j].startAddresscontent = $scope.todayaddressa;
-                                                            e.useHistory[j].endpoint = $scope.todayaddressa;
-                                                            j++;
-                                                            if (j < e.useHistory.length) {
-                                                                $scope.laststarttransloc();
-                                                            } else {
+                                                            //e.content.trips[j].startAddresscontent = $scope.todayaddressa;
+                                                            e.content.trips[j].endpoint = $scope.todayaddressa;
 
-                                                            }
+                                                            //$scope.timelastandloadtimefuzhi = $timeout(function() {
+                                                                $scope.lastdateinfo.push(e.content.trips[j]);
+
+                                                                console.log($scope.lastdateinfo[j]);
+                                                                j++;
+                                                                //if($scope.dituiditui){
+                                                                //
+                                                                //}else
+                                                                if (j < e.content.trips.length) {
+                                                                    console.log(222222222222222222, j, e.content.trips.length);
+                                                                    $scope.laststarttranslocand();
+                                                                } else {
+                                                                    $scope.lastandloadtripdis= false;//last的行程可点击
+                                                                }
+                                                            //},20);
                                                         }
-                                                        $scope.$apply(function () {
-                                                            $rootScope.lastdateinfo = e.useHistory;
-                                                        });
+                                                        //$scope.$apply(function () {
+                                                        //    $rootScope.lastdateinfo = e.content.trips;
+                                                        //});
                                                     });
                                                 });
                                             }
@@ -2171,47 +4781,61 @@ angular.module("app.demo.controllers",[])
                                                 latendcover()
                                             }
                                         });
-                                    }else if(e.useHistory[j].endGPSLat==0){
-                                        e.useHistory[j].endpoint = "获取地址失败！";
+                                    }else if(e.content.trips[j].fireOffLat==0){
+                                        e.content.trips[j].endpoint = "获取地址失败";
                                         //$scope.startwarningadd = new AMap.Geocoder({
                                         //});
 
                                         AMap.convertFrom(lngnum,"gps",function(status,result) {
-                                            console.log("现在是这个result：" + JSON.stringify(result));
+                                            //console.log("现在是这个result：" + JSON.stringify(result));
                                             function startcoverlng(){
                                                 AMap.service('AMap.Geocoder',function() {
                                                     $scope.startwarningadd = new AMap.Geocoder({});
                                                     $scope.startwarningadd.getAddress(lngnumstart, function (status, result) {
-                                                        console.log("lngnumstart:"+lngnumstart)
+                                                        //console.log("lngnumstart:"+lngnumstart);
                                                         //console.log("run here:",result,status);
                                                         //console.log("result:"+JSON.stringify(result));
                                                         if (status === 'complete' && result.info === 'OK') {
-                                                            $scope.todayaddressa = result.regeocode.formattedAddress;
-                                                            e.useHistory[j].startpoint = $scope.todayaddressa;
+                                                            $scope.todayaddressa = result.regeocode.formattedAddress+"附近";
+                                                            e.content.trips[j].startpoint = $scope.todayaddressa;
+                                                            //$scope.timelastandloadtimefuzhi = $timeout(function() {
+                                                                $scope.lastdateinfo.push(e.content.trips[j]);
 
-
-                                                            $scope.$apply(function () {
-                                                                $rootScope.lastdateinfo = e.useHistory;
-                                                            });
-                                                            j++;
-                                                            if (j < e.useHistory.length) {
-                                                                $scope.laststarttransloc();
-                                                            } else {
-
-                                                            }
+                                                                console.log($scope.lastdateinfo[j]);
+                                                                j++;
+                                                                //if($scope.dituiditui){
+                                                                //
+                                                                //}else
+                                                                if (j < e.content.trips.length) {
+                                                                    console.log(222222222222222222, j, e.content.trips.length);
+                                                                    $scope.laststarttranslocand();
+                                                                } else {
+                                                                    $scope.lastandloadtripdis= false;//last的行程可点击
+                                                                }
+                                                            //},20);
                                                         } else {
                                                             $scope.todayaddressa = "获取地址失败";
-                                                            e.useHistory[j].startpoint = $scope.todayaddressa;
-                                                            j++;
-                                                            if (j < e.useHistory.length) {
-                                                                $scope.laststarttransloc();
-                                                            } else {
+                                                            e.content.trips[j].startpoint = $scope.todayaddressa;
 
-                                                            }
+                                                            //$scope.timelastandloadtimefuzhi = $timeout(function() {
+                                                                $scope.lastdateinfo.push(e.content.trips[j]);
+
+                                                                console.log($scope.lastdateinfo[j]);
+                                                                j++;
+                                                                //if($scope.dituiditui){
+                                                                //
+                                                                //}else
+                                                                if (j < e.content.trips.length) {
+                                                                    console.log(222222222222222222, j, e.content.trips.length);
+                                                                    $scope.laststarttranslocand();
+                                                                } else {
+                                                                    $scope.lastandloadtripdis= false;//last的行程可点击
+                                                                }
+                                                            //},20);
                                                         }
-                                                        $scope.$apply(function () {
-                                                            $rootScope.lastdateinfo = e.useHistory;
-                                                        });
+                                                        //$scope.$apply(function () {
+                                                        //    $rootScope.lastdateinfo = e.content.trips;
+                                                        //});
                                                     });
                                                 });
                                             };
@@ -2228,1301 +4852,439 @@ angular.module("app.demo.controllers",[])
 
                                     }
                                 };
-                                if($scope.lastdatepage == 1) {       //第一页的数据
-                                    //console.log("这是第一页");
-                                    //两种情况
-                                    //console.log("开始结束date："+coverdatestart,coverdateend)
-                                    if(j==0){
-                                        console.log("j:"+j);
-                                        if(coverdatestart == coverdateend){
-                                            //第一种情况
+                                if($scope.lastpagenumbera >= 2){
+                                    console.log("j:"+j);
+                                    console.log(00000000,$scope.lastdateinfo);
+                                    console.log($scope.lastdateinfo[$scope.lastdateinfo.length - 1]);
+                                    var coverdateendlasteand = registerService.coverdateyear($scope.lastdateinfo[$scope.lastdateinfo.length - 1].fireOnTime);
+                                    //四种情况
+                                    if(coverdatestart == coverdateend && coverdateend != coverdateendlasteand){
+                                        //第一种情况
+                                        console.log("第一种情况");
 
-                                            console.log("第一种情况");
-                                            if(e.useHistory[j].startGPSTime !=0 && e.useHistory[j].endGPSTime !=0){
-                                                e.useHistory[j].fir={
-                                                    laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                                    starteventdate:coverdatestart,
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                                    endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime),
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                                console.log("执行了");
-                                            }else if(e.useHistory[j].startGPSTime==0 && e.useHistory[j].endGPSTime !=0){
-                                                e.useHistory[j].fir={
-                                                    laststarttime:"无数据",
-                                                    starteventdate:"无数据",
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                                    endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime),
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }else if(e.useHistory[j].startGPSTime!=0 && e.useHistory[j].endGPSTime ==0){
-                                                e.useHistory[j].fir={
-                                                    laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                                    starteventdate:coverdatestart,
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:"无数据",
-                                                    endeventdate:"无数据",
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }else{
-                                                e.useHistory[j].fir={
-                                                    laststarttime:"无数据",
-                                                    starteventdate:"无数据",
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:"无数据",
-                                                    endeventdate:"无数据",
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }
-                                            $scope.sbfunction();
-                                            $scope.lastdateinfo = e.useHistory;
-                                            console.log($scope.lastdateinfo);
+
+                                        if(e.content.trips[j].fireOnTime !=0 && e.content.trips[j].fireOffTime !=0){
+                                            e.content.trips[j].fir={
+                                                laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                starteventdate:coverdatestart,
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
+                                            console.log("执行了");
+                                        }else if(e.content.trips[j].fireOnTime==0 && e.content.trips[j].fireOffTime !=0){
+                                            e.content.trips[j].fir={
+                                                laststarttime:"无数据",
+                                                starteventdate:"无数据",
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
+                                        }else if(e.content.trips[j].fireOnTime!=0 && e.content.trips[j].fireOffTime ==0){
+                                            e.content.trips[j].fir={
+                                                laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                starteventdate:coverdatestart,
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:"无数据",
+                                                endeventdate:"无数据",
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
                                         }else{
-                                            //第四种情况
-                                            console.log("第四种情况");
-
-                                            if(e.useHistory[j].startGPSTime !=0 && e.useHistory[j].endGPSTime !=0){
-                                                e.useHistory[j].four={
-                                                    laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                                    starteventdate:coverdatestart,
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                                    endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime),
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                                console.log("执行了");
-                                            }else if(e.useHistory[j].startGPSTime==0 && e.useHistory[j].endGPSTime !=0){
-                                                e.useHistory[j].four={
-                                                    laststarttime:"无数据",
-                                                    starteventdate:"无数据",
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                                    endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime),
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }else if(e.useHistory[j].startGPSTime!=0 && e.useHistory[j].endGPSTime ==0){
-                                                e.useHistory[j].four={
-                                                    laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                                    starteventdate:coverdatestart,
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:"无数据",
-                                                    endeventdate:"无数据",
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }else{
-                                                e.useHistory[j].four={
-                                                    laststarttime:"无数据",
-                                                    starteventdate:"无数据",
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:"无数据",
-                                                    endeventdate:"无数据",
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }
-                                            $scope.sbfunction()
-                                            $scope.lastdateinfo = e.useHistory;
-
+                                            e.content.trips[j].fir={
+                                                laststarttime:"无数据",
+                                                starteventdate:"无数据",
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:"无数据",
+                                                endeventdate:"无数据",
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
                                         }
 
-                                        $scope.lastdateinfo = e.useHistory;
-                                    }
-                                    else if(j>0){
-                                        console.log("j:"+j);
-                                        var coverdateendlaste = registerService.coverdateyear(e.useHistory[j-1].startGPSTime);
-                                        //四种情况
-                                        if(coverdatestart == coverdateend && coverdateend != coverdateendlaste){
-                                            //第一种情况
-                                            console.log("第一种情况");
+                                        sbfunction();
+                                        //$scope.lastdateinfo = e.content.trips;
 
-
-                                            if(e.useHistory[j].startGPSTime !=0 && e.useHistory[j].endGPSTime !=0){
-                                                e.useHistory[j].fir={
-                                                    laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                                    starteventdate:coverdatestart,
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                                    endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime),
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                                console.log("执行了");
-                                            }else if(e.useHistory[j].startGPSTime==0 && e.useHistory[j].endGPSTime !=0){
-                                                e.useHistory[j].fir={
-                                                    laststarttime:"无数据",
-                                                    starteventdate:"无数据",
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                                    endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime),
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }else if(e.useHistory[j].startGPSTime!=0 && e.useHistory[j].endGPSTime ==0){
-                                                e.useHistory[j].fir={
-                                                    laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                                    starteventdate:coverdatestart,
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:"无数据",
-                                                    endeventdate:"无数据",
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }else{
-                                                e.useHistory[j].fir={
-                                                    laststarttime:"无数据",
-                                                    starteventdate:"无数据",
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:"无数据",
-                                                    endeventdate:"无数据",
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }
-
-                                            $scope.sbfunction();
-                                            $scope.lastdateinfo = e.useHistory;
-
-                                        }else if(coverdatestart != coverdateend && coverdateend != coverdateendlaste){
-                                            //第四种情况
-                                            console.log("第四种情况");
-
-                                            //if(e.useHistory[j].startGPSTime){
-                                            //    e.useHistory[j].four={
-                                            //        laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                            //        starteventdate:coverdatestart,
-                                            //        pointpoint:"......",
-                                            //        chinesestart:"起点：",
-                                            //        chineseend:"终点："
-                                            //    };
-                                            //    console.log("执行了");
-                                            //}else{
-                                            //    e.useHistory[j].four={
-                                            //        laststarttime:"未获取到数据",
-                                            //        starteventdate:"无数据",
-                                            //        pointpoint:"......"
-                                            //    };
-                                            //}
-                                            //if(e.useHistory[j].endGPSTime){
-                                            //    e.useHistory[j].four={
-                                            //        lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                            //        endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime)
-                                            //    };
-                                            //}else{
-                                            //    e.useHistory[j].four={
-                                            //        lastendtime:"未获取到数据",
-                                            //        endeventdate:"无数据"
-                                            //    };
-                                            //}
-
-                                            if(e.useHistory[j].startGPSTime !=0 && e.useHistory[j].endGPSTime !=0){
-                                                e.useHistory[j].four={
-                                                    laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                                    starteventdate:coverdatestart,
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                                    endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime),
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                                console.log("执行了");
-                                            }else if(e.useHistory[j].startGPSTime==0 && e.useHistory[j].endGPSTime !=0){
-                                                e.useHistory[j].four={
-                                                    laststarttime:"无数据",
-                                                    starteventdate:"无数据",
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                                    endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime),
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }else if(e.useHistory[j].startGPSTime!=0 && e.useHistory[j].endGPSTime ==0){
-                                                e.useHistory[j].four={
-                                                    laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                                    starteventdate:coverdatestart,
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:"无数据",
-                                                    endeventdate:"无数据",
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }else{
-                                                e.useHistory[j].four={
-                                                    laststarttime:"无数据",
-                                                    starteventdate:"无数据",
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:"无数据",
-                                                    endeventdate:"无数据",
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }
-                                            $scope.sbfunction()
-                                            $scope.lastdateinfo = e.useHistory;
-
-                                        }else if(coverdatestart == coverdateend && coverdateend == coverdateendlaste){
-                                            //第二种情况
-                                            console.log("第二种情况");
-
-                                            console.log(j,e.useHistory[j]);
-                                            //if(e.useHistory[j].startGPSTime){
-                                            //    e.useHistory[j].sed={
-                                            //        laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                            //        starteventdate:coverdatestart,
-                                            //        chinesestart:"起点：",
-                                            //        chineseend:"终点："
-                                            //    };
-                                            //    console.log("执行了");
-                                            //}else{
-                                            //    e.useHistory[j].sed={
-                                            //        laststarttime:"未获取到数据",
-                                            //        starteventdate:"无数据"
-                                            //    };
-                                            //}
-                                            //if(e.useHistory[j].endGPSTime){
-                                            //    e.useHistory[j].sed={
-                                            //        lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                            //        endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime)
-                                            //    };
-                                            //}else{
-                                            //    e.useHistory[j].sed={
-                                            //        lastendtime:"未获取到数据",
-                                            //        endeventdate:"无数据"
-                                            //    };
-                                            //}
-                                            if(!e.useHistory[j].startGPSTime && !e.useHistory[j].endGPSTime){
-                                                e.useHistory[j].sed={
-                                                    laststarttime:"无数据",
-                                                    starteventdate:"无数据",
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:"无数据",
-                                                    endeventdate:"无数据",
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }else if(e.useHistory[j].startGPSTime !=0 && e.useHistory[j].endGPSTime !=0){
-                                                e.useHistory[j].sed={
-                                                    laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                                    starteventdate:coverdatestart,
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                                    endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime),
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                                console.log("执行了");
-                                            }else if(e.useHistory[j].startGPSTime==0 && e.useHistory[j].endGPSTime !=0){
-                                                e.useHistory[j].sed={
-                                                    laststarttime:"无数据",
-                                                    starteventdate:"无数据",
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                                    endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime),
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }else if(e.useHistory[j].startGPSTime!=0 && e.useHistory[j].endGPSTime ==0){
-                                                e.useHistory[j].sed={
-                                                    laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                                    starteventdate:coverdatestart,
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:"无数据",
-                                                    endeventdate:"无数据",
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }else{
-                                                e.useHistory[j].sed={
-                                                    laststarttime:"无数据",
-                                                    starteventdate:"无数据",
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:"无数据",
-                                                    endeventdate:"无数据",
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }
-                                            $scope.sbfunction();
-                                            $scope.lastdateinfo = e.useHistory;
-
-
-                                        }else if(coverdatestart != coverdateend && coverdateend == coverdateendlaste){
-                                            //第三种情况
-                                            console.log("第三种情况");
-
-
-                                            if(e.useHistory[j].startGPSTime !=0 && e.useHistory[j].endGPSTime !=0){
-                                                e.useHistory[j].thr={
-                                                    laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                                    starteventdate:coverdatestart,
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                                    endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime),
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                                console.log("执行了");
-                                            }else if(e.useHistory[j].startGPSTime==0 && e.useHistory[j].endGPSTime !=0){
-                                                e.useHistory[j].thr={
-                                                    laststarttime:"无数据",
-                                                    starteventdate:"无数据",
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:registerService.coverdate(e.useHistory[j].endGPSTime),
-                                                    endeventdate:registerService.coverdateyear(e.useHistory[j].endGPSTime),
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }else if(e.useHistory[j].startGPSTime!=0 && e.useHistory[j].endGPSTime ==0){
-                                                e.useHistory[j].thr={
-                                                    laststarttime:registerService.coverdate(e.useHistory[j].startGPSTime),
-                                                    starteventdate:coverdatestart,
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:"无数据",
-                                                    endeventdate:"无数据",
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }else{
-                                                e.useHistory[j].thr={
-                                                    laststarttime:"无数据",
-                                                    starteventdate:"无数据",
-                                                    chinesestart:"起点：",
-                                                    chineseend:"终点：",
-                                                    lastendtime:"无数据",
-                                                    endeventdate:"无数据",
-                                                    startpoint: $scope.todayaddressa,
-                                                    endpoint: $scope.endaddressa,
-                                                    pointpoint:"........."
-                                                };
-                                                $scope.lastdateinfo = e.useHistory;
-                                            }
-                                            $scope.sbfunction();
-                                            $scope.lastdateinfo = e.useHistory;
-
-
+                                    }else if(coverdatestart != coverdateend && coverdateend != coverdateendlasteand){
+                                        //第四种情况
+                                        console.log("第四种情况");
+                                        if(e.content.trips[j].fireOnTime !=0 && e.content.trips[j].fireOffTime !=0){
+                                            e.content.trips[j].four={
+                                                laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                starteventdate:coverdatestart,
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
+                                            console.log("执行了");
+                                        }else if(e.content.trips[j].fireOnTime==0 && e.content.trips[j].fireOffTime !=0){
+                                            e.content.trips[j].four={
+                                                laststarttime:"无数据",
+                                                starteventdate:"无数据",
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            $scope.lastdateinfo = e.content.trips;
+                                        }else if(e.content.trips[j].fireOnTime!=0 && e.content.trips[j].fireOffTime ==0){
+                                            e.content.trips[j].four={
+                                                laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                starteventdate:coverdatestart,
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:"无数据",
+                                                endeventdate:"无数据",
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
+                                        }else{
+                                            e.content.trips[j].four={
+                                                laststarttime:"无数据",
+                                                starteventdate:"无数据",
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:"无数据",
+                                                endeventdate:"无数据",
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
                                         }
+                                        sbfunction()
+                                        //$scope.lastdateinfo = e.content.trips;
+
+                                    }else if(coverdatestart == coverdateend && coverdateend == coverdateendlasteand){
+                                        //第二种情况
+                                        console.log("第二种情况");
+
+                                        console.log(j,e.content.trips[j]);
+                                        if(!e.content.trips[j].fireOnTime && !e.content.trips[j].fireOffTime){
+                                            e.content.trips[j].sed={
+                                                laststarttime:"无数据",
+                                                starteventdate:"无数据",
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:"无数据",
+                                                endeventdate:"无数据",
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
+                                        }else if(e.content.trips[j].fireOnTime !=0 && e.content.trips[j].fireOffTime !=0){
+                                            e.content.trips[j].sed={
+                                                laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                starteventdate:coverdatestart,
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
+                                            console.log("执行了");
+                                        }else if(e.content.trips[j].fireOnTime==0 && e.content.trips[j].fireOffTime !=0){
+                                            e.content.trips[j].sed={
+                                                laststarttime:"无数据",
+                                                starteventdate:"无数据",
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
+                                        }else if(e.content.trips[j].fireOnTime!=0 && e.content.trips[j].fireOffTime ==0){
+                                            e.content.trips[j].sed={
+                                                laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                starteventdate:coverdatestart,
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:"无数据",
+                                                endeventdate:"无数据",
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
+                                        }else{
+                                            e.content.trips[j].sed={
+                                                laststarttime:"无数据",
+                                                starteventdate:"无数据",
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:"无数据",
+                                                endeventdate:"无数据",
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
+                                        }
+                                        sbfunction();
+                                        //$scope.lastdateinfo = e.content.trips;
+
+
+                                    }else if(coverdatestart != coverdateend && coverdateend == coverdateendlasteand){
+                                        //第三种情况
+                                        console.log("第三种情况");
+
+
+                                        if(e.content.trips[j].fireOnTime !=0 && e.content.trips[j].fireOffTime !=0){
+                                            e.content.trips[j].thr={
+                                                laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                starteventdate:coverdatestart,
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
+                                            console.log("执行了");
+                                        }else if(e.content.trips[j].fireOnTime==0 && e.content.trips[j].fireOffTime !=0){
+                                            e.content.trips[j].thr={
+                                                laststarttime:"无数据",
+                                                starteventdate:"无数据",
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:registerService.coverdate(e.content.trips[j].fireOffTime),
+                                                endeventdate:registerService.coverdateyear(e.content.trips[j].fireOffTime),
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
+                                        }else if(e.content.trips[j].fireOnTime!=0 && e.content.trips[j].fireOffTime ==0){
+                                            e.content.trips[j].thr={
+                                                laststarttime:registerService.coverdate(e.content.trips[j].fireOnTime),
+                                                starteventdate:coverdatestart,
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:"无数据",
+                                                endeventdate:"无数据",
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
+                                        }else{
+                                            e.content.trips[j].thr={
+                                                laststarttime:"无数据",
+                                                starteventdate:"无数据",
+                                                chinesestart:"起点：",
+                                                chineseend:"终点：",
+                                                lastendtime:"无数据",
+                                                endeventdate:"无数据",
+                                                startpoint: $scope.todayaddressa,
+                                                endpoint: $scope.endaddressa,
+                                                pointpoint:"........."
+                                            };
+                                            //$scope.lastdateinfo = e.content.trips;
+                                        }
+                                        sbfunction();
+                                        //$scope.lastdateinfo = e.content.trips;
+
+
                                     }
                                 }
+                            };
+                            $scope.laststarttranslocand();
 
-
-                            //if(e.useHistory[j].startGPSTime && e.useHistory[j].endGPSTime && coverdatestart==coverdateend){
-                            //    e.useHistory[j].laststarttime = registerService.coverdate(e.useHistory[j].startGPSTime);
-                            //    e.useHistory[j].eventdate = coverdateend;
-                            //    $scope.normaldianlastdontdate = false;
-                            //    $scope.sbdianlastdontdate =true ;
-                            //    console.log("444444");
-                            //}else if(e.useHistory[j].startGPSTime && e.useHistory[j].endGPSTime && coverdatestart!=coverdateend){
-                            //    $scope.normaldianlastdontdate =true ;
-                            //    $scope.sbdianlastdontdate = false;
-                            //    e.useHistory[j].eventdate = coverdateend;
-                            //    console.log("不正常");
-                            //}else if(!e.useHistory[j].startGPSTime && e.useHistory[j].endGPSTime){
-                            //    e.useHistory[j].laststarttime = "无数据";
-                            //    e.useHistory[j].lastendtime = registerService.coverdate(e.useHistory[j].endGPSTime);
-                            //    e.useHistory[j].eventdate = coverdateend;
-                            //    console.log("3333333");
-                            //}else if(e.useHistory[j].startGPSTime && !e.useHistory[j].endGPSTime){
-                            //    e.useHistory[j].lastendtime = "无数据";
-                            //    e.useHistory[j].laststarttime = registerService.coverdate(e.useHistory[j].startGPSTime);
-                            //    e.useHistory[j].eventdate = coverdatestart;
-                            //    console.log("222222");
-                            //}else{
-                            //    console.log("111111");
-                            //}
-                            //console.log(1);
-                            //if(j>0){
-                            //    if(registerService.coverdateyear(e.useHistory[j].startGPSTime) == registerService.coverdateyear(e.useHistory[j-1].endGPSTime) || registerService.coverdateyear(e.useHistory[j].endGPSTime) == registerService.coverdateyear(e.useHistory[j-1].endGPSTime)){
-                            //        $scope.dateyeardisnone = false;
-                            //        console.log("j>0,消失");
-                            //    }else{
-                            //        $scope.dateyeardisnone = false;
-                            //        console.log("j>0,显示");
-                            //    }
-                            //    console.log("f>0");
-                            //}else{
-                            //    console.log("f=0，显示");
-                            //    $scope.dateyeardisnone = true;
-                            //}
-
-
-
-
-                            //else if($scope.lastdatepage > 1){
-                            //    var coverdateendlast = registerService.coverdateyear(e.useHistory[j].endGPSTime);
-                            //    console.log("这不是第一页");
-                            //    console.log("开始，结束，前一天结束date："+coverdatestart,coverdateend,coverdateendlast)
-                            //    //if() {   //第一种情况
-                            //    //
-                            //    //}else if(){     //第二种情况
-                            //    //
-                            //    //}else if(){        //第三种情况
-                            //    //
-                            //    //}else if(){     //第四种情况
-                            //    //
-                            //    //}
-                            //}
-
-                        };
-                        $scope.laststarttransloc();
-                        //var f=0;
-                        //$scope.lastendtransloc = function() {
-                        //
-                        //    //var coverdatestart = registerService.coverdateyear(e.useHistory[f].startGPSTime);
-                        //    //var coverdateend = registerService.coverdateyear(e.useHistory[f].endGPSTime);
-                        //    ////e.useHistory[f].lastendtime = registerService.coverdate(e.useHistory[f].endGPSTime);
-                        //    //if(e.useHistory[f].startGPSTime && e.useHistory[f].endGPSTime && coverdatestart==coverdateend){
-                        //    //    e.useHistory[f].lastendtime = registerService.coverdate(e.useHistory[f].endGPSTime);
-                        //    //    e.useHistory[f].eventdate = coverdatestart;
-                        //    //
-                        //    //    $scope.normaldianlastdontdate =false ;
-                        //    //    $scope.sbdianlastdontdate = true;
-                        //    //}else if(e.useHistory[f].startGPSTime && e.useHistory[f].endGPSTime && coverdatestart!=coverdateend){
-                        //    //    $scope.normaldianlastdontdate =true ;
-                        //    //    $scope.sbdianlastdontdate = false;
-                        //    //    e.useHistory[f].eventdate = coverdateend;
-                        //    //}else if(!e.useHistory[f].startGPSTime && e.useHistory[f].endGPSTime){
-                        //    //    e.useHistory[f].laststarttime = "无数据";
-                        //    //    e.useHistory[f].lastendtime = registerService.coverdate(e.useHistory[f].endGPSTime);
-                        //    //    e.useHistory[f].eventdate = coverdateend;
-                        //    //}else if(e.useHistory[f].startGPSTime && !e.useHistory[f].endGPSTime){
-                        //    //    e.useHistory[f].lastendtime = "无数据";
-                        //    //    e.useHistory[f].laststarttime = registerService.coverdate(e.useHistory[f].startGPSTime);
-                        //    //    e.useHistory[f].eventdate = coverdatestart;
-                        //    //}
-                        //    //if(f>0){
-                        //    //    if(registerService.coverdateyear(e.useHistory[f].startGPSTime) == registerService.coverdateyear(e.useHistory[f-1].endGPSTime) || registerService.coverdateyear(e.useHistory[f].endGPSTime) == registerService.coverdateyear(e.useHistory[f-1].endGPSTime)){
-                        //    //        $scope.dateyeardisnone = true;
-                        //    //    }else{
-                        //    //        $scope.dateyeardisnone = false;
-                        //    //
-                        //    //    }
-                        //    //}else{
-                        //    //
-                        //    //
-                        //    //
-                        //    //    $scope.dateyeardisnone = false;
-                        //    //}
-                        //
-                        //    //$scope.lastendwarningadd = registerService.covertAddress(endlnglatXY);
-                        //
-                        //
-                        //
-                        //};
-                        //
-                        //$scope.lastendtransloc();
-                    }else{
-                        //e.length=0的时候
-                        $scope.notripcontent = false;//无行程
-                        $scope.clickonload = true;//点击加载
-                        $scope.cartriploading = true;//加载中
-                        $scope.thelastpagecartripover = true;//加载完全
-                        console.log("无数据")
-                    }
-
-
-                }else{
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = e.reason+"！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                    $scope.notripcontent = true;//无行程
-                    $scope.clickonload = false;//点击加载
-                    $scope.cartriploading = true;//加载中
-                    $scope.thelastpagecartripover = true;//加载完全
-                }
-            },function(err){
-                $scope.loadapp = {"toggle":false};
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-                $scope.notripcontent = true;//无行程
-                $scope.clickonload = false;//点击加载
-                $scope.cartriploading = true;//加载中
-                $scope.thelastpagecartripover = true;//加载完全
-            });
-        }
-        $scope.lastdate();
-        $scope.date_yes = function(){
-            if(($(".startyearnum").val() <= $(".overyearnum").val()) && ($(".startmonthnum").val()<=$(".overmonthnum").val()) && ($(".startdaynum").val()<=$(".overdaynum").val())){
-                $scope.ostartTime = $(".startyearnum").val() +$(".startmonthnum").val()+$(".startdaynum").val();
-                $scope.overTime = $(".overyearnum").val()+$(".overmonthnum").val()+$(".overdaynum").val();
-                $scope.ajaxstarttime = $scope.ostartTime.replace('年','').replace('月','').replace('日','');
-                $scope.ajaxendtime = $scope.overTime.replace('年','').replace('月','').replace('日','');
-                $scope.lastdatepage=0;
-                $scope.lastdate();
-                $timeout(function(){
-                    $scope.datediv = {toggle:false};
-                },200);
-            } else if(($(".startyearnum").val() <= $(".overyearnum").val()) && ($(".startmonthnum").val()<$(".overmonthnum").val())){
-                $scope.ostartTime = $(".startyearnum").val() +$(".startmonthnum").val()+$(".startdaynum").val();
-                $scope.overTime = $(".overyearnum").val()+$(".overmonthnum").val()+$(".overdaynum").val();
-                $scope.ajaxstarttime = $scope.ostartTime.replace('年','').replace('月','').replace('日','');
-                $scope.ajaxendtime = $scope.overTime.replace('年','').replace('月','').replace('日','');
-                $scope.lastdatepage=0;
-                $scope.lastdate();
-                $timeout(function(){
-                    $scope.datediv = {toggle:false};
-                },200);
-            }else if(($(".startyearnum").val() < $(".overyearnum").val())){
-                $scope.ostartTime = $(".startyearnum").val() +$(".startmonthnum").val()+$(".startdaynum").val();
-                $scope.overTime = $(".overyearnum").val()+$(".overmonthnum").val()+$(".overdaynum").val();
-                $scope.ajaxstarttime = $scope.ostartTime.replace('年','').replace('月','').replace('日','');
-                $scope.ajaxendtime = $scope.overTime.replace('年','').replace('月','').replace('日','');
-                $scope.lastdatepage=0;
-                $scope.lastdate();
-                $timeout(function(){
-                    $scope.datediv = {toggle:false};
-                },200);
-            } else {
-                //$rootScope.subapp = {toggle : true};
-                //$rootScope.submitWarning = "结束日期大于开始日期，请您重新确认！";
-                $scope.datediv = {toggle:false};
-                //console.log("riqi");
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "开始日期大于结束日期，请您重新确认！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-            }
-
-        }
-        $scope.dateModelhide = function(){
-            $scope.datediv = {toggle:false};
-            console.log(1);
-        }
-        $scope.showdatemodelbtn = function(){
-            $scope.datediv = {toggle:true};
-        }
-        //点击继续加载
-        $scope.clickLasttripOnload = function(){
-            $scope.notripcontent = true;//无行程
-            $scope.clickonload = true;//点击加载
-            $scope.cartriploading = false;//加载中
-            $scope.thelastpagecartripover = true;//加载完全
-            var lasttripObj = {
-                uid:$window.sessionStorage.getItem("Uid"),
-                startTime:$scope.ajaxstarttime+'000000',
-                endTime:$scope.ajaxendtime+'235959',
-                pageNumber:$scope.lastdatepage,
-                limit:2
-            };
-            var lasttripUrl = "/rest/vehicles/useHistory/";
-            $scope.loadapp = {"toggle":true};
-            registerService.commonUserget(lasttripObj,lasttripUrl).then(function(e){
-                $scope.loadapp = {"toggle":false};
-                if(e.status == true){
-                    console.log(e);
-                    console.log(e.useHistory.length);
-                    $scope.lastdatepage ++;
-                    if(e.useHistory.length !=0){
-                        console.log("有数据");
-                        //table的样式 是否最后一页
-                        if(e.isLastpage == true){
-                            $scope.notripcontent = true;//无行程
+                        }else{
+                            //e.length=0的时候
+                            $scope.notripcontent = false;//无行程
                             $scope.clickonload = true;//点击加载
                             $scope.cartriploading = true;//加载中
-                            $scope.thelastpagecartripover = false;//加载完全
-                        }else{
-                            $scope.notripcontent = true;//无行程
-                            $scope.clickonload = false;//点击加载
-                            $scope.cartriploading = true;//加载中
-                            $scope.thelastpagecartripover =true ;//加载完全
+                            $scope.thelastpagecartripover = true;//加载完全
+                            $scope.clickandaddloads = true;//继续加载
+                            console.log("无数据")
                         }
-                        for(var i in e.useHistory){
-                            e.useHistory[i].startpoint = "正在解析！";
-                            e.useHistory[i].endpoint = "正在解析！";
-                        }
-                        $scope.lastdateinfo = e.useHistory;
-                        var j = 0;
-
-                        $scope.laststarttransloc = function(){
-                            console.log("e.useHistory:",e.useHistory);
-                            var lnglatXY =[e.useHistory[j].startLat,e.useHistory[j].startLng];
-                            var coverdatestart = registerService.coverdateyear(e.useHistory[j].startGPSTime);
-                            var coverdateend = registerService.coverdateyear(e.useHistory[j].endGPSTime);
-
-                            //if(e.useHistory[j].startGPSTime && e.useHistory[j].endGPSTime && coverdatestart==coverdateend){
-                            //    e.useHistory[j].laststarttime = registerService.coverdate(e.useHistory[j].startGPSTime);
-                            //    e.useHistory[j].eventdate = coverdateend;
-                            //    $scope.normaldianlastdontdate = false;
-                            //    $scope.sbdianlastdontdate =true ;
-                            //    console.log("444444");
-                            //}else if(e.useHistory[j].startGPSTime && e.useHistory[j].endGPSTime && coverdatestart!=coverdateend){
-                            //    $scope.normaldianlastdontdate =true ;
-                            //    $scope.sbdianlastdontdate = false;
-                            //    e.useHistory[j].eventdate = coverdateend;
-                            //    console.log("不正常");
-                            //}else if(!e.useHistory[j].startGPSTime && e.useHistory[j].endGPSTime){
-                            //    e.useHistory[j].laststarttime = "无数据";
-                            //    e.useHistory[j].lastendtime = registerService.coverdate(e.useHistory[j].endGPSTime);
-                            //    e.useHistory[j].eventdate = coverdateend;
-                            //    console.log("3333333");
-                            //}else if(e.useHistory[j].startGPSTime && !e.useHistory[j].endGPSTime){
-                            //    e.useHistory[j].lastendtime = "无数据";
-                            //    e.useHistory[j].laststarttime = registerService.coverdate(e.useHistory[j].startGPSTime);
-                            //    e.useHistory[j].eventdate = coverdatestart;
-                            //    console.log("222222");
-                            //}else{
-                            //    console.log("111111");
-                            //}
-                            //console.log(1);
-                            //if(j>0){
-                            //    if(registerService.coverdateyear(e.useHistory[j].startGPSTime) == registerService.coverdateyear(e.useHistory[j-1].endGPSTime) || registerService.coverdateyear(e.useHistory[j].endGPSTime) == registerService.coverdateyear(e.useHistory[j-1].endGPSTime)){
-                            //        $scope.dateyeardisnone = false;
-                            //        console.log("j>0,消失");
-                            //    }else{
-                            //        $scope.dateyeardisnone = false;
-                            //        console.log("j>0,显示");
-                            //    }
-                            //    console.log("f>0");
-                            //}else{
-                            //    console.log("f=0，显示");
-                            //    $scope.dateyeardisnone = true;
-                            //}
-                            console.log($scope.lastdatepage);
-                            if($scope.lastdatepage > 1) {       //第一页的数据
-                                console.log("这不是第一页");
-                                //两种情况
-                                console.log("开始结束date："+coverdatestart,coverdateend);
-                                if(j==0){
-                                    //这个要跟上一页的比较，，
-                                    if(coverdatestart == coverdateend){
-                                        //第一种情况
-                                        $scope.normaldianlastdontdate = false;
-                                        $scope.agadianlastdontdate = true;
-                                        $scope.sbdianlastdontdate = true;
-                                        $scope.moresbdianlastdontdate = true;
-                                    }else{
-                                        //第四种情况
-                                        $scope.normaldianlastdontdate = true;
-                                        $scope.agadianlastdontdate = true;
-                                        $scope.sbdianlastdontdate = true;
-                                        $scope.moresbdianlastdontdate =false ;
-                                    }
-                                }else if(j>0){
-                                    var coverdateendlaste = registerService.coverdateyear(e.useHistory[j-1].endGPSTime);
-                                    //四种情况
-                                    if(coverdatestart == coverdateend && coverdatestart != coverdateendlaste){
-                                        //第一种情况
-                                        $scope.normaldianlastdontdate = false;
-                                        $scope.agadianlastdontdate = true;
-                                        $scope.sbdianlastdontdate = true;
-                                        $scope.moresbdianlastdontdate = true;
-                                    }else if(coverdatestart != coverdateend && coverdatestart != coverdateendlaste){
-                                        //第四种情况
-                                        $scope.normaldianlastdontdate = true;
-                                        $scope.agadianlastdontdate = true;
-                                        $scope.sbdianlastdontdate = true;
-                                        $scope.moresbdianlastdontdate =false ;
-                                    }else if(coverdatestart == coverdateend && coverdatestart == coverdateendlaste){
-                                        //第二种情况
-                                        $scope.normaldianlastdontdate = true;
-                                        $scope.agadianlastdontdate = false;
-                                        $scope.sbdianlastdontdate = true;
-                                        $scope.moresbdianlastdontdate =true ;
-                                    }else if(coverdatestart != coverdateend && coverdatestart == coverdateendlaste){
-                                        //第三种情况
-                                        $scope.normaldianlastdontdate = true;
-                                        $scope.agadianlastdontdate = true;
-                                        $scope.sbdianlastdontdate =false ;
-                                        $scope.moresbdianlastdontdate =true ;
-                                    }
-                                }
 
 
-                            }
-                            //else if($scope.lastdatepage > 1){
-                            //    var coverdateendlast = registerService.coverdateyear(e.useHistory[j].endGPSTime);
-                            //    console.log("这不是第一页");
-                            //    console.log("开始，结束，前一天结束date："+coverdatestart,coverdateend,coverdateendlast)
-                            //    //if() {   //第一种情况
-                            //    //
-                            //    //}else if(){     //第二种情况
-                            //    //
-                            //    //}else if(){        //第三种情况
-                            //    //
-                            //    //}else if(){     //第四种情况
-                            //    //
-                            //    //}
-                            //}
-                            AMap.service('AMap.Geocoder',function() {
-                                $scope.laststartwarningadd = new AMap.Geocoder({});
 
-                                $scope.laststartwarningadd.getAddress(lnglatXY, function (status, result) {
-
-                                    console.log("run here:", result, status);
-                                    if (status === 'complete' && result.info === 'OK') {
-                                        $scope.todayaddressa = result.regeocode.formattedAddress;
-                                        e.useHistory[j].startpoint = $scope.todayaddressa;
-                                        j++;
-                                        if (j < e.useHistory.length) {
-                                            $scope.laststarttransloc();
-                                        } else {
-                                        }
-                                    } else {
-                                        $scope.todayaddressa = "获取地址失败";
-                                        e.useHistory[j].startpoint = $scope.todayaddressa;
-                                        j++;
-                                        if (j < e.useHistory.length) {
-                                            $scope.laststarttransloc();
-                                        } else {
-                                        }
-                                    }
-
-
-                                    $scope.$apply(function () {
-                                        $scope.lastdateinfo = e.useHistory;
-                                    });
-                                });
-                            });
-
-                        };
-                        $scope.laststarttransloc();
-                        var f=0;
-                        $scope.lastendtransloc = function() {
-                            var endlnglatXY = [e.useHistory[f].endLat,e.useHistory[f].endLng];
-                            //var coverdatestart = registerService.coverdateyear(e.useHistory[f].startGPSTime);
-                            //var coverdateend = registerService.coverdateyear(e.useHistory[f].endGPSTime);
-                            ////e.useHistory[f].lastendtime = registerService.coverdate(e.useHistory[f].endGPSTime);
-                            //if(e.useHistory[f].startGPSTime && e.useHistory[f].endGPSTime && coverdatestart==coverdateend){
-                            //    e.useHistory[f].lastendtime = registerService.coverdate(e.useHistory[f].endGPSTime);
-                            //    e.useHistory[f].eventdate = coverdatestart;
-                            //
-                            //    $scope.normaldianlastdontdate =false ;
-                            //    $scope.sbdianlastdontdate = true;
-                            //}else if(e.useHistory[f].startGPSTime && e.useHistory[f].endGPSTime && coverdatestart!=coverdateend){
-                            //    $scope.normaldianlastdontdate =true ;
-                            //    $scope.sbdianlastdontdate = false;
-                            //    e.useHistory[f].eventdate = coverdateend;
-                            //}else if(!e.useHistory[f].startGPSTime && e.useHistory[f].endGPSTime){
-                            //    e.useHistory[f].laststarttime = "无数据";
-                            //    e.useHistory[f].lastendtime = registerService.coverdate(e.useHistory[f].endGPSTime);
-                            //    e.useHistory[f].eventdate = coverdateend;
-                            //}else if(e.useHistory[f].startGPSTime && !e.useHistory[f].endGPSTime){
-                            //    e.useHistory[f].lastendtime = "无数据";
-                            //    e.useHistory[f].laststarttime = registerService.coverdate(e.useHistory[f].startGPSTime);
-                            //    e.useHistory[f].eventdate = coverdatestart;
-                            //}
-                            //if(f>0){
-                            //    if(registerService.coverdateyear(e.useHistory[f].startGPSTime) == registerService.coverdateyear(e.useHistory[f-1].endGPSTime) || registerService.coverdateyear(e.useHistory[f].endGPSTime) == registerService.coverdateyear(e.useHistory[f-1].endGPSTime)){
-                            //        $scope.dateyeardisnone = true;
-                            //    }else{
-                            //        $scope.dateyeardisnone = false;
-                            //
-                            //    }
-                            //}else{
-                            //
-                            //
-                            //
-                            //    $scope.dateyeardisnone = false;
-                            //}
-
-
-                            if(endlnglatXY!=[0,0]){
-                                AMap.service('AMap.Geocoder',function() {
-                                    $scope.lastendwarningadd = new AMap.Geocoder({});
-
-                                    $scope.lastendwarningadd.getAddress(endlnglatXY, function (status, result) {
-                                        if (status === 'complete' && result.info === 'OK') {
-                                            $scope.endaddressa = result.regeocode.formattedAddress;
-                                            e.useHistory[f].endpoint = $scope.endaddressa;
-                                            f++;
-                                            if (f < e.useHistory.length) {
-                                                $scope.lastendtransloc();
-                                            } else {
-                                            }
-                                        } else {
-                                            $scope.endaddressa = "获取地址失败";
-                                            e.useHistory[f].endpoint = $scope.endaddressa;
-                                            f++;
-                                            if (f < e.useHistory.length) {
-                                                $scope.lastendtransloc();
-                                            } else {
-                                            }
-                                        }
-                                        $scope.$apply(function () {
-                                            $scope.lastdateinfo = e.useHistory;
-                                        });
-                                        console.log($scope.lastdateinfo)
-
-
-                                    });
-                                });
-                            }
-
-                        };
-
-                        $scope.lastendtransloc();
                     }else{
-                        //e.length=0的时候
-                        $scope.notripcontent = false;//无行程
-                        $scope.clickonload = true;//点击加载
-                        $scope.cartriploading = true;//加载中
-                        $scope.thelastpagecartripover = true;//加载完全
-                        console.log("无数据")
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timerrlasttripreasonapp = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+
+                            $scope.notripcontent = true;//无行程
+                            $scope.clickonload =true ;//点击加载
+                            $scope.cartriploading = true;//加载中
+                            $scope.thelastpagecartripover = true;//加载完全
+                            $scope.clickandaddloads =false ;//继续加载
+                        $scope.lastandloadtripdis= false;//last的行程可点击
+
                     }
+                },500);
 
 
-                }else{
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = e.reason+"！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                    $scope.notripcontent = true;//无行程
-                    $scope.clickonload = false;//点击加载
-                    $scope.cartriploading = true;//加载中
-                    $scope.thelastpagecartripover = true;//加载完全
-                }
             },function(err){
                 $scope.loadapp = {"toggle":false};
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $timeout(function(){
+                $scope.lasttripendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.lasttripendtimehs - $scope.lasttripstarttimehs);
+                if($scope.lasttripendtimehs - $scope.lasttripstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
+                $scope.timerrlasterrtime = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-                $scope.notripcontent = true;//无行程
-                $scope.clickonload = false;//点击加载
-                $scope.cartriploading = true;//加载中
-                $scope.thelastpagecartripover = true;//加载完全
+
+                    $scope.notripcontent = true;//无行程
+                    $scope.clickonload =true ;//点击加载
+                    $scope.cartriploading = true;//加载中
+                    $scope.thelastpagecartripover = true;//加载完全
+                    $scope.clickandaddloads =false ;//继续加载
+                $scope.lastandloadtripdis= false;//last的行程可点击
+
+
             });
-        }
+        };
         //var lnglatXY=[116.396574, 39.992706];
         //registerService.covertAddress(lnglatXY);
+        $scope.to = function() {
+            <!--alert("this is alert");-->
+
+            <!--navigator.intent.startGPS("  Json");-->
+            <!--navigator.intent.startGPS("  Json");-->
+            navigator.intent.toHistory(
+
+
+
+                {"termId":$window.sessionStorage.getItem("UtermId"),"token":$window.sessionStorage.getItem("Utoken"),"startTime":$rootScope.starttimee,"endTime":$rootScope.endtimee,"seq":123456,"startName":$rootScope.startaddresse,"endName":$rootScope.endaddresse
+                });
+        };
+        $scope.iosto = function(){
+            mybridge.callHandler('trackObjcCallback', {"termId":$window.sessionStorage.getItem("UtermId"),"token":$window.sessionStorage.getItem("Utoken"),"startTime":$rootScope.starttimee,"endTime":$rootScope.endtimee,"seq":123456,"startName":$rootScope.startaddresse,"endName":$rootScope.endaddresse
+            }, function(response) {
+                log('JS got response', response)
+            })
+
+        };
+
         //点击加载行程地图
         $scope.cartripmapbtn = function(index){
-            var etriphistory = $rootScope.tripmaplatlng;
-            //$rootScope.endlat = etriphistory[index].endGPSLat/1000000;
-            //$rootScope.endlng = etriphistory[index].endGPSLng/1000000;
-            //$rootScope.startlat = etriphistory[index].startGPSLat/1000000;
-            //$rootScope.staratlng = etriphistory[index].startGPSLng/1000000;
-            //$rootScope.oendpoint = etriphistory[index].endpoint;
-            //$rootScope.ostartpoint = etriphistory[index].startpoint;
-            $rootScope.endtimee = registerService.coverdateerooter(etriphistory[index].endGPSTime);
-            $rootScope.starttimee = registerService.coverdateerooter(etriphistory[index].startGPSTime);
+            var etriphistory = $scope.lastdateinfo;
+
+            $rootScope.endtimee = registerService.coverdateerooter(etriphistory[index].fireOffTime);
+            $rootScope.starttimee = registerService.coverdateerooter(etriphistory[index].fireOnTime);
+
+            $rootScope.startaddresse = etriphistory[index].startpoint;
+            $rootScope.endaddresse = etriphistory[index].endpoint;
+            console.log("时间这块"+$rootScope.endtimee,$rootScope.starttimee,$rootScope.startaddresse,$rootScope.endaddresse);
+            if($rootScope.phonetyperoot == 3){
+                $scope.to();
+            }else if($rootScope.phonetyperoot == 4){
+                $scope.iosto();
+            }
+
             //console.log($rootScope.endlat,$rootScope.endlng,$rootScope.startlat,$rootScope.staratlng);
             //$state.go("");
-            console.log("时间这块"+$rootScope.endtimee,$rootScope.starttimee);
-        }
+
+        };
         //点击加载行程地图
         $scope.firsttripbtn = function(index){
-            var firsttriphistory = $rootScope.todaytripinfo;
-            $rootScope.endtimee = registerService.coverdateerooter(firsttriphistory[index].endGPSTime);
-            $rootScope.starttimee = registerService.coverdateerooter(firsttriphistory[index].startGPSTime);
-            console.log("时间这块"+$rootScope.endtimee,$rootScope.starttimee);
-            //$rootScope.endlat = firsttriphistory[index].endGPSLat/1000000;
-            //$rootScope.endlng = firsttriphistory[index].endGPSLng/1000000;
-            //$rootScope.startlat = firsttriphistory[index].startGPSLat/1000000;
-            //$rootScope.staratlng = firsttriphistory[index].startGPSLng/1000000;
-            //$rootScope.oendpoint = firsttriphistory[index].startAddresscontent;
-            //$rootScope.ostartpoint = firsttriphistory[index].endAddresscontent;
-            //console.log($rootScope.endlat,$rootScope.endlng,$rootScope.startlat,$rootScope.staratlng);
-        }
-    })
-    //用车记录map
-    .controller("cartripmapController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout){
-        $scope.searchPassBackBtn = function(){
-            window.history.go(-1);
-        };
-        function prostatus(){
-            //return false;
-        }
-        prostatus();
-        $scope._topnot=(parseFloat($rootScope.windoWHeihgt) - 120)/2 +"px";
-        //console.log($scope._top);
-
-        $scope.modelpositionStnot = {
-            "top":$scope._topnot
-        };
-        $scope._top=(parseFloat($rootScope.windoWHeihgt) - 150)/2 +"px";
-
-        //console.log($scope._top);
-        $scope.modelpositionSt = {
-            "top":$scope._top
-        };
-        //$rootScope.checkConnection();
-        console.log("时间这块"+$rootScope.endtimee,$rootScope.starttimee);
-        //$scope.backappfunctionsmall = function(){
-        //    registerService.removeevent();
-        //};
-        //$scope.backappfunctionsmall();
-        //$scope.centerpointmap = [116.397428, 39.90923];
-        //
-        //$timeout(function(){
-        //    var map = $rootScope.maploadfun('tripmapid',$scope.centerpointmap);
-        //
-        //},200)
-        // console.log(window.localStorage.getItem("mapcenterpoint"));
-        var localgetarr = window.localStorage.getItem("mapcenterpoint");
-        console.log(localgetarr);
-        //if($rootScope.map){
-        //    var map=$rootScope.map
-        //}else{
-            if(!localgetarr){
-                var map =  new AMap.Map('tripmapid',{
-                    zoom:20,
-                    center: [116.397428, 39.90923]
-                });
-            }else{
-                var map =  new AMap.Map('tripmapid',{
-                    zoom:20,
-                    center: localgetarr.split(",")
-                });
+            var firsttriphistory = $scope.todaytripinfo;
+            $rootScope.endtimee = registerService.coverdateerooter(firsttriphistory[index].fireOffTime);
+            $rootScope.starttimee = registerService.coverdateerooter(firsttriphistory[index].fireOnTime);
+            $rootScope.startaddresse = firsttriphistory[index].startAddresscontent;
+            $rootScope.endaddresse = firsttriphistory[index].endAddresscontent;
+            console.log("时间这块"+$rootScope.endtimee,$rootScope.starttimee,$rootScope.startaddresse,$rootScope.endaddresse);
+            if($rootScope.phonetyperoot == 3){
+                $scope.to();
+            }else if($rootScope.phonetyperoot == 4){
+                $scope.iosto();
             }
-        //    $rootScope.map = map;
-        //}
-
-
-        //$rootScope.maproot("tripmapid");
-        //
-        //if($rootScope.maploadstyle){
-        //
-        //    map = $rootScope.mapallload();
-        //}else {
-        //    $rootScope.mapallload = function(){
-        //        new AMap.Map('tripmapid',{
-        //            zoom:20,
-        //            center: [116.397428, 39.90923]
-        //        });
-        //        //$rootScope.maploadstyle = true;
-        //    }
-        //    map = $rootScope.mapallload();
-        //    console.log("这是是map："+$rootScope.mapallload());
-        //}
-
-
-        AMap.plugin(['AMap.ToolBar','AMap.Scale'],
-            function(){
-                var toolbar = new AMap.ToolBar({
-                    liteStyle:true
-                });
-                map.addControl(toolbar);
-                map.addControl(new AMap.Scale());
-            });
-        //获取行车轨迹
-        var drivingtrackObj = {
-            uid:$window.sessionStorage.getItem("Uid"),
-            startTime:$rootScope.starttimee,
-            endTime:$rootScope.endtimee
-
+            //console.log($rootScope.endlat,$rootScope.endlng,$rootScope.startlat,$rootScope.staratlng);
         };
-        var drivingtrackUrl = "/rest/gps/period/";
-        $scope.loadapp = {"toggle":true};
-        registerService.commonUserget(drivingtrackObj,drivingtrackUrl).then(function(e){
-            $scope.loadapp = {"toggle":false};
-            console.log(e);
-            if(e.status == true){
-                var mappoly;
-                if(e.alarmLists.length != 0){
-                    //$scope.loadapp = {"toggle":false};
-                    var lineArr = [];
-                    //for(var i=0;i< e.alarmLists.length;i++){
-                    var i = e.alarmLists.length-1;
-                    //$scope.loadapp = {"toggle":true};
-                    function mapfuncloc(){
-                        //$scope.loadapp = {"toggle":true};
-                        function maplinenerf(){
-                            console.log(e.alarmLists.length,i);
-                            if(i == 0){
-                                if(lineArr.length >=1){
-                                    //$timeout(function(){
-                                    //    $scope.loadapp = {"toggle":false};
-                                    //},200);
 
-                                    console.log($scope);
-                                    $scope.otrackendpoint = "正在解析";
-                                    $scope.otrackstartpoint = "正在解析";
-                                    $scope.startfunc = function(){
-                                        var contentb = "<div class='locationmarkerC' >"+"起点位置: "+$scope.otrackstartpoint+"</div>"
-                                        $scope.contentmark1 = new AMap.Marker({
-                                            content:contentb,
-                                            position:lineArr[0],
-                                            offset : new AMap.Pixel(-70,-55),
-                                            map:map
-                                        });
-                                    };
-                                    $scope.endfunc = function(){
-                                        var contents = "<div class='locationmarkerC' >"+"终点位置: "+$scope.otrackendpoint+"</div>"
-                                        $scope.contentmark2 = new AMap.Marker({
-                                            content:contents,
-                                            position:lineArr[lineArr.length-1],
-                                            offset : new AMap.Pixel(-70,-55),
-                                            map:map
-                                        });
-                                    }
-                                    console.log("lineArr.length:"+lineArr.length);
-                                    var linearr1 = lineArr[0];
-                                    var linearr2 = lineArr[lineArr.length-1];
-                                    window.localStorage.setItem("mapcenterpoint",lineArr[0]);
-                                    $scope.mark1 = new AMap.Marker({
-                                        map: map,
-                                        position: lineArr[0],
-                                        icon: "img/my_location_3.png",
-                                        offset: new AMap.Pixel(-26, -27)
-                                            //autoRotation: true
-                                    });
-                                    $scope.mark2 = new AMap.Marker({
-                                        map: map,
-                                        position: lineArr[lineArr.length-1],
-                                        icon: "img/car_location_3.png",
-                                        offset: new AMap.Pixel(-17, -37)
-                                            //autoRotation: true
-                                    });
-                                    AMap.service('AMap.Geocoder',function() {
-                                        $scope.startrackadd = new AMap.Geocoder({
+        //if("\v"=="v") {
+        //    $(".datewidthcj").onpropertychange = webChange;
+        //}else{
+        //    $(".datewidthcj").bind("input",webChange);
+        //}
+        //function webChange(){
+        //    //if(element.value){document.getElementById("test").innerHTML = element.value};
+        //    console.log("js监听事件");
+        //    $scope.lastdateinfo = null;
+        //    $scope.notripcontent = true;//无行程
+        //    $scope.clickonload = false;//点击加载
+        //    $scope.cartriploading = true;//加载中
+        //    $scope.thelastpagecartripover =true ;//加载完全
+        //    $scope.clickandaddloads = true;//继续加载
+        //}
 
-                                        });
-                                        $scope.startrackadd.getAddress([linearr1,linearr2], function (status, result) {
-                                            console.log("报错的地方啊1；"+linearr1);
-                                            console.log("报错的地方2："+linearr2);
+        //监听路由的变化
+        $scope.$on('$stateChangeStart',
 
-                                            console.log("run here:",result,status);
-                                            //console.log("result:"+JSON.stringify(result));
-                                            if (status === 'complete' && result.info === 'OK') {
-                                                if (result.regeocodes[1].formattedAddress) {
-                                                    $scope.otrackendpoint = result.regeocodes[1].formattedAddress;
-                                                    $scope.endfunc();
-                                                } else {
-                                                    $scope.otrackendpoint = "获取地址失败";
-                                                    $scope.endfunc();
-                                                }
-                                                if (result.regeocodes[0].formattedAddress) {
-                                                    $scope.otrackstartpoint = result.regeocodes[0].formattedAddress;
-                                                    $scope.startfunc();
+            function(event, toState, toParams, fromState, fromParams){
+                console.log("toState:"+JSON.stringify(toState));
+                console.log("toParams:"+JSON.stringify(toParams));
+                console.log("fromState:"+JSON.stringify(fromState));
+                console.log("fromParams:"+JSON.stringify(fromParams));
+                console.log("获取路由地址："+$location.path());
+                if(fromState.name=="mains.home.cartripInformation"){
+                    $(".dw-persp").css({"display":"none"});
+                    console.log($scope.timerr);
+                    $interval.cancel($scope.timerr);
+                    console.log("关闭定时器,先出来");
+                    console.log($scope.timerr)
 
-                                                } else {
-                                                    $scope.otrackstartpoint = "获取地址失败";
-                                                    $scope.startfunc()
-                                                }
-                                            } else {
-                                                $scope.todayaddressa = "获取地址失败";
-                                                $scope.otrackstartpoint = $scope.todayaddressa;
-                                                $scope.otrackendpoint = $scope.todayaddressa;
-                                                $scope.endfunc();
-                                                $scope.startfunc();
-
-                                            }
-
-                                        });
-                                    });
-                                    mappoly = new AMap.Polyline({
-                                        map: map,
-                                        path: lineArr,
-                                        strokeColor: "#00A",  //线颜色
-                                        strokeOpacity: 1,     //线透明度
-                                        strokeWeight: 3,      //线宽
-                                        strokeStyle: "solid"  //线样式
-                                    });
-                                    try {
-                                        map.setFitView();
-                                    }catch (err){
-                                        console.log(err.message);
-                                    }
-                                    //console.log(map);
-                                    //console.log(map.setFitView);
-
-
-                                }else {
-                                    $scope.loadapp = {"toggle":false};
-                                    $scope.subapp= {"toggle":true};
-                                    $scope.submitWarning = "未获取到经纬度数据，无法显示轨迹！";
-                                    $timeout(function(){
-                                        $scope.subapp= {"toggle":false};
-                                    },2000);
-                                }
-
-
-                            }
-
-                        }
-                        if(!e.alarmLists[i].lat || !e.alarmLists[i].lng){
-                            if(i == 0){
-                                maplinenerf();
-                            }else {
-                                console.log("错了就一直加");
-                                i--;
-                                mapfuncloc()
-                            }
-
-                        } else if(e.alarmLists[i].lat !=0 && e.alarmLists[i].lng !=0){
-                            var covermaplatlng = [e.alarmLists[i].lng/1000000, e.alarmLists[i].lat/1000000]
-                            AMap.convertFrom(covermaplatlng,"gps",function(status,result){
-                                console.log("成功的result:"+JSON.stringify(result));
-
-                                if (result.info === 'ok') {
-                                    var s = result.locations[0];
-                                    lineArr.push(s);
-                                    mappoly = new AMap.Polyline({
-                                        map: map,
-                                        path: lineArr,
-                                        strokeColor: "#00A",  //线颜色
-                                        strokeOpacity: 1,     //线透明度
-                                        strokeWeight: 3,      //线宽
-                                        strokeStyle: "solid"  //线样式
-                                    });
-                                    try {
-                                        map.setFitView();
-                                    }catch (err){
-                                        console.log(err.message);
-                                    }
-                                    console.log("成功了");
-                                    console.log(lineArr);
-                                    maplinenerf();
-                                }else {
-                                    var s = new AMap.LngLat(e.alarmLists[i].lng/1000000, e.alarmLists[i].lat/1000000);
-                                    lineArr.push(s);
-                                    mappoly = new AMap.Polyline({
-                                        map: map,
-                                        path: lineArr,
-                                        strokeColor: "#00A",  //线颜色
-                                        strokeOpacity: 1,     //线透明度
-                                        strokeWeight: 3,      //线宽
-                                        strokeStyle: "solid"  //线样式
-                                    });
-                                    try {
-                                        map.setFitView();
-                                    }catch (err){
-                                        console.log(err.message);
-                                    }
-                                    console.log("失败了");
-                                    console.log(lineArr);
-                                    maplinenerf();
-                                };
-                                if(i== 0){
-
-                                }else {
-                                    i--;
-                                    mapfuncloc()
-                                }
-                            })
-                        }else {
-                            if(i == 0){
-                                maplinenerf();
-                            }else {
-                                i--;
-                                mapfuncloc()
-                            }
-                        }
-                    }
-                    mapfuncloc();
-
-
-                    //}
-
-                }else {
-                    $scope.loadapp = {"toggle":false};
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "未获取到数据，无法显示轨迹！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
                 }
 
-
-                // 绘制轨迹
-
-            }else {
-                $scope.loadapp = {"toggle":false};
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = e.reason+"！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-            }
-        },function(err){
-            $scope.loadapp = {"toggle":false};
-            $scope.subapp= {"toggle":true};
-            $scope.submitWarning = "网络连接失败！";
-            $timeout(function(){
-                $scope.subapp= {"toggle":false};
-            },2000);
-        })
+            });
     })
-    //报警记录
-    .controller("alarmrecordController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout){
+    //车辆报警
+    .controller("alarmrecordController",function($location,$scope,$rootScope,$state,registerService,$interval,$window,$timeout){
+        $scope.timealarmcordfir = $timeout(function(){
+            registerService.datecommon();
+        },200);
+        $scope.$on('$destroy',function(){
+            console.log($scope.timerr);
+            $interval.cancel($scope.timerr);
+            console.log("关闭定时器,先出来");
+            console.log($scope.timerr);
+        });
         $scope.dateinputdis = true;
         $rootScope.colorfff5 = true;
         $rootScope.coloryyy5 = false;
@@ -3535,6 +5297,38 @@ angular.module("app.demo.controllers",[])
         $scope.modelpositionStnot = {
             "top":$scope._topnot
         };
+        $scope.$watch('oalarmstartTime',  function(newValue, oldValue) {
+            console.log(22222222,newValue, oldValue)
+            if (newValue === oldValue){
+                return;
+            }else {
+                $scope.alarmrecordInfo = null;
+                $scope.alarmclick1=true ;
+                $scope.alarmclick2= true;
+                $scope.alarmclicknew =false ;
+                $scope.alarmclick3= true;
+                $scope.alarmclick4 = true;
+            }
+        });
+        $scope.$watch('alarmoverTime',  function(newValue, oldValue) {
+            if (newValue === oldValue){
+                return;
+            }else {
+                $scope.alarmrecordInfo = null;
+                $scope.alarmclick1=true ;
+                $scope.alarmclick2= true;
+                $scope.alarmclicknew =false ;
+                $scope.alarmclick3= true;
+                $scope.alarmclick4 = true;
+            }
+        });
+        //$(".dwb-s").click(function(){
+        //    console.log(111224445455,$("#appDate").val());
+        //})
+        //$('#appDate').on('input propertychange', function() {
+        //    console.log($(this).val().length + ' characters');
+        //});
+        //$
         //$rootScope.checkConnection();
         //function prostatus(){
         //    return false;
@@ -3550,156 +5344,348 @@ angular.module("app.demo.controllers",[])
         $scope.modelpositionSt = {
             "top":$scope._top
         };
+        //if($rootScope.alarmcount == 0){
+        //    $scope.alarmallstatusmodel= "全部标记为已读";
+        //    $scope.allalarmblur = true;
+        //}else if($rootScope.alarmcount > 0){
+        //标记为已读的按钮
+        $scope.alarmallstatusmodel= "全部标记为已读";
+        $scope.allalarmblur = true;
+        $scope.allstatusalarmdis= false;
+        //}
+        $scope.allastatusalarmbtn = function(){
+            $scope.allstatusalarmdis= true;
+            $scope.allalarmblur = false;
+            var allstatusalarmobj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                status:1
+            };
+            var allstatusalarmUrl = "/rest/alarms/updateAll/";
+            $scope.loadapp = {"toggle":true};
+            $scope.allstatusalarmstarttimehs = new Date().getTime();
+            registerService.commonUser(allstatusalarmobj,allstatusalarmUrl).then(function(e){
+
+                $scope.allstatusalarmdis=false ;
+                $scope.allalarmblur = true;
+                if(e.status == true){
+                    try{
+                        for(var i = 0;i<$scope.alarmrecordInfo.length;i++){
+                            var contentalarming = $scope.alarmrecordInfo;
+                            contentalarming[i].isalarmstatus = false;
+                            $scope.alarmrecordInfo = contentalarming;
+
+                            $scope.alarmrecordInfo = contentalarming;
+                            console.log("已经标记了");
+                            if(i==$scope.alarmrecordInfo.length-1){
+                                $scope.loadapp = {"toggle":false};
+                            }
+
+                        }
+                    }catch (err){
+
+                    }
+
+                }else if(e.status == false) {
+                    $scope.loadapp = {"toggle":false};
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = e.err+"！";
+                    $scope.timealarmtimeerr = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                }
+            },function(err){
+                $scope.loadapp = {"toggle":false};
+                $scope.allstatusalarmdis=false ;
+                $scope.allalarmblur = true;
+                $scope.subapp= {"toggle":true};
+                $scope.allstatusalarmendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.allstatusalarmendtimehs - $scope.allstatusalarmstarttimehs);
+                if($scope.allstatusalarmendtimehs - $scope.allstatusalarmstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
+                $scope.timealarmtimeerr = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            })
+        };
+        $scope.allnoalarmblur = true;
+        $scope.allnoastatusalarmbtn = function(){
+            $scope.allnostatusalarmdis= true;
+            $scope.allnoalarmblur = false;
+            var allstatusalarmobj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                status:0
+            };
+            var allstatusalarmUrl = "/rest/alarms/updateAll/";
+            $scope.loadapp = {"toggle":true};
+            $scope.allstatusalarmstarttimehs = new Date().getTime();
+            registerService.commonUser(allstatusalarmobj,allstatusalarmUrl).then(function(e){
+
+                $scope.allnostatusalarmdis=false ;
+                $scope.allnoalarmblur = true;
+                if(e.status == true){
+                    try{
+                        for(var i = 0;i<$scope.alarmrecordInfo.length;i++){
+                            var contentalarming = $scope.alarmrecordInfo;
+                            contentalarming[i].isalarmstatus = true;
+                            $scope.alarmrecordInfo = contentalarming;
+
+                            $scope.alarmrecordInfo = contentalarming;
+                            console.log("已经标记了");
+                            if(i==$scope.alarmrecordInfo.length-1){
+                                $scope.loadapp = {"toggle":false};
+                            }
+
+                        }
+                    }catch (err){
+
+                    }
+
+                }else if(e.status == false) {
+                    $scope.loadapp = {"toggle":false};
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = e.err+"！";
+                    $scope.timealarmtimeerr = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                }
+            },function(err){
+                $scope.loadapp = {"toggle":false};
+                $scope.allnostatusalarmdis=false ;
+                $scope.allnoalarmblur = true;
+                $scope.subapp= {"toggle":true};
+                $scope.allstatusalarmendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.allstatusalarmendtimehs - $scope.allstatusalarmstarttimehs);
+                if($scope.allstatusalarmendtimehs - $scope.allstatusalarmstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
+                $scope.timealarmtimeerr = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            })
+        }
         //$scope.windoWHeihgt = ($(window).height())*1+"px";
         $scope.winHeight = {
             "height":$rootScope.windoWHeihgt
         };
         $scope.alarmrecordPage = 0;
         $scope.alarmfirObj = {
-            uid:$window.sessionStorage.getItem("Uid"),
-            startTime:registerService.getdatestrnochinese(-10)+"000000",
-            endTime:registerService.getTime()+"235959",
-            pageNumber:$scope.alarmrecordPage,
-            limit:3
+            termId:Number($window.sessionStorage.getItem("UtermId")),
+            startTime:Number(new Date(registerService.getdatestrnochinese(-10)+" 00:00:00").getTime()),
+            endTime:Number(new Date(registerService.getTimems()+" 23:59:59").getTime()),
+            pageIndex:$scope.alarmrecordPage,
+            pageSize:6
         };
+        $scope.oalarmstartTime = registerService.getdatestr(-10);
+        $scope.alarmoverTime=  registerService.getdatestr(0);
         console.log(registerService.getTime());
-        $scope.alarmUrl = "/rest/vehicles/alarmLists/";
+        $scope.alarmUrl = "/rest/alarms/period/";
         $scope.alarminit = function(){
+            $scope.alarmandloaddis = true;//继续加载不能点击
             $scope.loadapp = {"toggle":true};
             $scope.alarmrecordInfo = null;
-            registerService.commonUserget($scope.alarmfirObj,$scope.alarmUrl).then(function(e){
+            $scope.alarmclick1=true ;
+            $scope.alarmclick2= false;
+            $scope.alarmclicknew = true;
+            $scope.alarmclick3= true;
+            $scope.alarmclick4 = true;
+            $scope.alarmloadtimeout = $timeout(function(){
                 $scope.loadapp = {"toggle":false};
-                $scope.alarmclick1=true ;
-                $scope.alarmclick2= false;
-                $scope.alarmclicknew = true;
-                $scope.alarmclick3= true;
-                $scope.alarmclick4 = true;
-                if(e.status == true){
-                    if(e.alarmLists.length != 0){
-                        console.log(e);
-                        $scope.alarmrecordPage ++;
+            },10000);
+            $scope.alarmfirstarttimehs = new Date().getTime();
+            registerService.commonUser($scope.alarmfirObj,$scope.alarmUrl).then(function(e){
 
-                        if(e.isLastPage == true){
-                            $scope.alarmclick1=true ;
-                            $scope.alarmclick2= true;
-                            $scope.alarmclicknew = true;
-                            $scope.alarmclick3= false;
-                            $scope.alarmclick4 = true;
-                        }else{
-                            $scope.alarmclick1=false ;
-                            $scope.alarmclicknew = true;
-                            $scope.alarmclick2= true;
-                            $scope.alarmclick3= true;
-                            $scope.alarmclick4 = true;
-                        }
-                        for(var i in e.alarmLists){
-                            e.alarmLists[i].describe = "正在解析！";
-                            e.alarmLists[i].gpstime = "正在解析！";
-                        }
-                        console.log("here 1",$scope)
-                        console.log("看这个"+$scope.alarmrecordInfo);
-                        //if($scope.alarmrecordInfo){
-                        //    $scope.alarmrecordInfo = $scope.alarmrecordInfo.concat(e.alarmLists);
-                        //}else{
-                        $scope.alarmrecordInfo = e.alarmLists;
-                        //}
+                $scope.alarmloadtimeoutzhege = $timeout(function(){
+                    $scope.loadapp = {"toggle":false};
+                    if(e.status == true){
+                        //$rootScope.alarmcount = 0;
+                        //$rootScope.alarmiconcountnone= true;
+                        if(e.content.currentSize != 0){
+                            console.log(e);
+                            $scope.alarmrecordPage ++;
+                            if(e.content.currentPage == e.content.totalPages-1){
+                                $scope.alarmclick1=true ;
+                                $scope.alarmclick2= true;
+                                $scope.alarmclicknew = true;
+                                $scope.alarmclick3= false;
+                                $scope.alarmclick4 = true;
+                            }else{
+                                $scope.alarmclick1=false ;
+                                $scope.alarmclicknew = true;
+                                $scope.alarmclick2= true;
+                                $scope.alarmclick3= true;
+                                $scope.alarmclick4 = true;
+                            }
+                            for(var i in e.content.alarms){
+                                e.content.alarms[i].describe = "正在解析！";
+                                e.content.alarms[i].gpstime = "正在解析！";
+                                if(e.content.alarms[i].status == 0){
+                                    e.content.alarms[i].isalarmstatus = true;
+                                }else {
+                                    e.content.alarms[i].isalarmstatus = false;
+                                }
+                                if(e.content.alarms[i].plugout == 1){
+                                    e.content.alarms[i].alarmstyle = "电池拔出";
+                                }else if(e.content.alarms[i].lowVoltage == 1){
+                                    e.content.alarms[i].alarmstyle = "低电压";
+                                }else if(e.content.alarms[i].vibration == 1){
+                                    e.content.alarms[i].alarmstyle = "碰撞报警";
+                                }
 
-                        var j = 0;
-                        $scope.transloc = function(){
-                            var lnglatXY =[e.alarmLists[j].LNG/1000000,e.alarmLists[j].LAT/1000000];
-                            e.alarmLists[j].gpstime = new Date(e.alarmLists[j].GPS_TIME);
-                            //$scope.warningadd = registerService.covertAddress(lnglatXY);
+                            }
+                            console.log("here 1",$scope);
+                            console.log("看这个"+$scope.alarmrecordInfo);
+                            //if($scope.alarmrecordInfo){
+                            //    $scope.alarmrecordInfo = $scope.alarmrecordInfo.concat(e.content.alarms);
+                            //}else{
+                            $scope.alarmrecordInfo = e.content.alarms;
+                            //}
 
-                            if(e.alarmLists[j].LAT !=0){
-                                try {
-                                    AMap.convertFrom(lnglatXY,"gps",function(status,result){
-                                        function alarmcoverlaglatf(){
-                                            AMap.service('AMap.Geocoder',function() {
-                                                $scope.warningadd = new AMap.Geocoder({});
-                                                $scope.warningadd.getAddress(lnglatXYcover, function (status, result) {
-                                                    if (status === 'complete' && result.info === 'OK') {
-                                                        $scope.addressa = result.regeocode.formattedAddress;
-                                                        e.alarmLists[j].describe = $scope.addressa;
-                                                        j++;
-                                                        if (j < e.alarmLists.length) {
-                                                            $scope.transloc();
+                            var j = 0;
+                            $scope.transloc = function(){
+                                var lnglatXY =[e.content.alarms[j].lng,e.content.alarms[j].lat];
+                                e.content.alarms[j].gpstime = new Date(e.content.alarms[j].gpsTime);
+
+                                //$scope.warningadd = registerService.covertAddress(lnglatXY);
+                                console.log(2222222222,lnglatXY);
+                                if(e.content.alarms[j].lat !=0){
+                                    try {
+                                        AMap.convertFrom(lnglatXY,"gps",function(status,result){
+                                            function alarmcoverlaglatf(){
+                                                AMap.service('AMap.Geocoder',function() {
+                                                    $scope.warningadd = new AMap.Geocoder({});
+                                                    console.log("这个是什么鬼："+lnglatXYcover)
+                                                    $scope.warningadd.getAddress([lnglatXYcover], function (status, result) {
+                                                        console.log(66666,status);
+                                                        console.log(555555,result);
+                                                        if (status === 'complete' && result.info === 'OK') {
+                                                            if(result.regeocodes[0].formattedAddress ==""){
+                                                                $scope.addressa = "获取地址失败";
+                                                            }else {
+                                                                $scope.addressa = result.regeocodes[0].formattedAddress;
+                                                            }
+
+                                                            e.content.alarms[j].describe = $scope.addressa;
+                                                            $scope.$apply(function () {
+                                                                $scope.alarmrecordInfo = e.content.alarms;
+                                                            })
+                                                            j++;
+                                                            console.log("查看j的数值：",j);
+                                                            if (j < e.content.alarms.length) {
+                                                                $scope.transloc();
+                                                            } else {
+                                                                $scope.alarmandloaddis = false;//继续加载可以点击
+                                                            }
                                                         } else {
+                                                            $scope.addressa = "获取地址失败";
+                                                            e.content.alarms[j].describe = $scope.addressa;
+                                                            $scope.$apply(function () {
+                                                                $scope.alarmrecordInfo = e.content.alarms;
+                                                            })
+                                                            j++;
+                                                            console.log("查看j的数值：",j);
+                                                            if (j < e.content.alarms.length) {
+                                                                $scope.transloc();
+                                                            } else {
+                                                                $scope.alarmandloaddis = false;//继续加载可以点击
+                                                            }
+
+
                                                         }
-                                                    } else {
-                                                        $scope.addressa = "获取地址失败";
-                                                        e.alarmLists[j].describe = $scope.addressa;
-                                                        j++;
 
-                                                        if (j < e.alarmLists.length) {
-                                                            $scope.transloc();
-                                                        } else {
-                                                        }
-
-
-                                                    }
-                                                    $scope.$apply(function () {
-                                                        $scope.alarmrecordInfo = e.alarmLists;
-                                                    })
+                                                    });
                                                 });
-                                            });
-                                        }
-                                        if (result.info === 'ok') {
-                                            var lnglatXYcover = result.locations[0];
-                                            //var s = result.locations[0];
-                                            alarmcoverlaglatf();
-                                        }else {
-                                            var lnglatXYcover = lnglatXY;
-                                            alarmcoverlaglatf();
-                                        }
-                                    });
-                                    $scope.initfalseapp= {"toggle":false};
-                                }catch (err){
-                                    $scope.initfalseapp= {"toggle":true};
-                                    //$scope.subapp= {"toggle":true};
+                                            }
+                                            if (result.info === 'ok') {
+                                                var lnglatXYcover = result.locations[0];
+                                                console.log(22222,333333,lnglatXYcover);
+                                                //var s = result.locations[0];
+                                                alarmcoverlaglatf();
+                                            }else {
+                                                var lnglatXYcover = lnglatXY;
+                                                console.log(333333,lnglatXYcover);
+                                                alarmcoverlaglatf();
+                                            }
+                                        });
+                                        $scope.initfalseapp= {"toggle":false};
+                                    }catch (err){
 
-                                    $scope.goSubmitPage= function(){
-                                        window.location.replace("index.html");
-                                        $scope.initfalseapp= {"toggle":false};
-                                    };
-                                    $scope.gomainhomePage = function(){
-                                        $state.go("mains.home");
-                                        $scope.initfalseapp= {"toggle":false};
+                                        $scope.initfalseapp= {"toggle":true};
+                                        //$scope.subapp= {"toggle":true};
+
+                                        $scope.goSubmitPage= function(){
+                                            $state.go("submits");
+                                            $scope.initfalseapp= {"toggle":false};
+                                        };
+                                        $scope.gomainhomePage = function(){
+                                            $state.go("mains.home");
+                                            $scope.initfalseapp= {"toggle":false};
+                                        }
+                                    }
+
+
+
+                                }else {
+                                    $scope.addressa = "获取地址失败";
+                                    e.content.alarms[j].describe = $scope.addressa;
+                                    $scope.$apply(function () {
+                                        $scope.alarmrecordInfo = e.content.alarms;
+                                    })
+                                    //e.content.alarms[j].describe = "获取地址失败";
+                                    j++;
+                                    console.log("查看j的数值：",j);
+                                    if (j < e.content.alarms.length) {
+                                        $scope.transloc();
+                                    } else {
+                                        $scope.alarmandloaddis = false;//继续加载可以点击
                                     }
                                 }
 
+                            };
+                            $scope.transloc();
+                        }else {
 
+                            $scope.alarmclick1=true ;
+                            $scope.alarmclick2= true;
+                            $scope.alarmclick3= true;
+                            $scope.alarmclicknew = true;
+                            $scope.alarmclick4 =false ;
+                        }
 
-                            }else {
-                                e.alarmLists[j].describe = "获取地址失败";
-                            }
-
-                        };
-                        $scope.transloc();
-                    }else {
-                        $scope.alarmclick1=true ;
+                    }else{
+                        $scope.alarmandloaddis = false;//继续加载可以点击
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timealarmtimereason = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                        $scope.alarmclick1= true;
+                        $scope.alarmclicknew = false;
                         $scope.alarmclick2= true;
                         $scope.alarmclick3= true;
-                        $scope.alarmclicknew = true;
-                        $scope.alarmclick4 =false ;
+                        $scope.alarmclick4 = true;
                     }
+                },500);
 
-                }else{
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = e.reason+"！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                    $scope.alarmclick1= true;
-                    $scope.alarmclicknew = false;
-                    $scope.alarmclick2= true;
-                    $scope.alarmclick3= true;
-                    $scope.alarmclick4 = true;
-                }
             },function(err){
+                $scope.alarmandloaddis = false;//继续加载可以点击
                 $scope.loadapp = {"toggle":false};
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $timeout(function(){
+                $scope.alarmfirendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.alarmfirendtimehs - $scope.alarmfirstarttimehs);
+                if($scope.alarmfirendtimehs - $scope.alarmfirstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
+                $scope.timealarmtimeerr = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
                 //$scope.alarmrecordPage = -1;
@@ -3723,28 +5709,28 @@ angular.module("app.demo.controllers",[])
             if(($(".startyearnum").val() <= $(".overyearnum").val()) && ($(".startmonthnum").val()<=$(".overmonthnum").val()) && ($(".startdaynum").val()<=$(".overdaynum").val())){
                 $scope.ostartTime = $(".startyearnum").val() +$(".startmonthnum").val()+$(".startdaynum").val();
                 $scope.overTime = $(".overyearnum").val()+$(".overmonthnum").val()+$(".overdaynum").val();
-                $scope.alarmajaxstarttime = $scope.ostartTime.replace('年','').replace('月','').replace('日','');
-                $scope.alarmajaxendtime = $scope.overTime.replace('年','').replace('月','').replace('日','');
-                $timeout(function(){
+                $scope.alarmajaxstarttime = $scope.ostartTime.replace('年','/').replace('月','/').replace('日','/');
+                $scope.alarmajaxendtime = $scope.overTime.replace('年','/').replace('月','/').replace('日','/');
+                $scope.timedateyesalarm =$timeout(function(){
                     $scope.datediv = {toggle:false};
 
                 },200);
                 $scope.alarmrecordPage = 0;
                 $scope.alarmfirObj = {
                     uid:$window.sessionStorage.getItem("Uid"),
-                    startTime:$scope.alarmajaxstarttime+"000000",
-                    endTime:$scope.alarmajaxendtime+"235959",
-                    pageNumber:$scope.alarmrecordPage,
-                    limit:3
+                    startTime:new Date($scope.alarmajaxstarttime+" 00:00:00"),
+                    endTime:new Date($scope.alarmajaxendtime+" 23:59:59"),
+                    pageIndex:$scope.alarmrecordPage,
+                    pageSize:6
                 };
-                $scope.alarmUrl = "/rest/ vehicles/alarmLists/";
+                $scope.alarmUrl = "/rest/alarms/period/";
                 $scope.alarminit();
             } else if(($(".startyearnum").val() <= $(".overyearnum").val()) && ($(".startmonthnum").val()<$(".overmonthnum").val())){
                 $scope.ostartTime = $(".startyearnum").val() +$(".startmonthnum").val()+$(".startdaynum").val();
                 $scope.overTime = $(".overyearnum").val()+$(".overmonthnum").val()+$(".overdaynum").val();
                 $scope.alarmajaxstarttime = $scope.ostartTime.replace('年','').replace('月','').replace('日','');
                 $scope.alarmajaxendtime = $scope.overTime.replace('年','').replace('月','').replace('日','');
-                $timeout(function(){
+                $scope.timedatayesalarmsed = $timeout(function(){
                     $scope.datediv = {toggle:false};
 
                 },200);
@@ -3756,14 +5742,14 @@ angular.module("app.demo.controllers",[])
                     pageNumber:$scope.alarmrecordPage,
                     limit:3
                 };
-                $scope.alarmUrl = "/rest/ vehicles/alarmLists/";
+                $scope.alarmUrl = "/rest/alarms/period/";
                 $scope.alarminit();
             } else if(($(".startyearnum").val() < $(".overyearnum").val())){
                 $scope.ostartTime = $(".startyearnum").val() +$(".startmonthnum").val()+$(".startdaynum").val();
                 $scope.overTime = $(".overyearnum").val()+$(".overmonthnum").val()+$(".overdaynum").val();
-                $scope.alarmajaxstarttime = $scope.ostartTime.replace('年','').replace('月','').replace('日','');
-                $scope.alarmajaxendtime = $scope.overTime.replace('年','').replace('月','').replace('日','');
-                $timeout(function(){
+                $scope.alarmajaxstarttime = $scope.ostartTime.replace('年','/').replace('月','/').replace('日','/');
+                $scope.alarmajaxendtime = $scope.overTime.replace('年','/').replace('月','/').replace('日','/');
+                $scope.timealarmdatethr = $timeout(function(){
                     $scope.datediv = {toggle:false};
 
                 },200);
@@ -3775,7 +5761,7 @@ angular.module("app.demo.controllers",[])
                     pageNumber:$scope.alarmrecordPage,
                     limit:3
                 };
-                $scope.alarmUrl = "/rest/ vehicles/alarmLists/";
+                $scope.alarmUrl = "/rest/alarms/period/";
                 $scope.alarminit();
             } else{
                 //$rootScope.subapp = {toggle : true};
@@ -3784,7 +5770,7 @@ angular.module("app.demo.controllers",[])
                 //console.log("riqi");
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "开始日期大于结束日期，请您重新确认！";
-                $timeout(function(){
+                $scope.timedatayesfour = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
             }
@@ -3810,116 +5796,214 @@ angular.module("app.demo.controllers",[])
         //继续加载
         $scope.alarmrecordload = function(){
             //$scope.alarmrecordPage +=1;
-            if($scope.oAstartTime){
-                $scope.firstarttime = $scope.oAstartTime;
-                $scope.firendtime=$scope.oAverTime;
-
-            }else{
-                $scope.firstarttime = registerService.getTime()-10+"000000";
-                $scope.firendtime = registerService.getTime()+"235959";
-            }
+            //if($scope.oAstartTime){
+            //    $scope.firstarttime = $scope.oAstartTime;
+            //    $scope.firendtime=$scope.oAverTime;
+            //
+            //}else{
+            //    $scope.firstarttime = registerService.getTime()-10+"000000";
+            //    $scope.firendtime = registerService.getTime()+"235959";
+            //}
+            $scope.alarmandloaddis = true;//继续加载不可以点击
             $scope.alarmfirObj = {
-                uid:$window.sessionStorage.getItem("Uid"),
-                startTime:$scope.firstarttime,
-                endTime:$scope.firendtime,
-                pageNumber:$scope.alarmrecordPage,
-                limit:3
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                startTime:Number(new Date($("#appDate").val().replace('-',"/").replace('-',"/")+" 00:00:00").getTime()),
+                endTime:Number(new Date($("#appDateover").val().replace('-',"/").replace('-',"/")+" 23:59:59").getTime()),
+                pageIndex:$scope.alarmrecordPage,
+                pageSize:6
             };
            //$scope.alarminit();
             $scope.loadapp = {"toggle":true};
-            registerService.commonUserget($scope.alarmfirObj,$scope.alarmUrl).then(function(e){
-                $scope.loadapp = {"toggle":false};
-                $scope.alarmclick1=true ;
-                $scope.alarmclick2= false;
-                $scope.alarmclick3= true;
-                if(e.status == true){
-                    console.log(e);
-                    $scope.alarmrecordPage ++;
-                    //$scope.alarmrecordPage = 1;
+            $scope.alarmfirstarttimehs = new Date().getTime();
+            registerService.commonUser($scope.alarmfirObj,$scope.alarmUrl).then(function(e){
+                $scope.timeandloadalarmtime = $timeout(function(){
+                    $scope.loadapp = {"toggle":false};
+                    $scope.alarmclick1=true ;
+                    $scope.alarmclick2= false;
+                    $scope.alarmclick3= true;
+                    if(e.status == true){
+                        console.log(e);
+                        $scope.alarmrecordPage ++;
+                        //$scope.alarmrecordPage = 1;
 
-                    if(e.isLastPage == true){
-                        $scope.alarmclick1=true ;
-                        $scope.alarmclick2= true;
-                        $scope.alarmclick3= false;
+                        if(e.content.currentPage == e.content.totalPages-1){
+                            $scope.alarmclick1=true ;
+                            $scope.alarmclick2= true;
+                            $scope.alarmclick3= false;
+                        }else{
+                            $scope.alarmclick1=false ;
+                            $scope.alarmclick2= true;
+                            $scope.alarmclick3= true;
+                        }
+                        //for(var i = 0;i<e.alarmLists.length;i++){
+                        //    var lnglatXY =[e.alarmLists[i].LAT,e.alarmLists[i].LNG ];
+                        //    if($scope.coveraddress(lnglatXY)){
+                        //        $scope.addressa = $scope.coveraddress(lnglatXY);
+                        //    }else{
+                        //        $scope.addressa = "获取位置失败！";
+                        //    }
+                        //    e.alarmLists[i].describe = $scope.addressa;
+                        //
+                        //}
+                        //console.log($scope.coveraddress([121.11111,31.3333]));
+                        //console.log(registerService.lngcoverAddress(lnglatXY));
+                        //$scope.alarmrecordInfo = e.alarmLists;
+                        //console.log($scope.alarmrecordInfo);
+                        for(var i in e.content.alarms){
+                            e.content.alarms[i].describe = "正在解析！";
+                            e.content.alarms[i].gpstime = "正在解析！";
+
+                        }
+                        //e.alarmLists[j].gpstime = new Date(e.alarmLists[j].GPS_TIME)
+
+                        //$scope.timeaddalarmtimefir = $timeout(function(){
+                        //$scope.alarmrecordInfo = $scope.alarmrecordInfo.concat(e.content.alarms);
+                        console.log(typeof $scope.alarmrecordInfo);
+                        //$scope.alarmrecordInfo.push(e.content.alarms[j])
+                        //$scope.alarmrecordInfo += e.content.alarms;
+                        //},200);
+                        var j = 0;
+                        $scope.transloc = function(){
+                            var lnglatXY =[e.content.alarms[j].lng,e.content.alarms[j].lat];
+                            e.content.alarms[j].gpstime = new Date(e.content.alarms[j].gpsTime)
+                            if(e.content.alarms[j].plugout == 1){
+                                e.content.alarms[j].alarmstyle = "电池拔出";
+                            }else if(e.content.alarms[j].lowVoltage == 1){
+                                e.content.alarms[j].alarmstyle = "低电压";
+                            }else if(e.content.alarms[j].vibration == 1){
+                                e.content.alarms[j].alarmstyle = "碰撞报警";
+                            }
+                            if(e.content.alarms[j].status == 0){
+                                e.content.alarms[j].isalarmstatus =true ;
+                            }else {
+                                e.content.alarms[j].isalarmstatus = false;
+                            }
+                            if(e.content.alarms[j].lat !=0){
+
+                                AMap.convertFrom(lnglatXY,"gps",function(status,result){
+                                    function alarmaddjiacoverlnglarfun(){
+                                        AMap.service('AMap.Geocoder',function() {
+                                            $scope.warningadd = new AMap.Geocoder({});
+                                            $scope.warningadd.getAddress([lnglatXYcover], function (status, result) {
+                                                if (status === 'complete' && result.info === 'OK') {
+                                                    if(result.regeocodes[0].formattedAddress == ""){
+                                                        $scope.addressa = "获取地址失败";
+                                                    }else {
+                                                        $scope.addressa = result.regeocodes[0].formattedAddress;
+                                                    }
+
+                                                    e.content.alarms[j].describe = $scope.addressa;
+                                                    //$scope.timealarmandpushtime = $timeout(function(){
+
+                                                        $scope.alarmrecordInfo.push(e.content.alarms[j]);
+                                                        j++;
+                                                        if (j < e.content.alarms.length) {
+
+                                                            $scope.transloc();
+
+                                                        } else {
+                                                            $scope.alarmandloaddis = false;//继续加载可以点击
+                                                        }
+                                                    //},20);
+
+
+
+                                                } else {
+                                                    $scope.addressa = "获取地址失败";
+                                                    //if(e.content.alarms[j].status == 0){
+                                                    //    e.content.alarms[j].isalarmstatus = true;
+                                                    //}else {
+                                                    //    e.content.alarms[j].isalarmstatus = false;
+                                                    //}
+                                                    e.content.alarms[j].describe = $scope.addressa;
+                                                    //$scope.timealarmandpushtime = $timeout(function(){
+
+                                                        $scope.alarmrecordInfo.push(e.content.alarms[j]);
+                                                        j++;
+                                                        if (j < e.content.alarms.length) {
+
+                                                            $scope.transloc();
+
+                                                        } else {
+                                                            $scope.alarmandloaddis = false;//继续加载可以点击
+                                                        }
+                                                    //},20);
+
+
+                                                }
+                                                //$scope.timeaddalarmtime = $timeout(function(){
+                                                //$scope.alarmrecordInfo = $scope.alarmrecordInfo.concat(e.content.alarms);
+
+                                                //$scope.alarmrecordInfo += e.content.alarms;
+                                                //},20);
+
+
+
+                                            });
+                                        });
+                                    }
+                                    if (result.info === 'ok') {
+                                        var lnglatXYcover = result.locations[0];
+                                        console.log(22222,333333,lnglatXYcover);
+                                        //var s = result.locations[0];
+                                        alarmaddjiacoverlnglarfun();
+                                    }else {
+                                        var lnglatXYcover = lnglatXY;
+                                        console.log(333333,lnglatXYcover);
+                                        alarmaddjiacoverlnglarfun();
+                                    }
+                                });
+                            }else {
+                                //e.content.alarms[j].describe = "获取地址失败";
+                                $scope.addressa = "获取地址失败";
+                                if(e.content.alarms[j].status == 0){
+                                    e.content.alarms[j].isalarmstatus = true;
+                                }else {
+                                    e.content.alarms[j].isalarmstatus =false ;
+                                }
+                                e.content.alarms[j].describe = $scope.addressa;
+                                //$scope.timealarmandpushtime = $timeout(function(){
+
+                                $scope.alarmrecordInfo.push(e.content.alarms[j]);
+                                j++;
+                                if (j < e.content.alarms.length) {
+
+                                    $scope.transloc();
+
+                                } else {
+                                    $scope.alarmandloaddis = false;//继续加载可以点击
+                                }
+                            }
+
+                        };
+                        $scope.transloc();
+
                     }else{
+                        $scope.alarmandloaddis = false;//继续加载可以点击
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
                         $scope.alarmclick1=false ;
                         $scope.alarmclick2= true;
                         $scope.alarmclick3= true;
+                        $scope.timealarmwherereason = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
                     }
-                    //for(var i = 0;i<e.alarmLists.length;i++){
-                    //    var lnglatXY =[e.alarmLists[i].LAT,e.alarmLists[i].LNG ];
-                    //    if($scope.coveraddress(lnglatXY)){
-                    //        $scope.addressa = $scope.coveraddress(lnglatXY);
-                    //    }else{
-                    //        $scope.addressa = "获取位置失败！";
-                    //    }
-                    //    e.alarmLists[i].describe = $scope.addressa;
-                    //
-                    //}
-                    //console.log($scope.coveraddress([121.11111,31.3333]));
-                    //console.log(registerService.lngcoverAddress(lnglatXY));
-                    //$scope.alarmrecordInfo = e.alarmLists;
-                    //console.log($scope.alarmrecordInfo);
-                    for(var i in e.alarmLists){
-                        e.alarmLists[i].describe = "正在解析！";
-                        e.alarmLists[i].gpstime = "正在解析！";
-                    }
-                    //e.alarmLists[j].gpstime = new Date(e.alarmLists[j].GPS_TIME)
-                    $scope.alarmrecordInfo = $scope.alarmrecordInfo.concat(e.alarmLists);
-                    var j = 0;
-                    $scope.transloc = function(){
-                        var lnglatXY =[e.alarmLists[j].LNG/1000000,e.alarmLists[j].LAT/1000000];
-                        e.alarmLists[j].gpstime = new Date(e.alarmLists[j].GPS_TIME)
+                },500);
 
-
-                        if(e.alarmLists[j].LAT !=0){
-                            AMap.service('AMap.Geocoder',function() {
-                                $scope.warningadd = new AMap.Geocoder({});
-                                $scope.warningadd.getAddress(lnglatXY, function (status, result) {
-                                    if (status === 'complete' && result.info === 'OK') {
-                                        $scope.addressa = result.regeocode.formattedAddress;
-                                        e.alarmLists[j].describe = $scope.addressa;
-                                        j++;
-                                        if (j < e.alarmLists.length) {
-                                            $scope.transloc();
-                                        } else {
-                                        }
-                                    } else {
-                                        $scope.addressa = "获取地址失败";
-                                        e.alarmLists[j].describe = $scope.addressa;
-                                        j++;
-
-                                        if (j < e.alarmLists.length) {
-                                            $scope.transloc();
-                                        } else {
-                                        }
-
-
-                                    }
-                                    $scope.$apply(function () {
-                                        $scope.alarmrecordInfo += e.alarmLists;
-                                    })
-                                });
-                            });
-                        }else {
-                            e.alarmLists[j].describe = "获取地址失败";
-                        }
-
-                    };
-                    $scope.transloc();
-
-                }else{
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = e.reason+"！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                }
             },function(err){
+                $scope.alarmandloaddis = false;//继续加载可以点击
                 $scope.loadapp = {"toggle":false};
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $timeout(function(){
+                $scope.alarmfirendtimehs = new Date().getTime();
+                console.log("请求时间差："+$scope.alarmfirendtimehs - $scope.alarmfirstarttimehs);
+                if($scope.alarmfirendtimehs - $scope.alarmfirstarttimehs>=6500){
+                    $scope.submitWarning = "请求超时！";
+                }else {
+                    $scope.submitWarning = "网络连接失败！";
+                }
+                //$scope.submitWarning = "网络连接失败！";
+                $scope.timealarmwhereerr = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
                 //$scope.alarmrecordPage = 0;
@@ -3929,47 +6013,219 @@ angular.module("app.demo.controllers",[])
                 $scope.alarmclick3= true;
             });
         };
+
+        //点击搜索
+        $scope.alarmdateyesbtn = function(){
+            $scope.searchalarmstart = $("#appDate").val().replace('-',"/").replace('-',"/")+" 00:00:00";
+            $scope.searchalarmover = $("#appDateover").val().replace('-',"/").replace('-',"/")+" 23:59:59";
+            if($scope.searchalarmstart < $scope.searchalarmover){
+                $scope.alarmrecordPage = 0;
+                $scope.alarmfirObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    startTime:Number(new Date($scope.searchalarmstart).getTime()),
+                    endTime:Number(new Date($scope.searchalarmover).getTime()),
+                    pageIndex:$scope.alarmrecordPage,
+                    pageSize:6
+                };
+                console.log(registerService.getTime());
+                $scope.alarmUrl = "/rest/alarms/period/";
+                //初始加载
+                $scope.alarminit();
+            }else {
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "开始日期大于结束日期，请您重新确认！";
+                $scope.timedataalarmdataerr = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+                console.log("看这里啊");
+            }
+
+        };
         //重新加载
         $scope.alarmrecordloadnew = function(){
-            $scope.alarmrecordPage = 0;
-            $scope.alarmfirObj = {
-                uid:$window.sessionStorage.getItem("Uid"),
-                startTime:registerService.getdatestrnochinese(-10)+"000000",
-                endTime:registerService.getTime()+"235959",
-                pageNumber:$scope.alarmrecordPage,
-                limit:3
-            };
-            console.log(registerService.getTime());
-            $scope.alarmUrl = "/rest/vehicles/alarmLists/";
-            //初始加载
-            $scope.alarminit();
-        }
+            //$scope.alarmrecordPage = 0;
+            //$scope.alarmfirObj = {
+            //    termId:Number($window.sessionStorage.getItem("UtermId")),
+            //    startTime:Number(new Date($("#appDate").val().replace('-',"/").replace('-',"/")+" 00:00:00").getTime()),
+            //    endTime:Number(new Date($("#appDateover").val().replace('-',"/").replace('-',"/")+" 23:59:59").getTime()),
+            //    pageIndex:$scope.alarmrecordPage,
+            //    pageSize:6
+            //};
+            //console.log(registerService.getTime());
+            //$scope.alarmUrl = "/rest/alarms/period/";
+            ////初始加载
+            //$scope.alarminit();
+            $scope.alarmdateyesbtn();
+        };
+        //监听路由的变化
+        $scope.$on('$stateChangeStart',
+
+            function(event, toState, toParams, fromState, fromParams){
+                console.log("toState:"+JSON.stringify(toState));
+                console.log("toParams:"+JSON.stringify(toParams));
+                console.log("fromState:"+JSON.stringify(fromState));
+                console.log("fromParams:"+JSON.stringify(fromParams));
+                console.log("获取路由地址："+$location.path());
+                if(fromState.name=="mains.home.alarmRecord"){
+                    $(".dw-persp").css({"display":"none"});
+                }
+
+            });
 
     })
     //车辆状态
     .controller("vehicleStatusController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout){
+        $scope.$on('$destroy',function(){
+            console.log($scope.timerr)
+            $interval.cancel($scope.timerr);
+            console.log("关闭定时器,先出来");
+            console.log($scope.timerr)
+        });
         $rootScope.colorfff4 = true;
         $rootScope.coloryyy4 = false;
         $scope.searchPassBackBtn = function(){
             window.history.go(-1);
         };
-        //function prostatus(){
-        //    return false;
-        //}
-        //prostatus()
-        //$scope.backappfunctionsmall = function(){
-        //    registerService.removeevent();
-        //};
-        //$scope.backappfunctionsmall();
         //$http获取数据
         $scope.vehiclestatusf = function(){
+            //获取车辆状态信息 2017年3月22日 15:13:00
+            $scope.carstatusUrl = "/rest/cmd/queryStatus/";
+            $scope.carstatusObj = {
+                appSN:parseInt(Number(new Date().getTime())/1000),
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp"))
+            };
+            $scope.loadapp = {"toggle":true};
+            registerService.getcarstatus($scope.carstatusObj,$scope.carstatusUrl).then(
+                function(e){
+                    console.log("success:",e);
+                    $scope.loadapp = {"toggle": false };
+                    if(e.status){
+                        $scope.dateee = e.content.voltagePercent;
+                        $scope.degspeedpoint =$scope.dateee* 3+'deg';
+                        $scope.pointerstyle = {
+                            "-webkit-transform": 'rotate('+$scope.degspeedpoint+')',
+                            "-moz-transform": 'rotate('+$scope.degspeedpoint+')',
+                            "-o-transform":'rotate('+$scope.degspeedpoint+')',
+                            "-ms-transform":'rotate('+$scope.degspeedpoint+')',
+                            "transform":'rotate('+$scope.degspeedpoint+')'
+                        }
+                        if(90<$scope.dateee && $scope.dateee<=100){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch100.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(80<$scope.dateee && $scope.dateee<=90){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch90.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(70<$scope.dateee && $scope.dateee<=80){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch80.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(60<$scope.dateee && $scope.dateee<=70){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch70.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(50<$scope.dateee && $scope.dateee<=60){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch60.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(40<$scope.dateee && $scope.dateee<=50){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch50.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(30<$scope.dateee && $scope.dateee<=40){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch40.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(20<$scope.dateee && $scope.dateee<=30){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch30.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(10<$scope.dateee && $scope.dateee<=20){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch20.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else if(0<$scope.dateee && $scope.dateee<=10){
+                            $scope.fulldegree = {
+                                "background":'url(img/watch10.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }else{
+                            $scope.fulldegree = {
+                                "background":'url(img/watch0.png) no-repeat',
+                                "-webkit-background-size":'contain',
+                                "background-size":'contain'
+                            }
+                        }
+                        $scope.elenum = $scope.dateee+"%";
 
-        }
-        $scope.vehiclestatusf();
-        //点击更新
-        $scope.searchPassupdateBtn = function(){
-            $scope.vehiclestatusf();
-        }
+                        if(e.content.voltagePercent < 50){
+                            $scope.elestatue= "电量不足";
+                            $scope.elenumfull= false;
+                            $scope.elenumless = true;
+                        }else{
+                            $scope.elestatue= "电量充足";
+                            $scope.elenumfull= true;
+                            $scope.elenumless = false;
+                        }
+                        if(e.content.plugOutAlarm == 1){
+                            $scope.batteystatue= "电池拔出";
+                            $scope.batteyyes= false;
+                            $scope.batteyno = true;
+                        }else{
+                            $scope.batteystatue= "电池插入";
+                            $scope.batteyyes= true;
+                            $scope.batteyno = false;
+                        }
+                        if((e.content.fault.fault1 == 1)||(e.content.fault.fault2 == 1)||(e.content.fault.fault3 == 1)||(e.content.fault.fault4 == 1)||(e.content.fault.fault5 == 1)){
+                            $scope.vibrationstatue= "车辆异常";
+                            $scope.vibrationgood = false;
+                            $scope.vibrationfalse = true;
+                        }else{
+                            $scope.vibrationstatue= "车辆正常";
+                            $scope.vibrationgood = true;
+                            $scope.vibrationfalse = false;
+                        }
+                    }else{
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timenoreasontime = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                },
+                function (e) {
+                    $scope.loadapp = {"toggle": false };
+                    $scope.subapp= {"toggle":true};
+                    console.log("error:",e);
+                    $scope.submitWarning = "网络连接失败!";
+                    $scope.timenoreasontime = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                }
+            )
+        };
+
         //旋转的度数
         $scope.dateee = 0;//后台获取的数据
         $scope.degspeedpoint =$scope.dateee* 3+'deg';
@@ -4058,9 +6314,22 @@ angular.module("app.demo.controllers",[])
         $scope.batteyno = false;
         $scope.vibrationgood= true;
         $scope.vibrationfalse = false;
+
+        $scope.vehiclestatusf();
+        //点击更新
+        $scope.searchPassupdateBtn = function(){
+            console.log("searchPassupdateBtnclick");
+            $scope.vehiclestatusf();
+        }
     })
     //服务与帮助
     .controller("serviceHelpController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout){
+        $scope.$on('$destroy',function(){
+            console.log($scope.timerr);
+            $interval.cancel($scope.timerr);
+            console.log("关闭定时器,先出来");
+            console.log($scope.timerr)
+        });
         $rootScope.colorfff6 = true;
         $rootScope.coloryyy6 = false;
         $scope.searchPassBackBtn = function(){
@@ -4075,1242 +6344,6 @@ angular.module("app.demo.controllers",[])
         //};
         //$scope.backappfunctionsmall();
         $scope.warderingnum = "500M";
-    })
-    //找车
-    .controller("searchCarController",function($scope,$rootScope,$location,$state,registerService,$interval,$window,$timeout){
-        $rootScope.colorfff3 = true;
-        $rootScope.coloryyy3 = false;
-        //console.log("日期："+new Date(1480933999000));
-        $scope.searchPassBackBtn = function(){
-            window.history.go(-1);
-        };
-        $scope._topnot=(parseFloat($rootScope.windoWHeihgt) - 120)/2 +"px";
-        //console.log($scope._top);
-
-        $scope.modelpositionStnot = {
-            "top":$scope._topnot
-        };
-        //$rootScope.checkConnection();
-        $scope._top=(parseFloat($rootScope.windoWHeihgt) - 150)/2 +"px";
-
-        //console.log($scope._top);
-        $scope.modelpositionSt = {
-            "top":$scope._top
-        };
-        function prostatus(){
-            //return false;
-        }
-        //$scope.initfalseapp= {"toggle":false};
-        prostatus();
-        //$scope.initfalseapp= {"toggle":false};
-        $scope.bellcontent = "获取中";
-
-        //console.log(1);
-        try {
-            //在这里运行代码
-            //if(AMap){
-            //$rootScope.maproot("tripmapcontainer");
-            //map.clearMap();
-
-            var localgetarr = window.localStorage.getItem("mapcenterpoint");
-
-
-                if(!localgetarr){
-                    var followmap =  new AMap.Map('tripmapid',{
-                        zoom:20,
-                        center: [116.397428, 39.90923]
-                    });
-
-                }else{
-                    console.log(localgetarr.split(","));
-                    var followmap =  new AMap.Map('tripmapid',{
-                        zoom:20,
-                        center: localgetarr.split(",")
-                    });
-                    console.log(followmap);
-                }
-            //$timeout(function(){
-            //    $rootScope.mapfunc();
-            //},10)
-
-
-            AMap.plugin(['AMap.ToolBar','AMap.Scale'],
-                function(){
-                    var toolbar = new AMap.ToolBar({
-                        liteStyle:true
-                    });
-                    followmap.addControl(toolbar);
-                    followmap.addControl(new AMap.Scale());
-                });
-            $scope.initfalseapp= {"toggle":false};
-            //}
-
-
-        }catch(err) {
-            //在这里处理错误
-                $scope.initfalseapp= {"toggle":true};
-                //$scope.subapp= {"toggle":true};
-
-                $scope.goSubmitPage= function(){
-                    window.location.replace("index.html");
-                    $scope.initfalseapp= {"toggle":false};
-                };
-                $scope.gomainhomePage = function(){
-                    $state.go("mains.home");
-                    $scope.initfalseapp= {"toggle":false};
-                }
-
-        }
-        //获取蜂鸣器的状态
-        $scope.carstatusbellObj = {
-            seq:registerService.randomsix(),
-            uid:$window.sessionStorage.getItem("Uid")
-        }
-        $scope.carstatusbellUrl = "/rest/Vehicles/state";
-        //获取蜂鸣器的状态
-        $scope.bellstatus = function(){
-            $scope.bellcontent = "获取中";
-            $scope.loadapp = {"toggle":true};
-            $scope.belldis= true;
-            $scope.bellcarGery = true;
-            registerService.commonUser($scope.carstatusbellObj,$scope.carstatusbellUrl).then(function(e){
-                $scope.loadapp = {"toggle":false};
-                $scope.belldis= false;
-                $scope.bellcarGery = false;
-                console.log(e);
-                if(e.status == true){
-                    if(e.db2 == 0){
-                        $scope.bellcontent = "开蜂鸣";
-                    }else if(e.db2 == 1){
-                        $scope.bellcontent = "关蜂鸣";
-                    }
-                }else{
-                    $scope.bellcontent = "点击获取";
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = e.reason+"！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                }
-            },function(err){
-                $scope.loadapp = {"toggle":false};
-                $timeout(function(){
-                    $scope.belldis= false;
-                    $scope.bellcarGery = false;
-                },200)
-
-                $scope.bellcontent = "点击获取";
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-                console.log("蜂鸣状态")
-            })
-        };
-        var searchcarlocationObj = {
-            userUid:$window.sessionStorage.getItem("Uid")
-        };
-        //获取用户的位置
-        function followuserlocationfun(){
-            //$scope.loadapp = {"toggle":true};
-            $scope.realtimedis= true;
-            $scope.realtimecolorgrey = true;
-            $scope.belldis= true;
-            $scope.bellcarGery = true;
-            //$scope.followmegrey = false;
-            AMap.plugin(['AMap.Geolocation'], function(){
-                var geolocation = new AMap.Geolocation({
-                    enableHighAccuracy: true,//是否使用高精度定位，默认:true
-                    //超过10秒后停止定位，默认：无穷大
-                    //maximumAge: 0,           //定位结果缓存0毫秒，默认：0
-                    convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
-                    showButton: true,        //显示定位按钮，默认：true
-                    //buttonDom:"<p></p>",
-                    buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
-                    buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-                    showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
-                    showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
-                    panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
-                    zoomToAccuracy:true,      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-                    //enableHighAccuracy: true,//是否使用高精度定位，默认:true
-                    timeout: 10000         //超过10秒后停止定位，默认：无穷大
-                    //buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-                    //zoomToAccuracy: true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-                    //buttonPosition:'RB'
-                });
-                followmap.addControl(geolocation);
-                console.log(geolocation);
-                geolocation.getCurrentPosition();
-                AMap.event.addListener(geolocation, 'complete', onComplete);//返回定位信息
-                AMap.event.addListener(geolocation, 'error', onError);      //返回定位出错信息
-
-                //map.addControl(toolbar);
-                console.log("定位");
-                //map.addControl(new AMap.Scale());
-
-
-
-            });
-            function onComplete(data){
-                console.log(data);
-                //$scope.loadapp = {"toggle":false};
-                //$scope.forfollowme = false;
-                $scope.userlocation = [data.position.lng, data.position.lat];
-                console.log("用户的位置"+$scope.userlocation);
-                //var caraddresslocation = registerService.covertAddress($scope.carlocation);
-                //console.log(caraddresslocation);
-                //var s = [121.1111,31.111];
-                AMap.service('AMap.Geocoder',function(){//回调函数
-                    //实例化Geocoder
-                    var caraddresslocation = new AMap.Geocoder({
-                    });
-
-                    var caraddressname = caraddresslocation.getAddress($scope.userlocation, function(status, result) {
-                        console.log(status);
-                        console.log(result);
-                        if (status === 'complete'&& result.info === 'OK') {
-                            console.log(result.regeocode.formattedAddress);
-                            content = "<div class='locationmarkerC' >"+"用户的位置: "+result.regeocode.formattedAddress+"</div>"
-                            locationmarker = new AMap.Marker({
-                                content:content,
-                                position:$scope.userlocation,
-                                offset : new AMap.Pixel(-70,-55),
-                                map:followmap
-                            });
-
-                            AMap.service('AMap.Walking',function(){//回调函数
-                                //实例化Walking
-                                var walking= new AMap.Walking({
-                                    map: followmap
-                                    //panel: "panel"
-                                });
-                                console.log("路程里："+$scope.userlocation, $scope.carlocation);
-
-                                //TODO: 使用walking对象调用步行路径规划相关的功能
-                                walking.search($scope.userlocation, $scope.carlocation);
-                                var markfollowcarl = new AMap.Marker({
-                                    map: followmap,
-                                    position: $scope.carlocation,
-                                    icon: "img/bike1.png",
-                                    offset: new AMap.Pixel(-13, -32)
-                                    //autoRotation: true
-                                });
-                                var markfollowmel = new AMap.Marker({
-                                    map: followmap,
-                                    position: $scope.userlocation,
-                                    icon: "img/pers1.png",
-                                    offset: new AMap.Pixel(-13, -32)
-                                    //autoRotation: true
-                                });
-
-                            });
-                            //根据起终点坐标规划步行路线
-                            console.log("解析成功");
-                            console.log($scope.userlocation);
-                            $timeout(function(){
-                                $scope.followmedis = false;
-                                $scope.realtimedis= false;
-                                $scope.realtimecolorgrey = false;
-                                $scope.followmegrey = false;
-                                $scope.belldis= false;
-                                $scope.bellcarGery = false;
-                            },200)
-
-                            //$scope.loadapp = {"toggle":false};
-                        }else{
-                            content = "<div class='locationmarkerC' >获取用户信息失败</div>"
-                            locationmarker = new AMap.Marker({
-                                content:content,
-                                position:$scope.carlocation,
-                                offset : new AMap.Pixel(-190,-55),
-                                map:followmap
-                            });
-                            $timeout(function(){
-                                $scope.followmedis = false;
-                                $scope.realtimedis= false;
-                                $scope.realtimecolorgrey = false;
-                                $scope.followmegrey = false;
-                                $scope.belldis= false;
-                                $scope.bellcarGery = false;
-                            },200)
-                        }
-                    });
-                })
-
-            }
-            function onError(){
-                $scope.forfollowme = false;
-                //$scope.loadapp = {"toggle":false};
-                var str = '定位失败,';
-                str += '错误信息：';
-                switch(data.info) {
-                    case 'PERMISSION_DENIED':
-                        str += '浏览器阻止了定位操作';
-                        break;
-                    case 'POSITION_UNAVAILBLE':
-                        str += '无法获得当前位置';
-                        break;
-                    case 'TIMEOUT':
-                        str += '定位超时';
-                        break;
-                    default:
-                        str += '未知错误';
-                        break;
-                }
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = str+"!";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-                $scope.followmedis = false;
-                $scope.realtimedis= false;
-                $scope.realtimecolorgrey = false;
-                $scope.followmegrey = false;
-                $scope.belldis= false;
-                $scope.bellcarGery = false;
-            }
-        };
-        $scope.bellstatus();
-        //获取车辆的位置
-        function timesearchcar(){
-            $scope.realtimedis= true;
-            $scope.followmedis = true;
-            $scope.realtimecolorgrey = true;
-            $scope.followmegrey = true;
-            $scope.belldis= true;
-            $scope.bellcarGery = true;
-            var searchcarlocationUrl = "/rest/gps/latest/";
-            $scope.loadapp = {"toggle":true};
-            registerService.commonUserget(searchcarlocationObj,searchcarlocationUrl).then(function(e){
-
-                $scope.loadapp = {"toggle":false};
-                if(e.status == true){
-                    console.log(e.gps);
-                    function carlocationbasestationcarfunc(obj){
-                        AMap.convertFrom(obj,"gps",function(status,result){
-                        //AMap.convertFrom(covertlnglats,"gps",function(status,result){
-                            console.log("gps定位："+result.locations,result.info);
-                            $scope.carlocation = [e.gps.lng/1000000,e.gps.lat/1000000];
-                            function carlocationcoverfun(){
-                                AMap.service('AMap.Geocoder',function() {
-                                    $scope.startwarningadd = new AMap.Geocoder({
-
-                                    });
-                                    var caraddressname = $scope.startwarningadd.getAddress($scope.carlocation, function (status, result) {
-                                        console.log("ghahah"+status);
-                                        console.log(result);
-                                        if (status === 'complete' && result.info === 'OK') {
-                                            console.log(result.regeocode.formattedAddress);
-                                            //return result.regeocode.formattedAddress;
-                                            console.log($scope.carlocation);
-                                            //map.clearMap();
-                                            followmap = new AMap.Map('tripmapid',{
-                                                zoom:20,
-                                                center: $scope.carlocation
-                                            });
-                                            //followmap.center = $scope.carlocation;
-                                            //followmap = $rootScope.maploadfun('tripmapid',$scope.carlocation);
-                                            carmarker = new AMap.Marker({
-                                                position : $scope.carlocation,
-                                                map : followmap
-                                            });
-                                            console.log($scope.carlocation);
-                                            content = "<div class='locationmarkerC' >" + "车辆位置: " + result.regeocode.formattedAddress + "</div>";
-                                            carmarker = new AMap.Marker({
-                                                content: content,
-                                                position: $scope.carlocation,
-                                                offset : new AMap.Pixel(-77,-55),
-                                                map: followmap
-                                            });
-
-                                            AMap.plugin(['AMap.ToolBar','AMap.Scale'],
-                                                function(){
-                                                    var toolbar = new AMap.ToolBar({
-                                                        liteStyle:true
-                                                    });
-
-                                                    followmap.addControl(toolbar);
-                                                    console.log("定位");
-                                                    followmap.addControl(new AMap.Scale());
-                                                    //geolocation.getCurrentPosition();
-                                                });
-
-                                        } else {
-                                            //map.clearMap();
-                                            //followmap = new AMap.Map('tripmapid',{
-                                            //    zoom:20,
-                                            //    center: $scope.carlocation
-                                            //});
-                                            followmap.center = $scope.carlocation;
-                                            //followmap = $rootScope.maploadfun('tripmapid',$scope.carlocation);
-                                            marker = new AMap.Marker({
-                                                position : $scope.carlocation,
-                                                map : followmap
-                                            });
-                                            content = "<div class='locationmarkerC' >获取车辆位置信息失败</div>"
-                                            locationmarker = new AMap.Marker({
-                                                content: content,
-                                                position: $scope.carlocation,
-                                                offset: new AMap.Pixel(-70, -55),
-                                                map: followmap
-                                            });
-                                            //return falsealarm;
-                                        }
-                                        //console.log(result);
-                                    });
-                                });
-                            }
-                            if(result.info === 'ok'){
-                                $scope.carlocation = result.locations[0];
-                                window.localStorage.setItem("mapcenterpoint",$scope.carlocation);
-                                carlocationcoverfun();
-                                if($scope.forfollowme == true){
-                                    $scope.realtimedis= true;
-                                    $scope.realtimecolorgrey = true;
-                                    $scope.belldis= true;
-                                    $scope.bellcarGery = true;
-                                    //$scope.followmegrey = false;
-                                    followuserlocationfun();
-                                }else{
-                                    $scope.realtimedis= false;
-                                    $scope.realtimecolorgrey = false;
-                                    $scope.belldis= false;
-                                    $scope.bellcarGery = false;
-                                    //$scope.followmegrey = false;
-                                }
-                            }else{
-                                $scope.carlocation = [e.gps.lng/1000000,e.gps.lat/1000000];
-                                window.localStorage.setItem("mapcenterpoint",$scope.carlocation);
-                                carlocationcoverfun();
-                                if($scope.forfollowme == true){
-                                    $scope.realtimedis= true;
-                                    $scope.realtimecolorgrey = true;
-                                    $scope.belldis= true;
-                                    $scope.bellcarGery = true;
-                                    //$scope.followmegrey = false;
-                                    followuserlocationfun();
-                                }else{
-                                    $scope.realtimedis= false;
-                                    $scope.realtimecolorgrey = false;
-                                    $scope.belldis= false;
-                                    $scope.bellcarGery = false;
-                                    //$scope.followmegrey = false;
-                                }
-                            }
-
-                        });
-                    }
-                    if(e.gps.lng !=0 && e.gps.lat !=0){
-                        $scope.lngsearche = e.gps.lng;
-                        $scope.latsearche = e.gps.lat;
-                        var covertlnglats = [e.gps.lng/1000000,e.gps.lat/1000000];
-                        carlocationbasestationcarfunc(covertlnglats)
-                        //AMap.convertFrom(covertlnglats,"gps",function(status,result){
-                        //    console.log("gps定位："+result.locations,result.info);
-                        //    $scope.carlocation = [e.gps.lng/1000000,e.gps.lat/1000000];
-                        //    function carlocationcoverfun(){
-                        //        AMap.service('AMap.Geocoder',function() {
-                        //            $scope.startwarningadd = new AMap.Geocoder({
-                        //
-                        //            });
-                        //            var caraddressname = $scope.startwarningadd.getAddress($scope.carlocation, function (status, result) {
-                        //                console.log("ghahah"+status);
-                        //                console.log(result);
-                        //                if (status === 'complete' && result.info === 'OK') {
-                        //                    console.log(result.regeocode.formattedAddress);
-                        //                    //return result.regeocode.formattedAddress;
-                        //                    console.log($scope.carlocation);
-                        //                    //map.clearMap();
-                        //                    //followmap = new AMap.Map('tripmapid',{
-                        //                    //    zoom:20,
-                        //                    //    center: $scope.carlocation
-                        //                    //});
-                        //                    followmap.center = $scope.carlocation;
-                        //                    //followmap = $rootScope.maploadfun('tripmapid',$scope.carlocation);
-                        //                    carmarker = new AMap.Marker({
-                        //                        position : $scope.carlocation,
-                        //                        map : followmap
-                        //                    });
-                        //                    console.log($scope.carlocation);
-                        //                    content = "<div class='locationmarkerC' >" + "车辆位置: " + result.regeocode.formattedAddress + "</div>";
-                        //                    carmarker = new AMap.Marker({
-                        //                        content: content,
-                        //                        position: $scope.carlocation,
-                        //                        offset : new AMap.Pixel(-77,-55),
-                        //                        map: followmap
-                        //                    });
-                        //
-                        //                    AMap.plugin(['AMap.ToolBar','AMap.Scale'],
-                        //                        function(){
-                        //                            var toolbar = new AMap.ToolBar({
-                        //                                liteStyle:true
-                        //                            });
-                        //
-                        //                            followmap.addControl(toolbar);
-                        //                            console.log("定位");
-                        //                            followmap.addControl(new AMap.Scale());
-                        //                            //geolocation.getCurrentPosition();
-                        //                        });
-                        //
-                        //                } else {
-                        //                    //map.clearMap();
-                        //                    //followmap = new AMap.Map('tripmapid',{
-                        //                    //    zoom:20,
-                        //                    //    center: $scope.carlocation
-                        //                    //});
-                        //                    followmap.center = $scope.carlocation;
-                        //                    //followmap = $rootScope.maploadfun('tripmapid',$scope.carlocation);
-                        //                    marker = new AMap.Marker({
-                        //                        position : $scope.carlocation,
-                        //                        map : followmap
-                        //                    });
-                        //                    content = "<div class='locationmarkerC' >获取车辆位置信息失败</div>"
-                        //                    locationmarker = new AMap.Marker({
-                        //                        content: content,
-                        //                        position: $scope.carlocation,
-                        //                        offset: new AMap.Pixel(-70, -55),
-                        //                        map: followmap
-                        //                    });
-                        //                    //return falsealarm;
-                        //                }
-                        //                //console.log(result);
-                        //            });
-                        //        });
-                        //    }
-                        //    if(result.info === 'ok'){
-                        //        $scope.carlocation = result.locations[0];
-                        //        window.localStorage.setItem("mapcenterpoint",$scope.carlocation);
-                        //        carlocationcoverfun();
-                        //        if($scope.forfollowme == true){
-                        //            $scope.realtimedis= true;
-                        //            $scope.realtimecolorgrey = true;
-                        //            $scope.belldis= true;
-                        //            $scope.bellcarGery = true;
-                        //            //$scope.followmegrey = false;
-                        //            followuserlocationfun();
-                        //        }else{
-                        //            $scope.realtimedis= false;
-                        //            $scope.realtimecolorgrey = false;
-                        //            $scope.belldis= false;
-                        //            $scope.bellcarGery = false;
-                        //            //$scope.followmegrey = false;
-                        //        }
-                        //    }else{
-                        //        $scope.carlocation = [e.gps.lng/1000000,e.gps.lat/1000000];
-                        //        window.localStorage.setItem("mapcenterpoint",$scope.carlocation);
-                        //        carlocationcoverfun();
-                        //        if($scope.forfollowme == true){
-                        //            $scope.realtimedis= true;
-                        //            $scope.realtimecolorgrey = true;
-                        //            $scope.belldis= true;
-                        //            $scope.bellcarGery = true;
-                        //            //$scope.followmegrey = false;
-                        //            followuserlocationfun();
-                        //        }else{
-                        //            $scope.realtimedis= false;
-                        //            $scope.realtimecolorgrey = false;
-                        //            $scope.belldis= false;
-                        //            $scope.bellcarGery = false;
-                        //            //$scope.followmegrey = false;
-                        //        }
-                        //    }
-                        //
-                        //});
-                        console.log(e.gps.lng/1000000,e.gps.lat/1000000);
-
-
-
-
-
-////////////////////////////////这里要加基站定位的代码
-                    }else {
-                        $scope.followmedis = false;
-                        $scope.realtimedis= false;
-                        $scope.realtimecolorgrey = false;
-                        $scope.followmegrey = false;
-                        $scope.belldis= false;
-                        $scope.bellcarGery = false;
-                        $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = "获取车辆位置失败！";
-                        $timeout(function(){
-                            $scope.subapp= {"toggle":false};
-                        },2000);
-                    }
-
-                }else{
-                    $scope.followmedis = false;
-                    $scope.realtimedis= false;
-                    $scope.realtimecolorgrey = false;
-                    $scope.followmegrey = false;
-                    $scope.belldis= false;
-                    $scope.bellcarGery = false;
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = e.reason+"！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                }
-            },function(err){
-                $scope.followmedis = false;
-                $scope.realtimedis= false;
-                $scope.realtimecolorgrey = false;
-                $scope.followmegrey = false;
-                $scope.belldis= true;
-                $scope.bellcarGery = true;
-                //$scope.followmedis = true;
-                //$scope.followmegrey = true;
-                $scope.loadapp = {"toggle":false};
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-            });
-        };
-        $scope.forfollowme = false;
-        timesearchcar();
-        //点击蜂鸣器，开启或者关闭蜂鸣器
-        $scope.bellyesornobtn = function(){
-            $scope.bellUrl = "/rest/Vehicles/operation";
-            $scope.loadapp = {"toggle":true};
-            registerService.commonUser($scope.bellObj,$scope.bellUrl).then(function(e){
-                $scope.loadapp = {"toggle":false};
-                console.log("第一种："+$scope.bellObj);
-                $scope.belldis= false;
-                $scope.bellcarGery = false;
-                if(e.status == true){
-
-                    if($scope.bellcontent == "开蜂鸣"){
-                        if(e.db1==0){
-                            $scope.hahaapp= {"toggle":true};
-                            $scope.submithappy = "蜂鸣开启！";
-                            $scope.bellcontent= "关蜂鸣";
-                            $timeout(function(){
-                                $scope.hahaapp= {"toggle":false};
-                            },2000);
-                        }
-
-                    }else if($scope.bellcontent == "关蜂鸣"){
-                        if(e.db1==0){
-                            $scope.hahaapp= {"toggle":true};
-                            $scope.submithappy = "蜂鸣关闭！";
-                            $scope.bellcontent= "开蜂鸣";
-                            $timeout(function(){
-                                $scope.hahaapp= {"toggle":false};
-                            },2000);
-                        }
-                    }
-                }else{
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = e.reason+"！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                }
-            },function(err){
-                $scope.loadapp = {"toggle":false};
-                console.log("第一种："+$scope.bellObj);
-                $scope.belldis= false;
-                $scope.bellcarGery = false;
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-                console.log("点击蜂鸣按钮")
-            });
-        }
-        //蜂鸣器
-
-        $scope.belldis= false;
-        $scope.bellcarGery = false;
-        //点击蜂鸣器按钮
-        $scope.searchcarbellbtn = function(){
-            $scope.belldis= true;
-            $scope.bellcarGery = true;
-            if($scope.bellcontent == "开蜂鸣"){
-                $scope.bellObj= {
-                    uid:$window.sessionStorage.getItem("Uid"),
-                    operationType:3,
-                    operation:1,
-                    seq:registerService.randomsix()
-
-                };
-                $scope.bellyesornobtn();
-
-            }else if($scope.bellcontent == "关蜂鸣"){
-                $scope.bellObj= {
-                    uid:$window.sessionStorage.getItem("Uid"),
-                    operationType:3,
-                    operation:0,
-                    seq:registerService.randomsix()
-                };
-                $scope.bellyesornobtn();
-            }else if($scope.bellcontent == "点击获取"){
-                $scope.bellstatus();
-                console.log("点击了点击获取")
-            }
-
-
-
-        };
-
-        //console.log("测试后台数据的时间："+new Date(1481001449000));
-        //定位车辆
-        $scope.followmedis = false;
-        //console.log("后台要的数据："+ new Date(1481001454000));
-        //跟我走
-        $scope.searchcarfollowmebtn = function(){
-            //步行导航
-            followmap.clearMap();
-            console.log("跟我走");
-            $scope.forfollowme = true;
-
-            $scope.belldis= true;
-            $scope.bellcarGery = true;
-            //$scope.followmedis = true;
-            //$scope.followmegrey = true;
-            $scope.followmedis = true;
-            $scope.realtimedis= true;
-            $scope.realtimecolorgrey = true;
-            $scope.followmegrey = true;
-            timesearchcar();
-            //if( $scope.lngsearche != 0 && $scope.latsearche != 0){
-            //
-            //    //$scope.followmedis = true;
-            //    //AMap.plugin(['AMap.Geolocation'], function(){
-            //    //    var geolocation = new AMap.Geolocation({
-            //    //        enableHighAccuracy: true,//是否使用高精度定位，默认:true
-            //    //        //超过10秒后停止定位，默认：无穷大
-            //    //        //maximumAge: 0,           //定位结果缓存0毫秒，默认：0
-            //    //        convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
-            //    //        showButton: true,        //显示定位按钮，默认：true
-            //    //        //buttonDom:"<p></p>",
-            //    //        buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
-            //    //        buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-            //    //        showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
-            //    //        showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
-            //    //        panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
-            //    //        zoomToAccuracy:true,      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-            //    //        //enableHighAccuracy: true,//是否使用高精度定位，默认:true
-            //    //        timeout: 10000         //超过10秒后停止定位，默认：无穷大
-            //    //        //buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-            //    //        //zoomToAccuracy: true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-            //    //        //buttonPosition:'RB'
-            //    //    });
-            //    //    map.addControl(geolocation);
-            //    //    console.log(geolocation);
-            //    //    geolocation.getCurrentPosition();
-            //    //    AMap.event.addListener(geolocation, 'complete', onComplete);//返回定位信息
-            //    //    AMap.event.addListener(geolocation, 'error', onError);      //返回定位出错信息
-            //    //
-            //    //    //map.addControl(toolbar);
-            //    //    console.log("定位");
-            //    //    //map.addControl(new AMap.Scale());
-            //    //
-            //    //
-            //    //
-            //    //});
-            //    //function onComplete(data){
-            //    //    console.log(data);
-            //    //
-            //    //    $scope.userlocation = [data.position.lng, data.position.lat];
-            //    //    console.log("用户的位置"+$scope.userlocation);
-            //    //    //var caraddresslocation = registerService.covertAddress($scope.carlocation);
-            //    //    //console.log(caraddresslocation);
-            //    //    //var s = [121.1111,31.111];
-            //    //    AMap.service('AMap.Geocoder',function(){//回调函数
-            //    //        //实例化Geocoder
-            //    //        var caraddresslocation = new AMap.Geocoder({
-            //    //        });
-            //    //
-            //    //        var caraddressname = caraddresslocation.getAddress($scope.userlocation, function(status, result) {
-            //    //            console.log(status);
-            //    //            console.log(result);
-            //    //            if (status === 'complete'&& result.info === 'OK') {
-            //    //                console.log(result.regeocode.formattedAddress);
-            //    //                content = "<div class='locationmarkerC' >"+"用户的位置: "+result.regeocode.formattedAddress+"</div>"
-            //    //                locationmarker = new AMap.Marker({
-            //    //                    content:content,
-            //    //                    position:$scope.userlocation,
-            //    //                    offset : new AMap.Pixel(-70,-55),
-            //    //                    map:map
-            //    //                });
-            //    //                AMap.service('AMap.Walking',function(){//回调函数
-            //    //                    //实例化Walking
-            //    //                    var walking= new AMap.Walking({
-            //    //                        map: map
-            //    //                        //panel: "panel"
-            //    //                    });
-            //    //                    console.log("路程里："+$scope.userlocation, $scope.carlocation)
-            //    //                    //TODO: 使用walking对象调用步行路径规划相关的功能
-            //    //                    walking.search($scope.userlocation, $scope.carlocation);
-            //    //                })
-            //    //                //根据起终点坐标规划步行路线
-            //    //                console.log("解析成功");
-            //    //                console.log($scope.userlocation);
-            //    //                $scope.followmedis = false;
-            //    //            }else{
-            //    //                content = "<div class='locationmarkerC' >获取用户信息失败</div>"
-            //    //                locationmarker = new AMap.Marker({
-            //    //                    content:content,
-            //    //                    position:$scope.carlocation,
-            //    //                    offset : new AMap.Pixel(-190,-55),
-            //    //                    map:map
-            //    //                });
-            //    //                $scope.followmedis = false;
-            //    //            }
-            //    //        });
-            //    //    })
-            //    //
-            //    //}
-            //    //function onError(){
-            //    //    var str = '定位失败,';
-            //    //    str += '错误信息：';
-            //    //    switch(data.info) {
-            //    //        case 'PERMISSION_DENIED':
-            //    //            str += '浏览器阻止了定位操作';
-            //    //            break;
-            //    //        case 'POSITION_UNAVAILBLE':
-            //    //            str += '无法获得当前位置';
-            //    //            break;
-            //    //        case 'TIMEOUT':
-            //    //            str += '定位超时';
-            //    //            break;
-            //    //        default:
-            //    //            str += '未知错误';
-            //    //            break;
-            //    //    }
-            //    //    $scope.subapp= {"toggle":true};
-            //    //    $scope.submitWarning = str+"!";
-            //    //    $timeout(function(){
-            //    //        $scope.subapp= {"toggle":false};
-            //    //    },2000);
-            //    //    $scope.followmedis = false;
-            //    //}
-            //
-            //}else if($scope.lngsearche == 0){
-            //    $scope.subapp= {"toggle":true};
-            //    $scope.submitWarning = "获取车辆位置失败！";
-            //    $timeout(function(){
-            //        $scope.subapp= {"toggle":false};
-            //    },2000);
-            //}else {
-            //    console.log($scope);
-            //    $scope.hahaapp= {"toggle":true};
-            //    $scope.submitWarning = "请稍等，正在获取您的位置！";
-            //    $timeout(function(){
-            //        $scope.hahaapp= {"toggle":false};
-            //    },2000);
-            //    console.log("错误")
-            //}
-        };
-        //实时追踪
-        $scope.realtimeword = "实时追踪";
-        $scope.realtimecolorgrey = false;
-        $scope.followmegrey = false;
-        $scope.realtimedis= false;
-        //基站定位不可点击
-        $scope.baseStationGery = true;
-        $scope.baseStationdis = true;
-        $scope.realtimearr = [];
-        //开启实时追踪
-        function realtimefunc(){
-            $scope.loadapp = {"toggle":true};
-            var realtimeObj = {
-                uid:$window.sessionStorage.getItem("Uid"),
-                seconds:5,
-                durationtime:300,
-                seq:registerService.randomsix()
-            };
-            var realtimeUrl = "/rest/gps/tracking/";
-            registerService.commonUserget(realtimeObj,realtimeUrl).then(function(e){
-                $scope.realtimedis= false;
-                $scope.realtimecolorgrey = false;
-                $scope.belldis= false;
-                $scope.bellcarGery = false;
-                $scope.followmedis = false;
-                $scope.followmegrey = false;
-                //基站定位可点击
-                $scope.baseStationGery = false;
-                $scope.baseStationdis = false;
-                //$scope.followmegrey = false;
-                $scope.loadapp = {"toggle":false};
-                if(e.status == true){
-                    //倒计时
-                    //$scope.realtimecolorgrey = false;
-                    //$scope.followmegrey = true;
-                    var realcountdownnumber = 300;
-                    function intervalcountdownfun(){
-                        if(realcountdownnumber>0){
-                            $scope.realcountdownnum = registerService.countdownnumf(realcountdownnumber);
-                            realcountdownnumber--;
-                        }else{
-                            $scope.realcountdownnum = "";
-                            $interval.cancel($scope.countdowntimers);
-                            $interval.cancel($scope.realtimers);
-                            $scope.realtimeword = "实时追踪";
-                            $scope.followmegrey = false;
-                            $scope.followmedis = false;
-                            //基站定位不可点击
-                            $scope.baseStationGery = true;
-                            $scope.baseStationdis = true;
-                        }
-
-                    };
-                    intervalcountdownfun();
-                    $scope.countdowntimers = $interval(intervalcountdownfun,1000);
-                    //实时追踪开启的时候，follow me disabled
-                    $scope.followmedis = true;
-                    //$scope.realtimecolorgrey = false;
-                    $scope.followmegrey = true;
-                    $scope.hahaapp = {"toggle":true};
-                    $scope.submithappy = "实时追踪已经开启！";
-                    $timeout(function(){
-                        $scope.hahaapp= {"toggle":false};
-                    },2000);
-                    $scope.realtimeword = "点击关闭";
-
-                    $scope.timeinvalRealfun =function(){
-                        $scope.realtimenumnum++;
-                        if($scope.realtimenumnum >= 61){
-                            $interval.cancel($scope.realtimers);
-                            $scope.realtimeword = "实时追踪";
-                            $scope.followmegrey = false;
-                            $scope.followmedis = false;
-                            //基站定位不可点击
-                            $scope.baseStationGery = true;
-                            $scope.baseStationdis = true;
-
-                        }else{
-                            var realcarlocationObj = {
-                                userUid:$window.sessionStorage.getItem("Uid")
-                            };
-                            var realcarlocationUrl = "/rest/gps/latest/";
-                            registerService.commonUserget(realcarlocationObj,realcarlocationUrl).then(function(e){
-                                if(e.status == true){
-                                    console.log("实时追踪获取的e："+JSON.stringify(e));
-                                    if(e.gps.lng !=0 && e.gps.lat!=0){
-
-                                        var timediffgpsnew = new Date() - e.gps.gpsTime;
-                                        console.log("获取到数据的时间和此时的时间的差值:"+timediffgpsnew);
-                                        if($scope.realtimenumnum == 1 && timediffgpsnew>40000){
-                                        }else{
-                                            var realgpscovergd = [e.gps.lng/1000000, e.gps.lat/1000000];
-                                            AMap.convertFrom(realgpscovergd,"gps",function(status,result){
-                                                if(result.info === 'ok'){
-                                                    var newreallocation = result.locations[0];
-                                                    window.localStorage.setItem("mapcenterpoint",newreallocation)
-                                                }else {
-                                                    var newreallocation = realgpscovergd;
-                                                    window.localStorage.setItem("mapcenterpoint",newreallocation)
-                                                }
-                                                console.log($scope.arrrealtime);
-                                                $scope.arrrealtime.push(newreallocation);//把数据push进去，画图
-                                                followmap.clearMap();
-                                                //followmap.remove(followmappoly);
-                                                //markReal.setMap(null)
-                                                var followmappoly = new AMap.Polyline({
-                                                    map: followmap,
-                                                    path: $scope.arrrealtime,
-                                                    strokeColor: "#00A",  //线颜色
-                                                    strokeOpacity: 1,     //线透明度
-                                                    strokeWeight: 3,      //线宽
-                                                    strokeStyle: "solid"  //线样式
-                                                });
-                                                markReal = new AMap.Marker({
-                                                    map: followmap,
-                                                    position: $scope.arrrealtime[$scope.arrrealtime.length-1],
-                                                    icon: "img/bike1.png",
-                                                    offset: new AMap.Pixel(-9, -32)
-                                                    //autoRotation: true
-                                                });
-                                                try {
-                                                    followmap.setFitView();
-                                                }catch (err){
-                                                    console.log(err.message);
-                                                }
-                                            });
-                                        }
-
-
-                                    }else{
-                                        if($scope.arrrealtime.length == 0 || $scope.realtimenumnum == 1){
-                                            $scope.subapp= {"toggle":true};
-                                            $scope.submitWarning = "获取GPS数据有误！";
-                                            $timeout(function(){
-                                                $scope.subapp= {"toggle":false};
-                                            },2000);
-                                        }
-                                    };
-                                    //var basestaarr = [];
-                                    //var basearr1 = [121.446982,31.293449];
-                                    //var basearr2 = [121.446984,31.293449];
-                                    //var basearr3 = [121.446982,31.293446];
-                                    //basestaarr.push(basearr1);
-                                    //basestaarr.push(basearr2);
-                                    //basestaarr.push(basearr3);
-                                    //var followmappolybase = new AMap.Polyline({
-                                    //    map: followmap,
-                                    //    path: basestaarr,
-                                    //    strokeColor: "#000",  //线颜色
-                                    //    strokeOpacity: 1,     //线透明度
-                                    //    strokeWeight: 5,      //线宽
-                                    //    strokeStyle: "solid"  //线样式
-                                    //});
-                                    //var markRealbase = new AMap.Marker({
-                                    //    map: followmap,
-                                    //    position: basearr3,
-                                    //    icon: "img/bike2.png",
-                                    //    offset: new AMap.Pixel(-9, -32)
-                                    //    //autoRotation: true
-                                    //});
-                                    //try {
-                                    //    followmap.setFitView();
-                                    //}catch (err){
-                                    //    console.log(err.message);
-                                    //}
-
-                                    //if(e.gps.lac!=0 && e.gps.ci!=0){
-                                        //var baseStationopenObj = {
-                                        //    mcc:460,
-                                        //    mnc: e.mnc,
-                                        //    lac: e.gps.lac,
-                                        //    ci: e.gps.ci,
-                                        //    _callback:"CALL_BACK"
-                                        //};
-                                        //var baseStationopenUrl = "http://api.cellocation.com/cell/";
-                                        //function jsonpfunc(data,url){
-                                        //    var param = "";
-                                        //    for(var i in data){
-                                        //        param += i+'='+data[i]+'&';
-                                        //    };
-                                        //    param = param.slice(0,param.length-1);
-                                        //    console.log("基点定位param:"+param);
-                                        //    url +='?'+param;
-                                        //    console.log("基点定位url:"+url);
-                                        //    var domScript = document.createElement('script');
-                                        //    domScript.src = url;
-                                        //    domScript.type = "text/javascript";
-                                        //    console.log(domScript);
-                                        //    document.getElementsByTagName('head').item(0).appendChild(domScript);
-                                        //    console.log(domScript);
-                                        //};
-                                        //jsonpfunc(baseStationopenObj,baseStationopenUrl);
-                                        //console.log(11111);
-                                        //function CALLBACK(e){
-                                        //    console.log(222222);
-                                        //    console.log("基站定位的e"+e)
-                                        //}
-
-
-                                        //$.ajax({
-                                        //    type:"get",
-                                        //    url:'http://api.cellocation.com/cell/?mcc=460&mnc='+ e.mnc+'&lac='+e.gps.lac+'&ci='+e.gps.ci+'&output=json&callback=basestationcallback',
-                                        //    dataType:"jsonp",
-                                        //    success:function(e){
-                                        //        console.log(e);
-                                        //    },
-                                        //    error:function(){
-                                        //        console.log("基站接口error");
-                                        //    }
-                                        //})
-
-
-
-                                        //var jsonpcommonUrl = 'http://api.cellocation.com/cell/?mcc=460&mnc='+e.mnc+'&lac='+e.gps.lac+'&ci='+e.gps.ci+'&output=json&jsonp=JSON_CALLBACK';
-                                        //registerService.jsonpcommon(jsonpcommonUrl).then(function(e){
-                                        //    console.log("基站定位的e："+e)
-                                        //},function(err){
-                                        //    console.log("进来了，，错误");
-                                        //})
-                                    //}else {
-                                    //    $scope.subapp = {"toggle": true};
-                                    //    $scope.submitWarning = "无基站定位查询结果！";
-                                    //    $timeout(function () {
-                                    //        $scope.subapp = {"toggle": false};
-                                    //    }, 2000);
-                                    //}
-
-
-
-
-                                }else{
-                                    $scope.subapp= {"toggle":true};
-                                    $scope.submitWarning = e.reason+"！";
-                                    $timeout(function(){
-                                        $scope.subapp= {"toggle":false};
-                                    },2000);
-                                }
-                            },function(err){
-                                $scope.subapp= {"toggle":true};
-                                $scope.submitWarning = "网络连接失败！";
-                                $timeout(function(){
-                                    $scope.subapp= {"toggle":false};
-                                },2000);
-                            })
-                        }
-
-                    }
-                    $scope.realtimenumnum = 0;
-                    $scope.timeinvalRealfun();
-                    //一共获取60次；
-                    $scope.realtimers = $interval($scope.timeinvalRealfun,5000);
-
-                }else{
-                    //基站定位不可点击
-                    $scope.baseStationGery = true;
-                    $scope.baseStationdis = true;
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = e.reason+"！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                }
-            },function(err){
-                $scope.realtimedis= false;
-                $scope.realtimecolorgrey = false;
-                $scope.belldis= false;
-                $scope.bellcarGery = false;
-                $scope.followmedis = false;
-                $scope.followmegrey = false;
-                //$scope.followmegrey = false;
-                $scope.loadapp = {"toggle":false};
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-            })
-        };
-        //关闭实时追踪
-        function realtimeoverfun(){
-            if($scope.realtimers){
-                $interval.cancel($scope.realtimers);
-            };
-            $scope.realcountdownnum = "";
-            if($scope.countdowntimers){
-                $interval.cancel($scope.countdowntimers);
-            };
-            //基站定位不可点击
-            $scope.baseStationGery = true;
-            $scope.baseStationdis = true;
-
-
-            $scope.loadapp = {"toggle":true};
-            var realtimeObj = {
-                uid:$window.sessionStorage.getItem("Uid"),
-                seconds:0,
-                durationtime:0,
-                seq:registerService.randomsix()
-            };
-            var realtimeUrl = "/rest/gps/tracking/";
-            $scope.realtimedis= true;
-            $scope.realtimecolorgrey = true;
-            $scope.belldis= true;
-            $scope.bellcarGery = true;
-            $scope.followmedis = true;
-            $scope.followmegrey = true;
-            //$scope.followmegrey = false;
-            registerService.commonUserget(realtimeObj,realtimeUrl).then(function(e){
-                $scope.realtimedis= false;
-                $scope.realtimecolorgrey = false;
-                $scope.belldis= false;
-                $scope.bellcarGery = false;
-                $scope.followmedis = false;
-                $scope.followmegrey = false;
-                //$scope.followmegrey = false;
-                $scope.loadapp = {"toggle":false};
-                if(e.status == true){
-                    $scope.followmedis = false;
-                    //$scope.realtimecolorgrey = false;
-                    $scope.followmegrey = false;
-                    $scope.realtimeword = "实时追踪";
-                    $scope.hahaapp = {"toggle":true};
-                    $scope.submithappy = "实时追踪已经关闭！";
-                    $timeout(function(){
-                        $scope.hahaapp= {"toggle":false};
-                    },2000);
-                }else {
-                    $scope.realtimeword ="实时追踪";
-                    $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = e.reason+"！";
-                    $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                }
-            },function(err){
-                $scope.realtimedis= false;
-                $scope.realtimecolorgrey = false;
-                $scope.belldis= false;
-                $scope.bellcarGery = false;
-                $scope.followmedis = false;
-                $scope.followmegrey = false;
-                //$scope.followmegrey = false;
-                $scope.realtimeword ="实时追踪";
-                $scope.loadapp = {"toggle":false};
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-            })
-        }
-        $scope.searchrealtime = function(){
-            $scope.realtimedis= true;
-            $scope.realtimecolorgrey = true;
-            $scope.belldis= true;
-            $scope.bellcarGery = true;
-            $scope.followmedis = true;
-            $scope.followmegrey = true;
-            //$scope.followmegrey = false;
-            if($scope.realtimeword == "实时追踪"){
-                var newtimerealtime = new Date();
-                $scope.realtimearr.push(newtimerealtime);
-                if($scope.realtimearr.length == 1){
-                    followmap.clearMap();
-                    $scope.arrrealtime = [];
-                }else {
-                    var nowtimearrlast = $scope.realtimearr[$scope.realtimearr.length-1];
-                    var nowtimearrlastfir = $scope.realtimearr[$scope.realtimearr.length-2];
-                    var realtwotimediffenert = nowtimearrlast-nowtimearrlastfir;
-                    if(realtwotimediffenert>600000){
-                        followmap.clearMap();
-                        $scope.arrrealtime = [];
-                    }
-                    console.log("两次实时追踪的时间差"+realtwotimediffenert);
-                }
-
-                realtimefunc();
-            }else if($scope.realtimeword == "点击关闭") {
-                realtimeoverfun();
-            }
-
-            //请求成功后，定时器获取用户最新的gps（维持10min）后，请求时间为0的
-        }
-        //监听路由的变化
-        $scope.$on('$stateChangeStart',
-
-            function(event, toState, toParams, fromState, fromParams){
-                console.log("toState:"+JSON.stringify(toState));
-                console.log("toParams:"+JSON.stringify(toParams));
-                console.log("fromState:"+JSON.stringify(fromState));
-                console.log("fromParams:"+JSON.stringify(fromParams));
-                console.log("获取路由地址："+$location.path());
-                if(fromState.name=="mains.home.searchCar"){
-                    realtimeoverfun();
-                    console.log("关闭实时追踪");
-                }
-
-            });
-        //开启基站定位
-        $scope.baseStationbtn = function(){
-            //openbaseStationfunc();
-        }
-        //监听基站定位与否
-
-
     })
     //修改密码
     .controller("changePassController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout){
@@ -5341,6 +6374,8 @@ angular.module("app.demo.controllers",[])
             var changePoldpass = $scope.changePassForm.changePoldpass.$modelValue;
             var changePnewpass = $scope.changePassForm.changePnewpass.$modelValue;
             var changePaganewpass = $scope.changePassForm.changePaganewpass.$modelValue;
+            //var regNull=/(^\s*)|(\s*$)/g;
+            //var regNull = /^\s*$/;
             //console.log("changePnewpass:"+changePnewpass);
             //console.log("changePaganewpass:"+changePaganewpass);
             if(!changePoldpass){
@@ -5367,18 +6402,27 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(changePnewpass.indexOf(" ")!=-1){
+                console.log("新密码:",changePnewpass)
+                console.log("新密码test:",changePnewpass.indexOf(" "))
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "新密码内容不能有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            } else{
                 $scope.changepassoldcontentdis = true;
                 $scope.changepassnewcontentdis = true;
                 $scope.changepassagacontentdis = true;
                 $scope.changepasspdis = true;
                 var searchpassObj = {
-                    uid:$window.sessionStorage.getItem("Uid"),
-                    oPwd:changePoldpass,
-                    nPwd:changePnewpass
+                    cp:Number($window.sessionStorage.getItem("Ucp")),
+                    oldPwd:$.md5(changePoldpass),
+                    newPwd:$.md5(changePnewpass)
                 };
                 var searchpassUrl = "/rest/user/resetPwd/";
                 $scope.loadapp = {"toggle":true};
+                $scope.searchpassstarttimehs = new Date().getTime();
                 registerService.commonUser(searchpassObj,searchpassUrl).then(function(e){
                     $scope.changepassoldcontentdis = false;
                     $scope.changepassnewcontentdis = false;
@@ -5394,7 +6438,7 @@ angular.module("app.demo.controllers",[])
                         },2000);
                     }else{
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.reason+"!";
+                        $scope.submitWarning = e.err+"!";
                         $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000);
@@ -5406,7 +6450,14 @@ angular.module("app.demo.controllers",[])
                     $scope.loadapp = {"toggle":false};
                     $scope.changepasspdis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.searchpassendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.searchpassendtimehs - $scope.searchpassstarttimehs);
+                    if($scope.searchpassendtimehs - $scope.searchpassstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -5433,23 +6484,39 @@ angular.module("app.demo.controllers",[])
         };
         $scope.changenickbtn = function(){
             var changenick= $scope.changeNickForm.changenicknewnickname.$modelValue;
+            //var regNull=/(^\s*)|(\s*$)/g;
             if(!changenick){
                 $scope.subapp= {"toggle":true};
                 $scope.submitWarning = "请输入新昵称！";
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(changenick.length>11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "新昵称的长度不能超过11位！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(changenick.indexOf(" ")!=-1){
+                console.log(changenick.indexOf(" "));
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "新昵称内容不能有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else {
+                console.log(changenick.indexOf(" "));
                 $scope.changenicknewdis = true;
                 $scope.changenickdis = true;
                 var changeNObj = {
-                    uid:$window.sessionStorage.getItem("Uid"),
-                    uname:changenick
+                    cp:Number($window.sessionStorage.getItem("Ucp")),
+                    nickName:changenick
                 };
-                var changeNUrl = "/rest/user/updateUname/";
+                var changeNUrl = "/rest/user/updateUserNickName/";
                 //$http
                 //修改成功昵称，$rootScope.mineusernick =  e.user.nickName;赋值
                 $scope.loadapp = {"toggle":true};
+                $scope.changeNstarttimehs = new Date().getTime();
                 registerService.commonUser(changeNObj,changeNUrl).then(function(e){
                     $scope.changenicknewdis = false;
                     $scope.loadapp = {"toggle":false};
@@ -5464,7 +6531,7 @@ angular.module("app.demo.controllers",[])
                         },2000);
                     }else{
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.reason+"！";
+                        $scope.submitWarning = e.err+"！";
                         $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000);
@@ -5474,7 +6541,14 @@ angular.module("app.demo.controllers",[])
                     $scope.loadapp = {"toggle":false};
                     $scope.changenickdis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.changeNendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.changeNendtimehs - $scope.changeNstarttimehs);
+                    if($scope.changeNendtimehs - $scope.changeNstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -5493,7 +6567,8 @@ angular.module("app.demo.controllers",[])
         $scope.unbundvercodeBtnContent= "点击获取验证码";
         $scope.unbundverCodedis = false;
         $scope.unbundlingdis= false;
-        $scope.unbundlingphone = '[0-9]{11}';
+        $scope.unbundlingphone = "[0-9]{11}";
+        $scope.unbindingvehiclecodepatt= "[0-9]{6}";
         //验证手机号码的格式
         $scope.phonePatStyle = function(isValid){
             //var regaccount = $scope.registerForm.regaccount.$modelValue;
@@ -5511,6 +6586,7 @@ angular.module("app.demo.controllers",[])
         $scope.loadapp = {"toggle":false};
         //点击获取验证码
         $scope.unbundlinggetVercode = function(){
+            var unbundaccountval = $(".unbindaccountval").val();
             var unbundlingaccount = $scope.unbundlingForm.unbundlingaccount.$modelValue;
             console.log(unbundlingaccount);
             if(!unbundlingaccount){
@@ -5519,19 +6595,27 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else{
+            }else if(unbundaccountval.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
                 $scope.unbundverCodedis = true;//不能再次点击，直到ajax结束
                 var unbundverCodeObj = {
-                    "cellphone":unbundlingaccount,
-                    "time":registerService.getcurrentTime()
+                    "cp":Number(unbundlingaccount)
+
                 };
-                var unbundverCodeUrl = "/rest/user/getMessage/";
+                var unbundverCodeUrl = "/register/applySmsCode/";
                 $scope.loadapp = {"toggle":true};
+                $scope.unbundverCodestarttimehs = new Date().getTime();
                 registerService.commonUser(unbundverCodeObj,unbundverCodeUrl).then(function(e){
                     $scope.loadapp = {"toggle":false};
                     //当status正确的时候，
                     if(e.status == true){
-                        var s = 300;
+                        var s = 60;
                         $scope.unbundvercodeBtnContent = s+"秒" ;
                         var regVertimer = $interval(function(){
                             s--;
@@ -5548,18 +6632,25 @@ angular.module("app.demo.controllers",[])
                     }else{
                         $scope.unbundverCodedis = false;
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.reason+"！";
+                        $scope.submitWarning = e.err+"！";
                         $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000);
-                        console.log(e.reason);
+                        console.log(e.err);
                     }
 
                 },function(err){
                     $scope.loadapp = {"toggle":false};
                     $scope.unbundverCodedis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.unbundverCodeendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.unbundverCodeendtimehs - $scope.unbundverCodestarttimehs);
+                    if($scope.unbundverCodeendtimehs - $scope.unbundverCodestarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
@@ -5570,6 +6661,8 @@ angular.module("app.demo.controllers",[])
         };
         //点击确定
         $scope.gounbundyes= function(){
+            var unbindcodevalval = $(".unbindvehiclecodevala").val();
+            var unbundaccountval = $(".unbindaccountval").val();
             var unbundlingaccount = $scope.unbundlingForm.unbundlingaccount.$modelValue;
             var unbundlingcode = $scope.unbundlingForm.unbundlingverCodeContent.$modelValue;
             if(!unbundlingaccount){
@@ -5584,19 +6677,224 @@ angular.module("app.demo.controllers",[])
                 $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
-            }else {
+            }else if(unbundaccountval.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(unbindcodevalval.length != 6){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "验证码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else {
                 $scope.unbundlingdis = true;
                 var undundingyesObj = {
-                    cellphone:unbundlingaccount,
-                    type:0,
-                    code:unbundlingcode
+                    cp:Number(unbundlingaccount),
+                    termId:Number(window.sessionStorage.getItem("UtermId")),
+                    code:Number(unbundlingcode)
                 };
-                var undundlingyesUrl = "/rest/Vehicle/Binding";
+                var undundlingyesUrl = "/rest/user/unBind/";
+                $scope.loadapp = {"toggle":true};
+                $scope.undundingyesstarttimehs = new Date().getTime();
                 registerService.commonUser(undundingyesObj,undundlingyesUrl).then(function(e){
+                    $scope.loadapp = {"toggle":false};
                     $scope.unbundlingdis = false;
                     if(e.status == true){
                         $scope.hahaapp= {"toggle":true};
                         $scope.submithappy = "解绑成功，稍后进入登录页面！";
+                        $timeout(function(){
+                            $scope.hahaapp= {"toggle":false};
+                            $state.go("submits");
+                        },2000);
+                    }else {
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                },function(err){
+                    $scope.loadapp = {"toggle":false};
+                    $scope.unbundlingdis = false;
+                    $scope.subapp= {"toggle":true};
+                    $scope.undundingyesendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.undundingyesendtimehs - $scope.undundingyesstarttimehs);
+                    if($scope.undundingyesendtimehs - $scope.undundingyesstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
+                    $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                })
+            }
+        }
+        //点击取消
+        $scope.backminePage = function(){
+            $state.go("mains.mine");
+        }
+    })
+    //更换手机号
+    .controller("changeiphonenumController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout){
+        $scope.searchPassBackBtn = function(){
+            window.history.go(-1);
+        };
+        $scope.winHeight = {
+            "height":$rootScope.windoWHeihgt
+        };
+        $scope.newchangephonepatt = "[0-9]{11}";
+        $scope.changeiphonecodepatt= '[0-9]{6}';
+        $scope.vercodeBtnContent= "点击获取验证码";
+        $scope.phonePatStylea = function(isValid){
+            console.log("失去焦点")
+            //var regaccount = $scope.registerForm.regaccount.$modelValue;
+            if(isValid){
+
+            }else{
+                console.log("手机号码格式错误");
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的手机号！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+        };
+        //点击获取验证码
+        $scope.changeiphonegetVercode = function(){
+            var newchangeiphonepow = $(".newchangeiphonepow").val();
+            var changeiphonenewaccount = $scope.changeiphoneForm.changeiphonenewaccount.$modelValue;
+            console.log(changeiphonenewaccount);
+            if(!changeiphonenewaccount){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的手机号！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(newchangeiphonepow.length != 11){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "手机号码前后不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
+            else{
+                $scope.unbundverCodedis = true;//不能再次点击，直到ajax结束
+                var unbundverCodeObj = {
+                    "cp":Number(changeiphonenewaccount)
+
+                };
+                var unbundverCodeUrl = "/register/applySmsCode/";
+                $scope.loadapp = {"toggle":true};
+                $scope.unbundverCodestarttimehs = new Date().getTime();
+                registerService.commonUser(unbundverCodeObj,unbundverCodeUrl).then(function(e){
+                    $scope.loadapp = {"toggle":false};
+                    //当status正确的时候，
+                    if(e.status == true){
+                        var s = 60;
+                        $scope.unbundvercodeBtnContent = s+"秒" ;
+                        var regVertimer = $interval(function(){
+                            s--;
+                            if(s>0){
+                                $scope.unbundvercodeBtnContent = s+"秒" ;
+                                //console.log(s);
+                            }else{
+                                $scope.unbundverCodedis = false;
+                                $scope.unbundvercodeBtnContent = "重新获取验证码" ;
+                                $interval.cancel(regVertimer);
+                                //console.log(s);
+                            }
+                        },2000)
+                    }else{
+                        $scope.unbundverCodedis = false;
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                        console.log(e.err);
+                    }
+
+                },function(err){
+                    $scope.loadapp = {"toggle":false};
+                    $scope.unbundverCodedis = false;
+                    $scope.subapp= {"toggle":true};
+                    $scope.unbundverCodeendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.unbundverCodeendtimehs - $scope.unbundverCodestarttimehs);
+                    if($scope.unbundverCodeendtimehs - $scope.unbundverCodestarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
+                    $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                });
+
+
+            }
+        };
+        $scope.backminePage = function(){
+            $state.go("mains.mine");
+        };
+        $scope.changeiphonebtnPage= function(){
+            var newchangeiphonepow = $(".newchangeiphonepow").val();//手机号
+            var changeiphonepassval = $(".changeiphonepassval").val();//密码
+            var changeiphonecodeclass = $(".changeiphonecodeclass").val();//验证码
+            var changeiphonenewaccounta = $scope.changeiphoneForm.changeiphonenewaccount.$modelValue;
+            var changeiphonepassworda = $scope.changeiphoneForm.changeiphonepassword.$modelValue;
+            var changeiphoneverCodeContenta = $scope.changeiphoneForm.changeiphoneverCodeContent.$modelValue;
+            if(!changeiphonenewaccounta){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的手机号！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(!changeiphonepassworda){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的密码！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(!changeiphoneverCodeContenta){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "请确认您的验证码！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(newchangeiphonepow.indexOf(" ") != -1){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "新的手机号码只能为11位数字，不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else if(changeiphonecodeclass.indexOf(" ") != -1){
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "验证码只能为6位数字，不能含有空格！";
+                $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else {
+                $scope.changeiphoneyesbtndis = true;
+                var changeiphoneObj = {
+                    "pw":changeiphonepassval,
+                    "newcp":Number(changeiphonenewaccounta)
+                };
+                var changeiphoneUrl = "";
+                $scope.loadapp = {"toggle":true};
+                $scope.unbundverCodestarttimehs = new Date().getTime();
+                registerService.commonUser(unbundverCodeObj,unbundverCodeUrl).then(function(e){
+                    $scope.loadapp = {"toggle":false};
+                    $scope.changeiphoneyesbtndis = false;
+                    if(e.status == true){
+                        $scope.hahaapp= {"toggle":true};
+                        $scope.submithappy = "更换手机号码成功，稍后进入登录页面！";
                         $timeout(function(){
                             $scope.hahaapp= {"toggle":false};
                             $state.go("submits");
@@ -5609,17 +6907,98 @@ angular.module("app.demo.controllers",[])
                         },2000);
                     }
                 },function(err){
-                    $scope.unbundlingdis = false;
+                    $scope.loadapp = {"toggle":false};
+                    $scope.changeiphoneyesbtndis = false;
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = "网络连接失败！";
+                    $scope.unbundverCodeendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.unbundverCodeendtimehs - $scope.unbundverCodestarttimehs);
+                    if($scope.unbundverCodeendtimehs - $scope.unbundverCodestarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
                     $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
                 })
             }
         }
-        //点击取消
-        $scope.backminePage = function(){
-            $state.go("mains.mine");
+    })
+    //修改限速
+    .controller("changelimitspeedController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout){
+        $scope.searchPassBackBtn = function(){
+            window.history.go(-1);
+        };
+        var defalutspeed = Number($window.sessionStorage.getItem("Uspeed"));
+        if(defalutspeed == 35){
+            $("input[name='changeSpeedLimit'][value='35']").attr('checked','true');
+        }else if(defalutspeed == 40){
+            $("input[name='changeSpeedLimit'][value='40']").attr('checked','true');
+        }else{
+            $("input[name='changeSpeedLimit'][value='30']").attr('checked','true');
+        }
+
+        $scope.changeSpeedDIS = false;
+        $scope.winHeight = {
+            "height":$rootScope.windoWHeihgt
+        };
+        $scope.changelimitspeedbtn = function(){
+            var changelimit = $("input[name='changeSpeedLimit']:checked").attr("value");
+            $scope.changeSpeedDIS = true;
+            $scope.speedlimitObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                appSN:parseInt(Number(new Date().getTime())/1000),
+                speed : Number(changelimit)
+            };
+            console.log($scope.speedlimitObj);
+            $scope.loadapp = {"toggle":true};
+            try{
+                registerService.speedlimit($scope.speedlimitObj).then(
+                    function(e){
+                        $scope.loadapp = {"toggle": false };
+                        $scope.changeSpeedDIS = false;
+                        console.log(e);
+                        if(e.status == true){
+                            if(e.content.result == 0){
+                                $scope.hahaapp= {"toggle":true};
+                                $scope.submithappy = "恭喜您，设置成功！";
+                                $window.sessionStorage.setItem("Uspeed", Number(changelimit));
+                                $scope.$parent.limitspeed = Number(changelimit);
+                                $scope.timehaftime = $timeout(function(){
+                                    $scope.hahaapp= {"toggle":false};
+                                    // window.history.go(-1);
+                                },2000);
+                            }
+                        }else {
+                            $scope.subapp= {"toggle":true};
+                            $scope.submitWarning = e.err+"！";
+                            $scope.timenoreasontime = $timeout(function(){
+                                $scope.subapp= {"toggle":false};
+                            },2000);
+                        }
+
+                    },
+                    function (e) {
+                        console.log("error:",e)
+                        $scope.changeSpeedDIS = false;
+                        $scope.loadapp = {"toggle": false };
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = "网络连接失败！";
+                        $scope.timenoreasontime = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                );
+            } catch (err) {
+                $scope.changeSpeedDIS = false;
+                $scope.loadapp = {"toggle": false };
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "网络连接失败！";
+                $scope.timenoreasontime = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }
         }
     })

@@ -1,6 +1,9 @@
 <div class="divvehicle" ng-style="winHeight">
-    <button class=" btnmargintop vehiclebtntopjianr" ></button>
-    <p class="vehicletitledetectionstyle">车辆检测</p>
+
+    <button class=" btnmargintop vehiclebtntopjianr" ng-click="searchPassBackBtn(event)"></button>
+    <p class="vehicletitledetectionstyle">
+        车辆检测
+    </p>
     <p ng-class="{'bikenormal':bikeyesnormal,'bikehandlebuga':bikehandlebug,'bikecontrollerbuga':bikecontrollerbug,'bikemotorbuga':bikemotorbug}" class="vehicleicona vehicleiconajianr"></p>
     <p class="startdetectionbtnstyle" ng-click="selfInspectionclick()">开始检测</p>
     <table class="vehicledetectiontable">
@@ -8,32 +11,25 @@
             <td>
                 车辆状况：
             </td>
-            <td class="vehicledetectionred">
-                电机相线脱落，建议检修！
+            <td ng-class="{'vehicledetectionred':hallmortorinfoerror}" ng-bind="hallmortorinfo">
             </td>
         </tr>
         <tr>
             <td>
-
             </td>
-            <td class="vehicledetectionred">
-                电机相线脱落，建议检修！
+            <td ng-class="{'vehicledetectionred':wiremortorinfoerror}" ng-bind="wiremortorinfo">
             </td>
         </tr>
         <tr>
             <td>
-
             </td>
-            <td class="vehicledetectionred">
-                电机相线脱落，建议检修！
+            <td ng-class="{'vehicledetectionred':handlemortorinfoerror}" ng-bind="handlemortorinfo">
             </td>
         </tr>
         <tr>
             <td>
-
             </td>
-            <td class="vehicledetectionred">
-                电机相线脱落，建议检修！
+            <td ng-class="{'vehicledetectionred':controllermortorinfoerror}" ng-bind="controllermortorinfo">
             </td>
         </tr>
     </table>
@@ -65,5 +61,24 @@
 <div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
     <div class="modelPad">
         <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>
+
+<!--模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<div class="toggle model_warning" ng-if="hahaapp.toggle" >
+</div>
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="hahaapp.toggle">
+    <div class="modelPad">
+        <p class="iconhappy"></p>
+        <span class="model_contentspan" ng-bind="submithappy"></span>
     </div>
 </div>

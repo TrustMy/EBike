@@ -104,7 +104,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     private boolean buzzerStatus = false, trackStatus = false, followMeStatus = false, netWorkStatus = false;
     private static ImageView loading;
 
-    private int uid, operationType, operation,  seconds, durationtime;
+    private int uid, operationType, operation, seconds, durationtime;
 //    private String start  Time, endTime;
 
 
@@ -124,8 +124,6 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     private int TrackGPSNum = 0;
 
     private TimeTest timeTest;
-
-
 
 
     private Context context = MapActivity.this;
@@ -187,16 +185,15 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     private List<LatLng> cacheGPS = new ArrayList<LatLng>();
     private List<LatLng> cacheMAP = new ArrayList<LatLng>();
 
-    private String userPhone,token,termId,seq;
-    private long appSN , termIdNew ,  userPhoneNew;
-    private boolean isOpenBuzzerStatus  = false;
+    private String userPhone, token, termId, seq;
+    private long appSN, termIdNew, userPhoneNew;
+    private boolean isOpenBuzzerStatus = false;
 
 //    public boolean isMapLiner() {
 //        return isMapLiner;
 //    }
 
     private Reminder isNoShow;
-
 
 
     public List<LatLng> getCacheMAP() {
@@ -216,9 +213,6 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-
-
-
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -228,16 +222,15 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                     if (msg.arg1 == EBikeConstant.HTTP_SUCCESS) {
                         //初始化成功  获取车辆成功
                         carGPSBean = (CarGPSBean) msg.obj;
-                        if(carGPSBean.getContent().getLat() != 0.0){
+                        if (carGPSBean.getContent().getLat() != 0.0) {
 
                             L.i("followMeStatus:" + followMeStatus);
                             if (followMeStatus) {
                                 L.i("跟我走");
                                 doFollowMe();
                             }
-                        }else
-                        {
-                            ToastUtil.showToast(context,"车辆坐标为0.0");
+                        } else {
+                            ToastUtil.showToast(context, "车辆坐标为0.0");
                         }
 
                     } else {
@@ -245,8 +238,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 //                        Toast.makeText(context, , Toast.LENGTH_SHORT).show();
                         startErrorPopopWindow((String) msg.obj);
 
-                        if(followMeStatus)
-                        {
+                        if (followMeStatus) {
                             followMeStatus = false;
                         }
 
@@ -290,8 +282,8 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
                             Log.i("lhh", "返回实时追踪操作成功后  trackStatus:" + trackStatus + "| TrackGPSNum :" + TrackGPSNum);
 //                        reminder = new Reminder(EBikeConstant.TIME, context, handler);
-                            L.i("gpsHistory :"+gpsHistory);
-                            L.i("当前 保存的点:"+getCacheGPS().size()+"|map :"+getCacheMAP().size());
+                            L.i("gpsHistory :" + gpsHistory);
+                            L.i("当前 保存的点:" + getCacheGPS().size() + "|map :" + getCacheMAP().size());
                             if (gpsHistory != null) {
 
 
@@ -310,12 +302,10 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                                     TrackGPSNum = 0;
 //
 
-                                    if(timeTest != null)
-                                    {
+                                    if (timeTest != null) {
                                         timeTest.stopTime();
                                     }
-                                    if(isNoShow != null)
-                                    {
+                                    if (isNoShow != null) {
                                         isNoShow.stopReminder();
                                     }
 
@@ -335,50 +325,44 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
 
                                     foundCar.setClickable(true);
-                                    if(buzzerStatus)
-                                    {
+                                    if (buzzerStatus) {
                                         foundCar.setImageResource(R.drawable.bell_4);
-                                    }else
-                                    {
+                                    } else {
                                         foundCar.setImageResource(R.drawable.bell_5);
                                     }
 
 
-
-
                                 } else {
-                                            //开始
-                                            trackStatus = true;
-                                            L.i("  start success");
+                                    //开始
+                                    trackStatus = true;
+                                    L.i("  start success");
 
-                                            mCvCountdownViewTest.start(TIMES);
-                                            mCvCountdownViewTest.setVisibility(View.VISIBLE);
-
-
-                                            alwaysSracking.setImageResource(R.drawable.track_4);
+                                    mCvCountdownViewTest.start(TIMES);
+                                    mCvCountdownViewTest.setVisibility(View.VISIBLE);
 
 
-                                            followMe.setClickable(false);
-                                            followMe.setImageResource(R.drawable.walk_2);
-
-                                            carLocation.setClickable(true);
-                                            carLocation.setImageResource(R.drawable.bike_2);
-
-                                            timeTest = new TimeTest(0, context, handler);
-                                            timeTest.startTime();
-
-                                            isNoShow =  new Reminder(300,context,handler,10);
-                                            isNoShow.startReminder();
+                                    alwaysSracking.setImageResource(R.drawable.track_4);
 
 
-                                            foundCar.setClickable(false);
-                                            if(buzzerStatus)
-                                            {
-                                                foundCar.setImageResource(R.drawable.bell_4);
-                                            }else
-                                            {
-                                                foundCar.setImageResource(R.drawable.bell_5);
-                                            }
+                                    followMe.setClickable(false);
+                                    followMe.setImageResource(R.drawable.walk_2);
+
+                                    carLocation.setClickable(true);
+                                    carLocation.setImageResource(R.drawable.bike_2);
+
+                                    timeTest = new TimeTest(0, context, handler);
+                                    timeTest.startTime();
+
+                                    isNoShow = new Reminder(300, context, handler, 10);
+                                    isNoShow.startReminder();
+
+
+                                    foundCar.setClickable(false);
+                                    if (buzzerStatus) {
+                                        foundCar.setImageResource(R.drawable.bell_4);
+                                    } else {
+                                        foundCar.setImageResource(R.drawable.bell_5);
+                                    }
                                 }
 
 
@@ -421,7 +405,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 //                                }
 //                                 new TrackPostHtttp(handler,context,aMap,termId,token,gpsHistory).execute();
                                 try {
-                                    lwaysTrackingLine.doGet(EBikeSever.server_url+EBikeSever.car_location_url,termId,token,EBikeConstant.ALWAYS_TRACKING_LINE);
+                                    lwaysTrackingLine.doGet(EBikeSever.server_url + EBikeSever.car_location_url, termId, token, EBikeConstant.ALWAYS_TRACKING_LINE);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -429,7 +413,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
                         } else {
 //                        Toast.makeText(context, (String) msg.obj,Toast.LENGTH_SHORT).show();
-                            ToastUtil.showToast(context,(String) msg.obj);
+                            ToastUtil.showToast(context, (String) msg.obj);
 //                            startErrorPopopWindow((String) msg.obj);
 
                         }
@@ -485,25 +469,22 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 ////                        Toast.makeText(context, , Toast.LENGTH_SHORT).show();
 //                        errorPopopWindow.setMsg((String) msg.obj);
 //                        errorPopopWindow.showPopopWindow(context,mapView);
-                            if(waitPopopWindow != null)
-                            {
-                                waitPopopWindow.stopPopopWindow();
-                            }
+                        if (waitPopopWindow != null) {
+                            waitPopopWindow.stopPopopWindow();
+                        }
 
-                        Log.i("lhh", "handleMessage: "+(String) msg.obj);
+                        Log.i("lhh", "handleMessage: " + (String) msg.obj);
 
 
-                            startErrorPopopWindow((String) msg.obj);
+                        startErrorPopopWindow((String) msg.obj);
 
 
                     }
 
 
-
                     break;
 
                 case 10:
-
 
 
                     Log.i("lhh", "5min success! ");
@@ -519,8 +500,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 //
                     TrackGPSNum = 0;
 //
-                    if(timeTest!= null)
-                    {
+                    if (timeTest != null) {
                         timeTest.stopTime();
 //                        aMap.clear();
                     }
@@ -535,20 +515,15 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                     followMe.setClickable(true);
                     followMe.setImageResource(R.drawable.walk);
 
-                   if(buzzerStatus)
-                   {
-                       foundCar.setImageResource(R.drawable.bell_4);
-                   }else
-                   {
-                       foundCar.setImageResource(R.drawable.bell_5);
-                   }
+                    if (buzzerStatus) {
+                        foundCar.setImageResource(R.drawable.bell_4);
+                    } else {
+                        foundCar.setImageResource(R.drawable.bell_5);
+                    }
                     foundCar.setClickable(true);
 
                     carLocation.setClickable(true);
                     carLocation.setImageResource(R.drawable.bike);
-
-
-
 
                     break;
 
@@ -582,7 +557,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                     break;
                 case EBikeConstant.DIALOG:
                     DialogBean dialogBean = (DialogBean) msg.obj;
-                    DialogTool.showDialog(context,dialogBean.getTitle(),dialogBean.getMsg());
+                    DialogTool.showDialog(context, dialogBean.getTitle(), dialogBean.getMsg());
                     break;
 
             }
@@ -591,14 +566,12 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     };
 
 
-
     private void stopPopupWindow() {
         if (popopWindow != null) {
             popopWindow.stopPopopWindow();
         }
 
-        if(waitPopopWindow != null )
-        {
+        if (waitPopopWindow != null) {
             waitPopopWindow.stopPopopWindow();
         }
     }
@@ -616,8 +589,6 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
         init();
 
 
-
-
         androidCheckVersion = new AndroidCheckVersion(context);
         androidCheckVersion.checkVersion();
 
@@ -630,19 +601,19 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
         userPhoneNew = Long.parseLong(userPhone);
         seq = intent.getStringExtra("seq");
 
-        L.i("termId:"+termId+"|token:"+token+"|userPhone:"+userPhone+"|seq:"+seq);
+        L.i("termId:" + termId + "|token:" + token + "|userPhone:" + userPhone + "|seq:" + seq);
         if (termId == null) {
             Toast.makeText(context, "uid异常 请重新进入本页面", Toast.LENGTH_SHORT).show();
         } else {
-                if (checkIntent()) {
-                    Toast.makeText(context, "正在定位请稍后!", Toast.LENGTH_SHORT).show();
-                    initLocation();
-                    handler.sendEmptyMessageDelayed(100, 300);
+            if (checkIntent()) {
+                Toast.makeText(context, "正在定位请稍后!", Toast.LENGTH_SHORT).show();
+                initLocation();
+                handler.sendEmptyMessageDelayed(100, 300);
 
-                } else {
-                    Toast.makeText(context, "当前网络异常,请检查网络!", Toast.LENGTH_SHORT).show();
-                    aMap.moveCamera(CameraUpdateFactory.zoomTo(3));
-                }
+            } else {
+                Toast.makeText(context, "当前网络异常,请检查网络!", Toast.LENGTH_SHORT).show();
+                aMap.moveCamera(CameraUpdateFactory.zoomTo(3));
+            }
 //
         }
 
@@ -679,10 +650,10 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
         errorPopopWindow = new ErrorPopopWindow();
 //        popopWindow.showPopopWindow(get,alwaysSracking,loading);
-        gpsHistory = new GPSHistory(aMap, context,this);
+        gpsHistory = new GPSHistory(aMap, context, this);
         getHttpRequest = new GetHttpRequest(context, handler, aMap, gpsHistory);
         lwaysTrackingLine = new LwaysTrackingLine(context, handler, aMap, gpsHistory);
-        postHttpRequest = new PostHttpRequest(context, handler,aMap,gpsHistory);
+        postHttpRequest = new PostHttpRequest(context, handler, aMap, gpsHistory);
 
 //        uid = 7;
         operationType = 3;
@@ -698,34 +669,29 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-
-
     //声明定位回调监听器
     public AMapLocationListener mLocationListener = new AMapLocationListener() {
         @Override
         public void onLocationChanged(AMapLocation aMapLocation) {
 
-                if (aMapLocation != null
-                        && aMapLocation.getErrorCode() == 0) {
+            if (aMapLocation != null
+                    && aMapLocation.getErrorCode() == 0) {
 //                mListener.onLocationChanged(aMapLocation);// 显示系统小蓝点
 //
 //                LatLng update= coordinateTransformation.transformation(new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude()));
 
-                    startLat = new LatLonPoint(aMapLocation.getLatitude(), aMapLocation.getLongitude());
-                    L.i("定位成功! startLat:"+startLat.toString());
-                } else {
-                    String errText = "定位失败," + aMapLocation.getErrorCode() + ": " + aMapLocation.getErrorInfo();
-                    Log.e("AmapErr", errText);
+                startLat = new LatLonPoint(aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                L.i("定位成功! startLat:" + startLat.toString());
+            } else {
+                String errText = "定位失败," + aMapLocation.getErrorCode() + ": " + aMapLocation.getErrorInfo();
+                Log.e("AmapErr", errText);
 //                Toast.makeText(context, "失败原因:" + errText, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(context,"定位失败,请检查手机网络或GPS信号!",Toast.LENGTH_SHORT).show();
-                    stopPopupWindow();
-                }
+                Toast.makeText(context, "定位失败,请检查手机网络或GPS信号!", Toast.LENGTH_SHORT).show();
+                stopPopupWindow();
+            }
 
         }
     };
-
-
-
 
 
     /**
@@ -774,17 +740,15 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
         mMenu = (ImageView) findViewById(R.id.map_menu);
         rlTopBar = (RelativeLayout) findViewById(R.id.titles);
-        mMenuList.add(new TestCheckBean(0,"GPS定位"));
-        mMenuList.add(new TestCheckBean(1,"基站定位"));
+        mMenuList.add(new TestCheckBean(0, "GPS定位"));
+        mMenuList.add(new TestCheckBean(1, "基站定位"));
 
 
-        menyPopupWindow = new MenyPopupWindow(this,mMenuLayout, mMenuListView, mPopupWindowMenu, handler,EBikeConstant.REQUEST_TYPE);
-        menyPopupWindow.showPopupWidow( mMenu, getLayoutInflater(), extBtn, rlTopBar, mMenuList);
+        menyPopupWindow = new MenyPopupWindow(this, mMenuLayout, mMenuListView, mPopupWindowMenu, handler, EBikeConstant.REQUEST_TYPE);
+        menyPopupWindow.showPopupWidow(mMenu, getLayoutInflater(), extBtn, rlTopBar, mMenuList);
 
 
         timeView();
-
-
 
 
         //初始化定位
@@ -811,7 +775,6 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
         mLocationClient.setLocationOption(mLocationOption);
         //启动定位
         mLocationClient.startLocation();
-
 
 
     }
@@ -865,8 +828,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
             timeTest.stopTime();
         }
 
-        if(lwaysTrackingLine != null)
-        {
+        if (lwaysTrackingLine != null) {
             lwaysTrackingLine.setIsExt(true);
         }
 
@@ -877,8 +839,6 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
             mLocationClient.onDestroy();
         }
         aMap.clear();
-
-
 
 
     }
@@ -917,27 +877,25 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                         gpsHistory.setIsStop(false);
 
 
-
-
                         if (beforeTime == null) {
                             beforeTime = timeTool.getSystemTime();
                         } else {
 
-                                nowTime = timeTool.getSystemTime();
-                                if (timeTool.getTrackingTime(beforeTime, nowTime)) {
-                                    Log.d("TimeTool", "返回 true");
-                                    if (gpsHistory.getHandler() != null) {
-                                        Message message = new Message();
-                                        message.what = EBikeConstant.EMPTY_GPS_MAP_CACHE;
-                                        gpsHistory.getHandler().sendMessage(message);
+                            nowTime = timeTool.getSystemTime();
+                            if (timeTool.getTrackingTime(beforeTime, nowTime)) {
+                                Log.d("TimeTool", "返回 true");
+                                if (gpsHistory.getHandler() != null) {
+                                    Message message = new Message();
+                                    message.what = EBikeConstant.EMPTY_GPS_MAP_CACHE;
+                                    gpsHistory.getHandler().sendMessage(message);
 
-                                        cacheGPS.clear();
-                                        cacheMAP.clear();
-                                    }
-                                } else {
-                                    //发送
-                                    L.i("未超过限定时间");
+                                    cacheGPS.clear();
+                                    cacheMAP.clear();
                                 }
+                            } else {
+                                //发送
+                                L.i("未超过限定时间");
+                            }
 
 
                         }
@@ -949,7 +907,6 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                     name = "alwaysSracking";
 
                     Log.d("MapActivity", "当前按钮状态" + trackStatus);
-
 
 
                     break;
@@ -978,16 +935,16 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 //                postRequestClasz = new PostRequestClasz(context, EBikeConstant.BUZZER, handler);
 //                postRequestClasz.execute(EBikeSever.server_url + EBikeSever.open_buzzer, uid, operationType, operation, seq);
 
-                   appSN = System.currentTimeMillis()/1000;
+                    appSN = System.currentTimeMillis() / 1000;
 
-                    Map<String,Object> map = new WeakHashMap<String, Object>();
-                    map.put("termId",termIdNew);
-                    map.put("userCellPhone",userPhoneNew);
-                    map.put("appSN",appSN);
-                    map.put("on",isOpenBuzzerStatus);
+                    Map<String, Object> map = new WeakHashMap<String, Object>();
+                    map.put("termId", termIdNew);
+                    map.put("userCellPhone", userPhoneNew);
+                    map.put("appSN", appSN);
+                    map.put("on", isOpenBuzzerStatus);
 
 //                    postHttpRequest.doPostBUZZER(EBikeSever.server_url + EBikeSever.car_buzzer,termId,token,userPhone,appSN,isOpenBuzzerStatus,EBikeConstant.FOUND_CAR);
-                    postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_buzzer,token,map,EBikeConstant.FOUND_CAR);
+                    postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_buzzer, token, map, EBikeConstant.FOUND_CAR);
 
                     break;
 
@@ -1002,13 +959,10 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                     aMap.clear();
 
                     popopWindow.showPopopWindow(context, mapView);
-                        followMeStatus = true;
+                    followMeStatus = true;
 
-                        startCarLocation();
+                    startCarLocation();
 //                            postHttpRequest.doPostCheckCarLcation(EBikeSever.server_url + EBikeSever.car_location_url, termId,token, EBikeConstant.CAR_LOCATIOM);
-
-
-
 
 
                     break;
@@ -1021,8 +975,6 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                     break;
 
 
-
-
             }
 //        Toast.makeText(this, name, Toast.LENGTH_SHORT).show();
 
@@ -1033,61 +985,56 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
     private void doFollowMe() {
         if (carGPSBean != null) {
-            if(startLat != null && startLat.getLongitude() != 0.0)
-            {
+            if (startLat != null && startLat.getLongitude() != 0.0) {
 
 
-            LatLng gpsEndLatiLng = coordinateTransformation.transformation(new LatLng(carGPSBean.getContent().getLat(),carGPSBean.getContent().getLng()));
+                LatLng gpsEndLatiLng = coordinateTransformation.transformation(new LatLng(carGPSBean.getContent().getLat(), carGPSBean.getContent().getLng()));
 //            LatLng mapEndLatiLng = new LatLng(carGPSBean.getMap().getLat(), carGPSBean.getMap().getLon());
 
-            if (gpsEndLatiLng.latitude != 0.0) {
-                endLat = new LatLonPoint(gpsEndLatiLng.latitude, gpsEndLatiLng.longitude);
-            } else {
-                endLat = new LatLonPoint(0.0, 0.0);
-            }
-
-
-            if (endLat.getLongitude() != 0.0) {
-                amapClear();
-                popopWindow.stopPopopWindow();
-
-                if(carGPSBean.getContent().getType() == 1)
-                {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setTitle("当前数据为基站数据,可能与实际位置有所偏差是否继续?");
-                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ToastUtil.showToast(context,"已取消!");
-                        }
-                    });
-                    builder.setPositiveButton("继续", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            initRoutePlanning(startLat, endLat, popopWindow);
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                }else
-                {
-                    initRoutePlanning(startLat, endLat, popopWindow);
+                if (gpsEndLatiLng.latitude != 0.0) {
+                    endLat = new LatLonPoint(gpsEndLatiLng.latitude, gpsEndLatiLng.longitude);
+                } else {
+                    endLat = new LatLonPoint(0.0, 0.0);
                 }
 
 
+                if (endLat.getLongitude() != 0.0) {
+                    amapClear();
+                    popopWindow.stopPopopWindow();
+
+                    if (carGPSBean.getContent().getType() == 1) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setTitle("当前数据为基站数据,可能与实际位置有所偏差是否继续?");
+                        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ToastUtil.showToast(context, "已取消!");
+                            }
+                        });
+                        builder.setPositiveButton("继续", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                initRoutePlanning(startLat, endLat, popopWindow);
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    } else {
+                        initRoutePlanning(startLat, endLat, popopWindow);
+                    }
+
+
+                } else {
+//                        Toast.makeText(context, "车辆位置获取失败!", Toast.LENGTH_SHORT).show();
+                    followMeStatus = false;
+                    popopWindow.stopPopopWindow();
+                    errorPopopWindow.showPopopWindow(context, mapView);
+                    followMe.setImageResource(R.drawable.walk);
+
+
+                }
 
             } else {
-//                        Toast.makeText(context, "车辆位置获取失败!", Toast.LENGTH_SHORT).show();
-                followMeStatus = false;
-                popopWindow.stopPopopWindow();
-                errorPopopWindow.showPopopWindow(context, mapView);
-                followMe.setImageResource(R.drawable.walk);
-
-
-            }
-
-            }else
-            {
                 //定位失败
                 L.i("定位失败直接return");
                 return;
@@ -1106,14 +1053,14 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void startGPSTracking(int duration, int types, int seconds) {
-        appSN = System.currentTimeMillis()/1000;
-        Map<String , Object> map = new WeakHashMap<String, Object>();
-        map.put("termId",termIdNew);
-        map.put("userCellPhone",userPhoneNew);
-        map.put("appSN",appSN);
-        map.put("interval",seconds);
-        map.put("duration",duration);
-        postHttpRequest.toRequest(EBikeSever.server_url+EBikeSever.car_time_tracking_lcation_url,token,map,types);
+        appSN = System.currentTimeMillis() / 1000;
+        Map<String, Object> map = new WeakHashMap<String, Object>();
+        map.put("termId", termIdNew);
+        map.put("userCellPhone", userPhoneNew);
+        map.put("appSN", appSN);
+        map.put("interval", seconds);
+        map.put("duration", duration);
+        postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_time_tracking_lcation_url, token, map, types);
 //        postHttpRequest.doPostStartTracking(EBikeSever.server_url+EBikeSever.car_time_tracking_lcation_url, termId,token,userPhone,appSN,seconds,duration,types);
 
 
@@ -1126,21 +1073,14 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-
-
-
-
-
-
-
     public void checkCarStatus() {
 //        postRequestClasz = new PostRequestClasz(context, EBikeConstant.CAR_STATUS, handler);
 //        postRequestClasz.execute(EBikeSever.server_url + EBikeSever.car_status, seq, uid);
         try {
-            postHttpRequest.doPostCheckCarStatus(EBikeSever.server_url + EBikeSever.car_status,termId,token,userPhone,appSN,EBikeConstant.CAR_STATUS);
+            postHttpRequest.doPostCheckCarStatus(EBikeSever.server_url + EBikeSever.car_status, termId, token, userPhone, appSN, EBikeConstant.CAR_STATUS);
 
         } catch (IOException e) {
-            L.i("error:"+e.toString());
+            L.i("error:" + e.toString());
             e.printStackTrace();
         }
 
@@ -1191,8 +1131,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
         if (timeTest != null) {
             timeTest.stopTime();
         }
-        if(lwaysTrackingLine != null)
-        {
+        if (lwaysTrackingLine != null) {
             lwaysTrackingLine.setIsExt(true);
         }
 
@@ -1200,17 +1139,14 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public synchronized void startErrorPopopWindow(String msg) {
-            synchronized (context)
-            {
-                if(errorPopopWindow == null)
-                {
-                    errorPopopWindow = new ErrorPopopWindow();
-                }
-                errorPopopWindow.setMsg(msg);
-                errorPopopWindow.showPopopWindow(context, alwaysSracking);
+        synchronized (context) {
+            if (errorPopopWindow == null) {
+                errorPopopWindow = new ErrorPopopWindow();
             }
+            errorPopopWindow.setMsg(msg);
+            errorPopopWindow.showPopopWindow(context, alwaysSracking);
+        }
     }
-
 
 
     // 离线地图
@@ -1255,28 +1191,23 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    public void startCarLocation()
-    {
+    public void startCarLocation() {
 
 //            postHttpRequest.doPostCheckCarLcation(EBikeSever.server_url + EBikeSever.car_location_url, termId,token, EBikeConstant.CAR_LOCATIOM);
-            Map<String,Object> map = new WeakHashMap<String, Object>();
-            map.put("termId",termIdNew);
-              postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_location_url,token,map ,EBikeConstant.CAR_LOCATIOM);
+        Map<String, Object> map = new WeakHashMap<String, Object>();
+        map.put("termId", termIdNew);
+        postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_location_url, token, map, EBikeConstant.CAR_LOCATIOM);
 
     }
 
-    public void amapClear()
-    {
-        if(aMap != null)
-        {
+    public void amapClear() {
+        if (aMap != null) {
             aMap.clear();
         }
     }
 
 
-
-    public class  Delete extends BroadcastReceiver
-    {
+    public class Delete extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {

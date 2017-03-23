@@ -61,7 +61,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.zip.GZIPOutputStream;
 
-public class GPSHistoryActivity extends Activity implements TraceListener {
+public class GPSHistoryActivity extends Activity {
     private MapView mapView;
     private AMap aMap;
     //定义一个过滤器；
@@ -103,7 +103,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
     private PostHttpRequest postHttpRequest;
 
-    private String termId,token;
+    private String termId, token;
     private long termIdNew;
     private int mapType = 0;//0 是GPS   1是基站
 
@@ -111,7 +111,9 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+
             switch (msg.what) {
+
                 case EBikeConstant.CAR_LOCATION_HISTORICAL:
 
                     if (msg.arg1 == EBikeConstant.HTTP_SUCCESS) {
@@ -143,17 +145,14 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 //                                }
 //                                L.i("start guiJiJiuPian");
                                 //--------------->
-                                if(carLocationHistorical.getContent().getGps().size() == 0)
-                                {
+                                if (carLocationHistorical.getContent().getGps().size() == 0) {
                                     stopPopopuwindow();
-                                    ToastUtil.showToast(context,"本次行程坐标点为0!");
-                                }else
-                                {
+                                    ToastUtil.showToast(context, "本次行程坐标点为0!");
+                                } else {
                                     stopPopopuwindow();
-                                    ToastUtil.showToast(context,"正在努力绘制路线,请稍后...");
+                                    ToastUtil.showToast(context, "正在努力绘制路线,请稍后...");
                                     guiJiJiuPian(carLocationHistorical);
                                 }
-
 
 
                                 //------------------>
@@ -164,9 +163,8 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
                         } else {
                             Toast.makeText(context, "历史记录错了1111", Toast.LENGTH_SHORT).show();
                         }
-                    }else
-                    {
-                        L.i("gps histoey "+(String) msg.obj);
+                    } else {
+                        L.i("gps histoey " + (String) msg.obj);
                         waitPopopWindow.stopPopopWindow();
                         startErrorPopopWindow((String) msg.obj);
                     }
@@ -184,27 +182,20 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
                     break;
 
                 case 100:
-
                     waitPopopWindow.setMsg("正在加载历史轨迹,请耐心等待!");
                     waitPopopWindow.showPopopWindow(context, extBtn);
-//
-                    handler.sendEmptyMessageDelayed(101, 10);
 
+                    stratHttp();
                     break;
 
-                case 101:
-                    stratHttp();
-                break;
 
                 case EBikeConstant.REQUEST_TYPE://切换基站或者GPS数据轨迹
-                    if(waitPopopWindow != null)
-                    {
+                    if (waitPopopWindow != null) {
                         waitPopopWindow.setMsg("正在加载历史轨迹,请耐心等待!");
                         waitPopopWindow.showPopopWindow(context, extBtn);
                     }
 
-                    if(msg.arg1 == 0)
-                    {
+                    if (msg.arg1 == 0) {
                         L.i("GPS 数据");
 
                         mapType = 0;
@@ -218,8 +209,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 //                        }
                         checkCoordinate();
 
-                    }else
-                    {
+                    } else {
                         mapType = 1;
                         L.i("基站 数据");
                         Toast.makeText(context, "基站接口未开通,请耐心等待!", Toast.LENGTH_SHORT).show();
@@ -227,58 +217,58 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
                         stopPopopuwindow();
                     }
 
-                break;
+                    break;
+
+                case 1000:
+                    List<LatLng> ml = (List<LatLng>) msg.obj;
+                    if (ml.size() != 0) {
+                        huaLiner(new GPSHistory(aMap, context, null));
+                    } else {
+                        stopPopopuwindow();
+                        ToastUtil.showToast(context, "坐标点为0");
+                    }
+                    break;
+
             }
         }
     };
 
     private void stratHttp() {
-        Map<String,Object> map  = new WeakHashMap<String, Object>();
-        map.put("termId",termIdNew);
-        map.put("startTime",startTime);
-        map.put("endTime",endTime);
-        postHttpRequest.toRequest(EBikeSever.server_url+EBikeSever.car_history_location_url,token,map,EBikeConstant.CAR_LOCATION_HISTORICAL);
+        Map<String, Object> map = new WeakHashMap<String, Object>();
+        map.put("termId", termIdNew);
+        map.put("startTime", startTime);
+        map.put("endTime", endTime);
+        postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_history_location_url, token, map, EBikeConstant.CAR_LOCATION_HISTORICAL);
 //            postHttpRequest.doPostCheckCarHistoryLocation(EBikeSever.server_url+EBikeSever.car_history_location_url,termId,token,startTime,endTime,EBikeConstant.CAR_LOCATION_HISTORICAL);
 
     }
 
 
-    public void checkCoordinate()
-    {
+    public void checkCoordinate() {
 
-        if(checkIntent())
-        {
+        if (checkIntent()) {
 
-            if(carLocationHistorical == null)
-            {
+            if (carLocationHistorical == null) {
                 initLocation();
-            }else if(carLocationHistorical.getContent().getGps().size() == 0)
-            {
-                ToastUtil.showToast(context,"本次行程坐标点为空");
+            } else if (carLocationHistorical.getContent().getGps().size() == 0) {
+                ToastUtil.showToast(context, "本次行程坐标点为空");
                 stopPopopuwindow();
-            }else
-            {
+            } else {
 
                 guiJiJiuPian(carLocationHistorical);
             }
 
 
-
-
-        }else
-        {
-            ToastUtil.showToast(context,"请检查当前网络!");
+        } else {
+            ToastUtil.showToast(context, "请检查当前网络!");
             stopPopopuwindow();
         }
 
 
-
     }
 
-    public void stopPopopuwindow()
-    {
-        if(waitPopopWindow != null)
-        {
+    public void stopPopopuwindow() {
+        if (waitPopopWindow != null) {
             waitPopopWindow.stopPopopWindow();
         }
     }
@@ -292,7 +282,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         setContentView(R.layout.activity_gpshistory);
         mapView = (MapView) findViewById(R.id.history_map);
         mapView.onCreate(savedInstanceState);// 此方法必须重写
-    //18621579338
+        //18621579338
         init();
         Intent intent = getIntent();
         uid = intent.getIntExtra("uid", 0);
@@ -308,13 +298,13 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         token = intent.getStringExtra("token");
 
 
-        L.i("H5 data : startTime:"+startTime+"|endTime:"+endTime+"|startName:"+startName+"|endName:"+endName+"|termId:"+termId);
+        L.i("H5 data : startTime:" + startTime + "|endTime:" + endTime + "|startName:" + startName + "|endName:" + endName + "|termId:" + termId);
 
         TimeTool time = new TimeTool();
-        String st = startTime+"";
-        String et = endTime+"";
+        String st = startTime + "";
+        String et = endTime + "";
         try {
-            startTime =time.getTime(st);
+            startTime = time.getTime(st);
             endTime = time.getTime(et);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -323,7 +313,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         Log.d("GPSHistoryActivity", "GPS 参数 " + uid + "|" + startTime + "|" + endTime + "|" + seq);
         initDate();
 
-        if ( seq != 0 && startTime != 0 && !termId.equals("") && !token.equals("")) {
+        if (seq != 0 && startTime != 0 && !termId.equals("") && !token.equals("")) {
             if (checkIntent()) {
                 initLocation();
 
@@ -381,6 +371,7 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 //        getHttpRequest = new GetHttpRequest(context, handler, aMap, new GPSHistory(aMap, context,null));
         Toast.makeText(context, "正在获取历史行程,请稍后!", Toast.LENGTH_SHORT).show();
 
+
         handler.sendEmptyMessageDelayed(100, 300);
     }
 
@@ -399,20 +390,20 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
         extBtn = (ImageButton) findViewById(R.id.history_ext);
         rlTopBar = (RelativeLayout) findViewById(R.id.history_titles);
 
-        mMenuList.add(new TestCheckBean(0,"GPS定位"));
-        mMenuList.add(new TestCheckBean(1,"基站定位"));
+        mMenuList.add(new TestCheckBean(0, "GPS定位"));
+        mMenuList.add(new TestCheckBean(1, "基站定位"));
 
-        menyPopupWindow = new MenyPopupWindow(this,mMenuLayout, mMenuListView, mPopupWindowMenu, handler,EBikeConstant.REQUEST_TYPE);
-        menyPopupWindow.showPopupWidow( historyMenu, getLayoutInflater(), extBtn, rlTopBar, mMenuList);
+        menyPopupWindow = new MenyPopupWindow(this, mMenuLayout, mMenuListView, mPopupWindowMenu, handler, EBikeConstant.REQUEST_TYPE);
+        menyPopupWindow.showPopupWidow(historyMenu, getLayoutInflater(), extBtn, rlTopBar, mMenuList);
 
-        updateBtn = (ImageView)findViewById(R.id.update);
+        updateBtn = (ImageView) findViewById(R.id.update);
 
 
         mTraceList = TraceAsset.parseLocationsData(this.getAssets(),
                 "traceRecord" + File.separator + "AMapTrace.txt");
 
 
-        postHttpRequest = new PostHttpRequest(context,handler,aMap,new GPSHistory(aMap,context,null));
+        postHttpRequest = new PostHttpRequest(context, handler, aMap, new GPSHistory(aMap, context, null));
         waitPopopWindow = new WaitPopopWindow();
     }
 
@@ -459,118 +450,46 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
     }
 
 
-    public void guiJiJiuPian(CarLocationHistorical carLocationHistorical) {
+    public void guiJiJiuPian(final CarLocationHistorical carLocationHistorical) {
         LBSTraceClient mTraceClient = new LBSTraceClient(this.getApplicationContext());
-        L.i("guiJiJiuPian  carLocationHistorical.size ():"+carLocationHistorical.getContent().getGps().size());
-       if(latLngs.size() == 0)
-       {
+        L.i("guiJiJiuPian  carLocationHistorical.size ():" + carLocationHistorical.getContent().getGps().size());
+        if (latLngs.size() == 0) {
 
-
-        for (int i = carLocationHistorical.getContent().getGps().size() -1; i >=0 ; i--) {
-            if (carLocationHistorical.getContent().getGps().get(i).getLat() == 0.0 || carLocationHistorical.getContent().getGps().get(i).getType() != 0) {
-                continue;
-            }else
-            {
-                LatLng latLng =coordinateTransformation.transformation(new LatLng(carLocationHistorical.getContent().getGps().get(i).getLat() ,carLocationHistorical.getContent().getGps().get(i).getLng() ));
-                LatLng GPS = new LatLng(carLocationHistorical.getContent().getGps().get(i).getLat(),carLocationHistorical.getContent().getGps().get(i).getLng() );
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = carLocationHistorical.getContent().getGps().size() - 1; i >= 0; i--) {
+                        if (carLocationHistorical.getContent().getGps().get(i).getLat() == 0.0 || carLocationHistorical.getContent().getGps().get(i).getType() != 0) {
+                            continue;
+                        } else {
+                            LatLng latLng = coordinateTransformation.transformation(new LatLng(carLocationHistorical.getContent().getGps().get(i).getLat(), carLocationHistorical.getContent().getGps().get(i).getLng()));
+                            LatLng GPS = new LatLng(carLocationHistorical.getContent().getGps().get(i).getLat(), carLocationHistorical.getContent().getGps().get(i).getLng());
 //                ml.add(new TraceLocation(GPS.latitude,GPS.longitude, 1, 1, 1));
-                latLngs.add(latLng);
-            }
+                            latLngs.add(latLng);
+                        }
 
+                    }
+
+                    Message message = new Message();
+                    message.what = 1000;
+                    message.obj = latLngs;
+                    handler.sendMessage(message);
+                }
+            }).start();
+
+        } else {
+            Message message = new Message();
+            message.what = 1000;
+            message.obj = latLngs;
+            handler.sendMessage(message);
         }
-       }
-        if(latLngs.size() != 0)
-        {
-            huaLiner(new GPSHistory(aMap,context,null));
-        }else
-        {
-            stopPopopuwindow();
-            ToastUtil.showToast(context,"坐标点为0");
-        }
-
-
-
-
-        L.i("mTraceList.size() :"+mTraceList.size());
-
-    }
-
-    @Override
-    public void onRequestFailed(int num, String s) {
-        /*
-        GPSHistory mHistory = new GPSHistory(aMap, context,null);
-        int listSize = 0;
-        L.i("onRequestFailed   num:"+num+"| s:"+s);
-        Toast.makeText(context,s,Toast.LENGTH_SHORT).show();
-//        L.i("carLocationHistorical.getAlarmLists().size():"+carLocationHistoricalgetContent().getGps().size());
-            for (int i = 0; i < carLocationHistorical.getContent().getGps().size(); i++) {
-                L.i("carLocationHistorical 坐标:"+carLocationHistorical.getContent().getGps().get(i).getLat()+"|"+carLocationHistorical.getContent().getGps().get(i).getLng());
-                                    if (carLocationHistorical.getContent().getGps().get(i).getLat() == 0.0) {
-                                        listSize++;
-                                        if(listSize == carLocationHistorical.getContent().getGps().size())
-                                        {
-//                                            Toast.makeText(context,"本次行程坐标无效:0.0",Toast.LENGTH_SHORT).show();
-                                            waitPopopWindow.stopPopopWindow();
-                                            startErrorPopopWindow("本次行程坐标全部为:0.0");
-                                            listSize = 0;
-                                        }
-                                        continue;
-                                    } else {
-
-                                        LatLng latLng =coordinateTransformation.transformation(new LatLng(carLocationHistorical.getContent().getGps().get(i).getLat(),carLocationHistorical.getContent().getGps().get(i).getLng()));
-                                        LatLng oldlatLng = new LatLng(carLocationHistorical.getContent().getGps().get(i).getLat(),carLocationHistorical.getContent().getGps().get(i).getLng());
-                                        latLngs.add(latLng);
-
-                                    }
-
-                                }
-
-        if(latLngs.size() != 0)
-        {
-            huaLiner(mHistory);
-        }else
-        {
-            ToastUtil.showToast(context,"坐标点为空");
-        }
-
-    */
-    }
-
-    @Override
-    public void onTraceProcessing(int i, int i1, List<LatLng> list) {
 
 
     }
 
-    @Override
-    public void onFinished(int i, List<LatLng> list, int i1, int i2) {
-        L.i("onFinished  list.size ():"+list.size());
 
-        /*
-
-        GPSHistory mHistory = new GPSHistory(aMap, context,null);
-
-
-
-
-        for (int nums = 0; nums <list.size(); nums ++)
-        {
-            LatLng latLng = coordinateTransformation.transformation(new LatLng(list.get(nums).latitude, list.get(nums).longitude));
-            LatLng oldlatLng = new LatLng(carLocationHistorical.getContent().getGps().get(i).getLat(), carLocationHistorical.getContent().getGps().get(i).getLng());
-            latLngs.add(latLng);
-        }
-
-
-        huaLiner(mHistory);
-
-    */
-
-
-    }
-
-    public void huaLiner (GPSHistory mHistory)
-    {
-        L.i("huaLiner:"+latLngs.size());
+    public void huaLiner(GPSHistory mHistory) {
+        L.i("huaLiner:" + latLngs.size());
         mHistory.setLatLngs(latLngs);
         mHistory.setName(startName, endName);
         mHistory.startHistory();
@@ -595,7 +514,6 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
     }
 
 
-
     /**
      * 设置显示总里程和等待时间
      *
@@ -618,27 +536,23 @@ public class GPSHistoryActivity extends Activity implements TraceListener {
 
 
     public void startErrorPopopWindow(String msg) {
-        try {
-            Thread.sleep(100);
-            errorPopopWindow = new ErrorPopopWindow();
-            errorPopopWindow.setMsg(msg);
-            errorPopopWindow.showPopopWindow(context, mapView);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+
+        errorPopopWindow = new ErrorPopopWindow();
+        errorPopopWindow.setMsg(msg);
+        errorPopopWindow.showPopopWindow(context, mapView);
+
 
     }
 
-    public void updateDate(View v)
-    {
+    public void updateDate(View v) {
         synchronized (this) {
             aMap.clear();
             checkCoordinate();
         }
     }
 
-    public class Delete extends BroadcastReceiver
-    {
+    public class Delete extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {

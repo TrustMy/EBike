@@ -1,0 +1,48 @@
+<div class="searchPassBack" ng-style="winHeight">
+    <p class="searchPassTitle searchpasstitlejianr">
+        <button class="searchBackBtn searchBackbtnjianr" ng-click="searchPassBackBtn()"></button>
+        <span class="searchPassTitleContent searchpasstitlecontentjianr">限速设置</span>
+    </p>
+    <form name="changeSpeedForm" novalidate>
+
+        <p class="searchPasscontent searchPasscontentjianr">
+            限速：
+            <!--<input class="searchPinputS inputwidth" type="radio" ng-model="changenick.newnickname" name="changeSpeedLimit" required />-->
+            <input name="changeSpeedLimit" type="radio" value="30" class="radioclass"/>30
+            <input name="changeSpeedLimit" type="radio" value="35" class="radioclass"/>35
+            <input name="changeSpeedLimit" type="radio" value="40" class="radioclass"/>40
+        </p>
+
+        <p class="searchPBtnPStyle searchPBtnPStylejianr">
+            <button class="searchPBtnStyle searchPBtnNo searchPBtnStylejianr" ng-click="searchPassBackBtn()">取消</button>
+            <button class="searchPBtnStyle searchPBtnYes searchPBtnStylejianr" ng-click="changelimitspeedbtn()" ng-disabled="changeSpeedDIS">确认</button>
+        </p>
+    </form>
+</div>
+<!--warning模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<div class="toggle model_warning" ng-if="hahaapp.toggle" >
+</div>
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="hahaapp.toggle">
+    <div class="modelPad">
+        <p class="iconhappy"></p>
+        <span class="model_contentspan" ng-bind="submithappy"></span>
+    </div>
+</div>
+<!--加载中的模态框-->
+<div class="toggle model_warning" ng-if="loadapp.toggle" >
+</div>
+
+<div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+    <div class="modelPad">
+        <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>

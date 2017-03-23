@@ -7,21 +7,22 @@
     <p class="nicknamestylep" ng-bind="mineusernick"></p>
 
     <div class="divminetablepositiona divminetablepositionajianr">
-        <div class="speedlimitalldiv">
-            <p class="speedlimitleftallp" ng-click = "speedlimitclick()">
-            <span class="speedlimitleftallspan">
-                限速：<span ng-bind="limitspeed"></span>&nbsp;<span class="unitclassspeed">km/h</span>
-            </span>
+        <!--<div class="speedlimitalldiv">-->
+            <!--<p class="speedlimitleftallp" ng-click = "speedlimitclick()">-->
+            <!--<span class="speedlimitleftallspan">-->
+                <!--限速：<span ng-bind="limitspeed"></span>&nbsp;<span class="unitclassspeed">km/h</span>-->
+            <!--</span>-->
 
-                <!--ng-bind="speedajaxlimitbind"-->
-            </p>
-        <span class="displayspanleftright allspanwidthallspeed" ng-if="speedlimitif.toggle">
-            <!---->
-            <span class="displayspanleftright fivebtnspeedwidth borderspanspeeda" ng-click="speedlimitchange(30)">30</span>
-            <span class="displayspanleftright fivebtnspeedwidth borderspanspeeda" ng-click="speedlimitchange(35)">35</span>
-            <span class="displayspanleftright fivebtnspeedwidth" ng-click="speedlimitchange(40)">40</span>
-        </span>
-        </div>
+                <!--&lt;!&ndash;ng-bind="speedajaxlimitbind"&ndash;&gt;-->
+            <!--</p>-->
+        <!--<span class="displayspanleftright allspanwidthallspeed" ng-if="speedlimitif.toggle">-->
+            <!--&lt;!&ndash;&ndash;&gt;-->
+            <!--<span class="displayspanleftright fivebtnspeedwidth borderspanspeeda" ng-click="speedlimitchange(30)">30</span>-->
+            <!--<span class="displayspanleftright fivebtnspeedwidth borderspanspeeda" ng-click="speedlimitchange(35)">35</span>-->
+            <!--<span class="displayspanleftright fivebtnspeedwidth" ng-click="speedlimitchange(40)">40</span>-->
+        <!--</span>-->
+        <!--</div>-->
+
         <table class="trmarginmine tablefontsize minetablebordera">
             <tr class="trlineheight minetrborderb" ui-sref="mains.mine.changeiphonenum">
                 <td class="minetablefir ">
@@ -37,51 +38,7 @@
                 </td>
             </tr>
         </table>
-        <table class="trmarginmine tablefontsize minetablebordera">
-            <tr class="trlineheight minetrborderb" ui-sref="mains.mine.changenickname">
-                <td class="minetablefir">
-                    <img src="img/6.png" class="tableicon1"/>
-                </td>
-                <td class="minetablesed">
-                    昵称
-                </td>
-                <td class="minetablethr" ng-bind="mineusernick">
-                    <!--<span class="heightlinenickstyle"></span><span class="spanminebtn">></span>-->
-                </td>
-                <td class="minetablefourright">
-                    <span class="minerightbtnstylea"></span>
-                </td>
-            </tr>
-        </table>
-        <table class="trmarginmine tablefontsize minetablebordera">
-            <tr class="trlineheight minetrborderb">
-                <td class="minetablefir">
-                    <img src="img/email.png" class="tableicon2"/>
-                </td>
-                <td class="minetablesed">
-                    电子邮件
-                </td>
-                <td class="minetablethrall" ng-bind="mineuseremail" ng-click="shouldreturnfalse()">
-                    <!--<span"></span>-->
-                </td>
-            </tr>
-        </table>
-        <table class="trmarginmine tablefontsize minetablebordera">
-            <tr class="trlineheight minetrborderb" ui-sref="mains.mine.changePass">
-                <td class="minetablefir">
-                    <img src="img/key_btn.png" class="tableicon3"/>
-                </td>
-                <td class="minetablesed">
-                    修改密码
-                </td>
-                <td class="minetablethr">
-                    <!--<span class="spanminebtn">></span>-->
-                </td>
-                <td class="minetablefourright">
-                    <span class="minerightbtnstylea"></span>
-                </td>
-            </tr>
-        </table>
+
         <table class="trmarginmine tablefontsize minetablebordera">
             <tr class="trlineheight minetrborderb" ui-sref="mains.mine.unbundling">
                 <td class="minetablefir">
@@ -99,6 +56,25 @@
             </tr>
 
         </table>
+
+        <table class="trmarginmine tablefontsize minetablebordera">
+            <tr class="trlineheight minetrborderb" ui-sref="mains.mine.changelimitspeed">
+                <td class="minetablefir">
+                    <img src="img/speed.png" class="tableicon2"/>
+                </td>
+                <td class="minetablesed">
+                    限速(km/h)
+                </td>
+                <!--heightlinenickstyle-->
+                <td class="minetablethr" ng-bind="limitspeed" >
+                </td>
+                <td class="minetablefourright">
+                    <span class="minerightbtnstylea"></span>
+                </td>
+            </tr>
+
+        </table>
+
         <table class="trmarginmine tablefontsize minetablebordera">
             <tr class="trlineheight minetrborderb">
                 <td class="minetablefir">
@@ -125,7 +101,7 @@
                     <img src="img/lightopen.png" class="tableicon2"/>
                 </td>
                 <td class="minetablesed">
-                    开灯
+                    车灯控制
                 </td>
                 <!--heightlinenickstyle-->
                 <td class="minetablethrall " >
@@ -137,6 +113,54 @@
                 <!--</td>-->
             </tr>
 
+        </table>
+
+        <table class="trmarginmine tablefontsize minetablebordera">
+            <tr class="trlineheight minetrborderb" ui-sref="mains.mine.changePass">
+                <td class="minetablefir">
+                    <img src="img/key_btn.png" class="tableicon3"/>
+                </td>
+                <td class="minetablesed">
+                    修改密码
+                </td>
+                <td class="minetablethr">
+                    <!--<span class="spanminebtn">></span>-->
+                </td>
+                <td class="minetablefourright">
+                    <span class="minerightbtnstylea"></span>
+                </td>
+            </tr>
+        </table>
+
+        <table class="trmarginmine tablefontsize minetablebordera">
+            <tr class="trlineheight minetrborderb" ui-sref="mains.mine.changenickname">
+                <td class="minetablefir">
+                    <img src="img/6.png" class="tableicon1"/>
+                </td>
+                <td class="minetablesed">
+                    昵称
+                </td>
+                <td class="minetablethr" ng-bind="mineusernick">
+                    <!--<span class="heightlinenickstyle"></span><span class="spanminebtn">></span>-->
+                </td>
+                <td class="minetablefourright">
+                    <span class="minerightbtnstylea"></span>
+                </td>
+            </tr>
+        </table>
+
+        <table class="trmarginmine tablefontsize minetablebordera">
+            <tr class="trlineheight minetrborderb">
+                <td class="minetablefir">
+                    <img src="img/email.png" class="tableicon2"/>
+                </td>
+                <td class="minetablesed">
+                    电子邮件
+                </td>
+                <td class="minetablethrall" ng-bind="mineuseremail" ng-click="shouldreturnfalse()">
+                    <!--<span"></span>-->
+                </td>
+            </tr>
         </table>
     </div>
 

@@ -150,18 +150,18 @@ baseService.prototype.commonUser = function(obj,url) {
             'Token':window.sessionStorage.getItem("Utoken")
         },
 
-        timeout:8000
+        timeout:12000
     };
     //obj = that.columnToData(obj,that.mapping[that.userrestPass]);''
     console.log("验证码、忘记密码的输入新密码、imsi.蜂鸣器,修改密码,"+JSON.stringify(obj));
     var q = that.$q.defer();
     that.$http.post(that.baseUrl+url,obj,congfigthr)
         .then(function (e) {
-            console.log('验证码、忘记密码的输入新密码、imsi、蜂鸣器，修改密码成功:'+e);
+            console.log('验证码、忘记密码的输入新密码、imsi、蜂鸣器，修改密码成功:',e);
             q.resolve(e.data);
             console.log(e);
         },function (err) {
-            console.log('验证码、忘记密码的输入新密码、imsi、蜂鸣器，修改密码失败:'+err);
+            console.log('验证码、忘记密码的输入新密码、imsi、蜂鸣器，修改密码失败:',err);
             q.reject(err);
             console.log(err);
         });
@@ -679,7 +679,7 @@ baseService.prototype.speedlimit = function(obj) {
             'Content-Type': 'application/json;charset=UTF-8',
             'Token':window.sessionStorage.getItem("Utoken")
         },
-        timeout:16000
+        timeout:12000
     };
     var q = that.$q.defer();
     that.$http.post(that.baseUrl+'/rest/cmd/limitSpeed/',obj,congfigthr)
@@ -700,7 +700,7 @@ baseService.prototype.breakPower = function(obj) {
             'Content-Type': 'application/json;charset=UTF-8',
             'Token':window.sessionStorage.getItem("Utoken")
         },
-        timeout:16000
+        timeout:12000
     };
     var q = that.$q.defer();
     that.$http.post(that.baseUrl+'/rest/cmd/breakPower/',obj,congfigthr)
@@ -746,6 +746,29 @@ baseService.prototype.selfInspection = function(obj) {
     };
     var q = that.$q.defer();
     that.$http.post(that.baseUrl+'/rest/cmd/selfInspection/',obj,congfigthr)
+        .then(function (e) {
+            q.resolve(e.data);
+        },function (err) {
+            q.reject(err);
+        });
+
+    return q.promise;
+};
+
+//车辆状态获取接口 2017年3月22日 15:15:05
+baseService.prototype.getcarstatus = function(obj,url) {
+    var that= this;
+    var congfigthr={
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            'Token':window.sessionStorage.getItem("Utoken")
+        },
+
+        timeout:16000
+    };
+    //obj = that.columnToData(obj,that.mapping[that.userrestPass]);''
+    var q = that.$q.defer();
+    that.$http.post(that.baseUrl+url,obj,congfigthr)
         .then(function (e) {
             q.resolve(e.data);
         },function (err) {

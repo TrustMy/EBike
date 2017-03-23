@@ -1,69 +1,84 @@
 <div class="divvehicle" ng-style="winHeight">
-    <button class=" btnmargintop" ></button>
-    <button class="vehicleupdate"></button>
 
-    <img src="img/2.png" class="vehicleicona"/>
-
-    <p class="nicknamestylep">车辆状况：<span class="redcolor">故障</span></p>
-    <table class="trmarginmine tablefontsize colorfffvehicle">
-        <tr class="trlineheight vehicletablerdleft">
-
-            <td class="vehicletable ">
-                中控系统
+    <button class=" btnmargintop vehiclebtntopjianr" ng-click="searchPassBackBtn(event)"></button>
+    <p class="vehicletitledetectionstyle">
+        车辆检测
+    </p>
+    <p ng-class="{'bikenormal':bikeyesnormal,'bikehandlebuga':bikehandlebug,'bikecontrollerbuga':bikecontrollerbug,'bikemotorbuga':bikemotorbug}" class="vehicleicona vehicleiconajianr"></p>
+    <p class="startdetectionbtnstyle" ng-click="selfInspectionclick()">开始检测</p>
+    <table class="vehicledetectiontable">
+        <tr>
+            <td>
+                车辆状况：
             </td>
-            <td class="vehicletable vehicletablerdright">
-                正常
-            </td>
-        </tr>
-        <tr class="trlineheight vehicletablerdleft">
-
-            <td class="vehicletable redcolor">
-                电控系统
-            </td>
-            <td class="vehicletable vehicletablerdright redcolor">
-                调整电路故障
-            </td>
-        </tr>
-        <tr class="trlineheight vehicletablerdleft">
-
-            <td class="vehicletable">
-                无线通信系统
-            </td>
-            <td class="vehicletable vehicletablerdright">
-                正常
-            </td>
-        </tr>
-        <tr class="trlineheight vehicletablerdleft">
-
-            <td class="vehicletable">
-                声光控制系统
-            </td>
-            <td class="vehicletable vehicletablerdright">
-                正常
-            </td>
-        </tr>
-        <tr class="trlineheight vehicletablerdleft">
-            <td class="vehicletable">
-                安防系统
-            </td>
-            <td class="vehicletable vehicletablerdright">
-                正常
+            <td ng-class="{'vehicledetectionred':hallmortorinfoerror}" ng-bind="hallmortorinfo">
             </td>
         </tr>
         <tr>
-            <td colspan="2" class="vehicletable vehicletablerdcenter" >
-                在线维修
+            <td>
+            </td>
+            <td ng-class="{'vehicledetectionred':wiremortorinfoerror}" ng-bind="wiremortorinfo">
             </td>
         </tr>
-
+        <tr>
+            <td>
+            </td>
+            <td ng-class="{'vehicledetectionred':handlemortorinfoerror}" ng-bind="handlemortorinfo">
+            </td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td ng-class="{'vehicledetectionred':controllermortorinfoerror}" ng-bind="controllermortorinfo">
+            </td>
+        </tr>
     </table>
+    <ul class="vehicledetectionul">
+        <li class="vehicledetectionlileft" ng-class="{'hallmotorlinor':hallmortornormal,'hallmotorlibug':hallmotorliproblem}">
+            <span class="vehicleullispantopstyle vehicletextrightall">电机霍尔</span>
+            <span class="vehicleullispantopstyle vehicletextrightall vehicleulllispanfontsize" ng-bind="hallbindcontent"></span>
+        </li>
+        <li class="vehicledetectionliright" ng-class="{'wiremotorlinor':wiremortornormal,'wirelmotorlibug':wiremotorliproblem}">
+            <span class="vehicleullispantopstyle vehicletextleftall">电机相线</span>
+            <span class="vehicleullispantopstyle vehicletextleftall vehicleulllispanfontsize" ng-bind="wirebindcontent"></span>
+        </li>
+    </ul>
+    <ul class="vehicledetectionul">
+        <li class="vehicledetectionlileft" ng-class="{'handlemotorlinor':handlemortornormal,'handlemotorlibug':handlemotorliproblem}">
+            <span class="vehicleullispantopstyle vehicletextrightall">转把</span>
+            <span class="vehicleullispantopstyle vehicletextrightall vehicleulllispanfontsize" ng-bind="handlebindcontent"></span>
+        </li>
+        <li class="vehicledetectionliright" ng-class="{'controllermotorlinor':controllermortornormal,'controllermotorlibug':controllermotorliproblem,'controllermotorliprotectiona':controllermotorliprotection}">
+            <span class="vehicleullispantopstyle vehicletextleftall">控制器</span>
+            <span class="vehicleullispantopstyle vehicletextleftall vehicleulllispanfontsize" ng-bind="controllerbindcontent"></span>
+        </li>
+    </ul>
 </div>
 <!--加载中的模态框-->
 <div class="toggle model_warning" ng-if="loadapp.toggle" >
 </div>
 
-<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+<div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
     <div class="modelPad">
         <img class="loadiconstyle" src="img/load.gif"/>
+    </div>
+</div>
+
+<!--模态框-->
+<div class="toggle model_warning" ng-if="subapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="subapp.toggle">
+    <div class="modelPad">
+        <p class="iconAngry"></p>
+        <span class="model_contentspan" ng-bind="submitWarning"></span>
+    </div>
+</div>
+<div class="toggle model_warning" ng-if="hahaapp.toggle" >
+</div>
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="hahaapp.toggle">
+    <div class="modelPad">
+        <p class="iconhappy"></p>
+        <span class="model_contentspan" ng-bind="submithappy"></span>
     </div>
 </div>

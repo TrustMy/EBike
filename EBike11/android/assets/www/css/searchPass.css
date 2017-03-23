@@ -34,7 +34,7 @@
 .contentlogostyle {
     width:2rem;
     height:3.5rem;
-    margin:2rem 7rem;
+    margin:1rem 7rem;
 }
 .searchPasscontent {
     width:12rem;
@@ -57,7 +57,7 @@
 .searchPBtnPStyle {
     width:12rem;
     height:1.7rem;
-    margin:2rem 2rem;
+    margin:1.5rem 2rem;
     -webkit-border-radius:0.9rem;
     -moz-border-radius:0.9rem;
     border-radius:0.9rem;
@@ -80,3 +80,64 @@
     color:#fff;
     right:0;
 }
+@media(max-device-height: 480px) {
+
+}
+@media(min-device-height: 481px) and (max-device-height:750px ) {
+
+}
+@media(min-device-height:751px){
+    .searchpasstitlejianr {
+        height:1.7rem;
+    }
+    .searchBackbtnjianr {
+        height:1.1rem;
+        margin-top:0.3rem;
+        width:0.6rem;
+    }
+    .searchpasstitlecontentjianr {
+        height:1.7rem;
+        line-height: 1.7rem;
+        font-size:0.7rem;
+    }
+    .contentlogostylejianr {
+        margin:1.5rem 7rem 1rem;
+    }
+    .searchPasscontentjianr {
+        margin:1rem 2rem;
+        font-size:0.6rem;
+    }
+    .searchPBtnPStylejianr {
+        margin:1.5rem 2rem;
+        height:1.4rem;
+
+    }
+    .searchPBtnStylejianr {
+        font-size: 0.6rem;
+        line-height:1.4rem;
+        height:1.4rem;
+    }
+    .vehiclebindlogojianr {
+        height:2.7rem;
+        margin:1rem 7rem 1rem;
+    }
+
+}
+.changeiphonesearchpass {
+    color:#e08101;
+    margin:0 2rem;
+    font-size: 0.5rem;
+}
+.searchforgetpassiphone {
+    margin: 1.3rem 2rem 0.4rem;
+}
+
+.radioclass {
+    margin-left: 1rem;
+}
+
+.demo--label{margin:20px 20px 0 0;display:inline-block}
+.demo--radio{display:none}
+.demo--radioInput{background-color:#fff;border:1px solid rgba(0,0,0,0.15);border-radius:100%;display:inline-block;height:16px;margin-right:0.2rem;margin-top:1px;vertical-align:middle;width:16px;line-height:1}
+.demo--radio:checked + .demo--radioInput:after{background-color:#57ad68;border-radius:100%;content:"";display:inline-block;height:12px;margin:2px;width:12px}
+.demo--checkbox.demo--radioInput,.demo--radio:checked + .demo--checkbox.demo--radioInput:after{border-radius:0}

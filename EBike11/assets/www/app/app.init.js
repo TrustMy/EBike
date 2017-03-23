@@ -132,7 +132,18 @@ angular.module("myApp",["ui.router","app.demo.controllers","app.demo.service","a
 
                 }
             }
-        }).state("mains.mine.changeiphonenum",{
+        })
+            .state("mains.mine.changelimitspeed",{
+                url:"/limitspeed",
+                views:{
+                    'tab-mine':{
+                        templateUrl:"app/views/main.mine.changelimitspeed.html",
+                        controller:"changelimitspeedController"
+
+                    }
+                }
+            })
+            .state("mains.mine.changeiphonenum",{
                 url:"/changeiphonenum",
                 views:{
                     'tab-mine':{

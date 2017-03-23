@@ -18,7 +18,7 @@
     margin:1.25rem;
 }
 .trmarginmine {
-    margin:1rem 0.5rem 0;
+    margin:0.2rem 0.5rem 0.2rem;
     font-size:0.8rem;
     color:#d0d0d0;
 }
@@ -28,67 +28,33 @@
 }
 .tableicon1 {
     width:0.8rem;
-
+    margin-top:0.5rem;
 }
 .tableicon2 {
     width:1.3rem;
+    margin-top:0.5rem;
+}
+.tableicon3 {
+    width:1rem;
+    margin-top:0.5rem;
 }
 .minetablesed {
-    width:4rem;
+    width:3.5rem;
     text-align: left;
     line-height:1rem;
 }
 .minetablethr {
-    width:9rem;
+    width:8rem;
     text-align: right;
+    line-height: 1rem;
 }
 .spanminebtn {
     font-size:1.5rem;
     display: inline-block;
     margin-left:0.9rem;
 }
-@media(max-device-height: 480px) {
-    .trlineheight {
-        line-height: 1.3rem;
-    }
-    .tablefontsize {
-        font-size:0.6rem;
-    }
-    .spanminebtn {
-        font-size:0.9rem;
-        display: inline-block;
-        margin-left:0.9rem;
-    }
-}
-@media(min-device-height: 481px) and (max-device-height:568px ) {
-    .trlineheight {
-        line-height: 1.6rem;
-    }
-    .tablefontsize {
-        font-size:0.7rem;
-    }
-    .spanminebtn {
-        font-size:1.2rem;
-        display: inline-block;
-        margin-left:0.9rem;
-    }
-}
-@media(min-device-height: 569px) {
-    .trlineheight {
-        line-height: 1.9rem;
-    }
-    .tablefontsize {
-        font-size:0.75rem;
-    }
-    .spanminebtn {
-        font-size:1.5rem;
-        display: inline-block;
-        margin-left:0.9rem;
-    }
-}
-
 .nicknamestylep {
-    width:16rem;
+    width:100%;
     text-align: center;
     line-height:2rem;
     font-size:1rem;
@@ -111,3 +77,197 @@
     -webkit-background-size:contain;
     background-size: contain;
 }
+.minetablethrall {
+    width:9.5rem;
+}
+@media(max-device-height: 480px) {
+    .divminetablepositiona {
+        position: absolute;
+        top:9rem;
+        bottom: 2.6rem;
+        overflow-y:auto;
+    }
+    .trlineheight {
+        line-height: 1.3rem;
+    }
+    .tablefontsize {
+        font-size:0.6rem;
+    }
+    .spanminebtn {
+        font-size:0.9rem;
+        display: inline-block;
+        margin-left:0.9rem;
+    }
+}
+@media(min-device-height: 481px) and (max-device-height:568px ) {
+    .divminetablepositiona {
+        position: absolute;
+        top:9rem;
+        bottom: 2.6rem;
+        overflow-y:auto;
+    }
+    .trlineheight {
+        line-height: 1.6rem;
+    }
+    .tablefontsize {
+        font-size:0.7rem;
+    }
+    .spanminebtn {
+        font-size:1.2rem;
+        display: inline-block;
+        margin-left:0.9rem;
+    }
+}
+@media(min-device-height: 569px) and (max-device-height:750px ) {
+    .divminetablepositiona {
+        position: absolute;
+        top:11rem;
+        bottom: 2.6rem;
+        overflow-y:auto;
+    }
+    .trlineheight {
+        line-height: 1.9rem;
+    }
+    .tablefontsize {
+        font-size:0.75rem;
+    }
+    .spanminebtn {
+        font-size:1.5rem;
+        display: inline-block;
+        margin-left:0.9rem;
+    }
+}
+@media(min-device-height:751px){
+    .divminetablepositiona {
+        position: absolute;
+        top:10rem;
+        bottom: 2.6rem;
+        overflow-y:auto;
+    }
+    .trlineheight {
+        line-height: 1.2rem;
+    }
+    .tablefontsize {
+        font-size:0.55rem;
+    }
+    .userphonestylejianr {
+        width:4rem;
+        height:4rem;
+        margin:0.5rem 5.9rem;
+        border:0.1rem solid #edefee;
+        -webkit-border-radius:2rem;
+        -moz-border-radius:2rem;
+        border-radius:2rem;
+    }
+    .userimgstylejianr {
+        width:2.5rem;
+        margin: 0.5rem 0.75rem 1rem;
+    }
+}
+/*.heightlinenickstyle {*/
+    /*line-height: 0.5rem;*/
+/*}*/
+.mode_spanexit {
+    width:4.6rem;
+    line-height: 30px;
+    display: inline-block;
+    height: 30px;
+    color:#014286;
+}
+.exitappmodelborderspan {
+    font-size: 20px;
+}
+.minetablebordera {
+    border-bottom:1px solid #12364b;
+}
+
+.minetablefourright {
+    width:1.5rem;
+
+}
+.minerightbtnstylea {
+    display: inline-block;
+    margin:0.5rem 0 0 0.5rem ;
+    width:0.5rem;
+    height:1rem;
+    background:url("../img/arrow_right.png") no-repeat right;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.oiltdcolorstyle {
+    margin:0 0.6rem 0 0;
+    height:1.2rem;
+}
+.oiltdyellow {
+    background:url("../img/off.png") no-repeat right center;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.oiltdgrey {
+    background:url("../img/on.png") no-repeat right center;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.lighttdyellow {
+    background:url("../img/off.png") no-repeat right center;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.lighttdgrey {
+    background:url("../img/on.png") no-repeat right center;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.speedlimitalldiv {
+    width:15rem;
+    height:2rem;
+    padding:0.5rem 0.5rem 0.5rem;
+
+        /*background:#fff;*/
+}
+.speedlimitleftallp {
+    background:#1b4158;
+    float: left;
+    width:6rem;
+    display: inline-block;
+    font-size: 0.7rem;
+    line-height: 1.2rem;
+    height:1.2rem;
+    padding:0.25rem 0.2rem 0.25rem 0.5rem;
+}
+.speedlimitleftallspan {
+    display: inline-block;
+    height:1.2rem;
+    padding-left:1.5rem;
+    background:url("../img/speed.png") no-repeat left center;
+    -webkit-background-size:contain;
+    background-size:contain;
+
+}
+.unitclassspeed {
+    font-size: 0.5rem;
+}
+.displayspanleftright {
+    display: inline-block;
+    float: left;
+
+}
+.allspanwidthallspeed {
+    width:7rem;
+    margin-left:1rem;
+}
+.turnleftbtnspeed {
+    background: url("../img/leftspeed.png") no-repeat center;
+}
+.fivebtnspeedwidth {
+    width:1.7rem;
+    height:1.7rem;
+    line-height: 1.7rem;
+    background:#1b4158;
+    text-align: center;
+}
+.borderspanspeeda {
+    border-right:1px solid #fff;
+}
+
+

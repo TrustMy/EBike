@@ -59,3 +59,19 @@
 .servicephone {
     font-size:0.6rem;
 }
+@media(min-device-height:751px){
+    .servicehelpbackjianr {
+        top:0;
+        bottom:2.3rem;
+        left:0;
+        right:0;
+    }
+    .servicelijianr {
+        line-height: 1.3rem;
+        height:1.3rem;
+        font-size: 0.55rem;
+    }
+    .servicebtnstylejianr {
+        line-height:1.2rem;
+    }
+}

@@ -105,7 +105,7 @@ public class LwaysTrackingLine {
                         Message messages = new Message();
                         messages.what = type;
                         messages.arg1 = EBikeConstant.HTTP_EROOR;
-                        messages.obj = "网络连接超时";
+                        messages.obj = "{\"status\":false,\"err\":\"网络连接超时!\"}";
                         Thread.sleep(100);
                         postNet.sendMessage(messages);
                     } catch (InterruptedException e1) {

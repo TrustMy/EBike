@@ -1,13 +1,29 @@
 <div class="alarmRecordBack" ng-style="winHeight">
-    <p class="searchPassTitle">
-        <button class="searchBackBtn" ng-click="searchPassBackBtn()"></button>
-        <span class="searchPassTitleContent">报警记录</span>
+    <p class="searchPassTitle searchpasstitlejianr">
+        <button class="searchBackBtn searchBackbtnjianr" ng-click="searchPassBackBtn()"></button>
+        <span class="searchPassTitleContent searchpasstitlecontentjianr">报警记录</span>
+        <button ng-click="alarmdateyesbtn()" class="alarmdateyespo bottomtripstyle alarmdatayespojianr">搜索</button>
     </p>
-    <p class="titlePall">
-        <span class="titleicon alarmrecordiconleft"></span>
-        <button class="titleicon alarmrecordiconright" ng-click="alarmrecorddatebtn()"></button>
+    <p class="titlePall titlePalljianr">
+        <form name="alarmdateform" novalidate>
+            <p class="titledatebigp titledatealarmstyle">
+                <label for="appDate">开始日期：</label>
+                <input type="text" ng-model="oalarmstartTime" class="alarmdateinputstyle" readonly="readonly" name="appDate" id="appDate" />
+                <button class="alarmallstatusmodelstyle" ng-class="{'allstatusalarmblue':allalarmblur}" ng-disabled="allstatusalarmdis" ng-click="allastatusalarmbtn()">全部标记为已读</button>
+            </p>
+            <p class="titledatebigpbott titledatealarmstyle">
+                <label for="appDate">结束日期：</label>
+                <!--<span >{{overTime}}</span> -->
+                <input type="text" ng-model="alarmoverTime" class="alarmdateinputstyle" readonly="readonly" name="appDate" id="appDateover" />
+                <button class="alarmallstatusmodelstyle" ng-class="{'allstatusnoalarmblue':allnoalarmblur}" ng-disabled="allnostatusalarmdis" ng-click="allnoastatusalarmbtn()">全部标记为未读</button>
+
+            </p>
+        </form>
+
+        <!--<span class="titleicon alarmrecordiconleft"></span>-->
+        <!--<button class="titleicon alarmrecordiconright" ng-click="alarmrecorddatebtn()"></button>-->
     </p>
-    <div class="alarmrecordcontent">
+    <div class="alarmrecordcontent alarmrecordcontentjianr">
         <table>
             <tr class="alarmtabletitle">
                 <td class="alarmtablefir">时间</td>
@@ -15,11 +31,12 @@
                 <td class="alarmtablethr">类别</td>
             </tr>
             <tr class="alarmtabletr" ng-repeat="info in alarmrecordInfo">
-                <td class="alarmrdtdborder " ng-bind="info.gpstime | date:'yyyy-MM-dd hh:mm'"></td>
+                <td class="alarmrdtdborder " ng-bind="info.gpstime | date:'yyyy-MM-dd HH:mm:ss'"></td>
                 <td class="alarmrctdsed alarmrdtdborder" ng-bind="info.describe"></td>
-                <td class="alarmrdtdborder colorthr" ng-bind="info.describe"></td>
+                <td class="alarmrdtdborder colorthr" ng-show="info.isalarmstatus" ng-bind="info.alarmstyle"></td>
+                <td class="alarmrdtdborder colorthrnorm" ng-hide="info.isalarmstatus" ng-bind="info.alarmstyle"></td>
             </tr>
-            <tr class="widthcenter" ng-class="{'alarmclick':alarmclick1}" ng-click="alarmrecordload()">
+            <tr class="widthcenter" ng-class="{'alarmclick':alarmclick1}" ng-click="alarmrecordload()" ng-disabled="alarmandloaddis">
                 <td colspan="3">继续加载</td>
             </tr>
             <tr class="widthcenter" ng-class="{'alarmnew':alarmclicknew}" ng-click="alarmrecordloadnew()">
@@ -105,7 +122,7 @@
 <div class="toggle model_warning" ng-if="loadapp.toggle" >
 </div>
 
-<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+<div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
     <div class="modelPad">
         <img class="loadiconstyle" src="img/load.gif"/>
     </div>
@@ -123,5 +140,14 @@
     <div class="model_bottombtn">
         <input type="button" class="model_btnleft mode_span" value="返回登录" ng-click="goSubmitPage()" />
         <input type="button" class="mode_span" value="返回主页面" ng-click="gomainhomePage()" />
+    </div>
+</div>
+<!--网络状态的模态框-->
+<div class="toggle model_warning" ng-if="intapp.toggle" >
+</div>
+
+<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="intapp.toggle">
+    <div class="modelPad">
+        <span ng-bind="intappcontent"></span>
     </div>
 </div>

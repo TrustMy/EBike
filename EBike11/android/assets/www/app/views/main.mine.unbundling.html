@@ -1,20 +1,20 @@
 <div class="searchPassBack" ng-style="winHeight">
-    <p class="searchPassTitle">
-        <button class="searchBackBtn" ng-click="searchPassBackBtn()"></button>
-        <span class="searchPassTitleContent">车辆解绑</span>
+    <p class="searchPassTitle searchpasstitlejianr">
+        <button class="searchBackBtn searchBackbtnjianr" ng-click="searchPassBackBtn()"></button>
+        <span class="searchPassTitleContent searchpasstitlecontentjianr">车辆解绑</span>
     </p>
-    <p class="vehiclebindlogo contentlogostyle"></p>
+    <p class="vehiclebindlogo contentlogostyle contentlogostylejianr"></p>
     <form name="unbundlingForm" novalidate>
-        <p class="searchPasscontent">
-            手机号：<input class="searchPinputS devicenumwidth" type="number" ng-model="unbundling.account" name="unbundlingaccount" ng-pattern="unbundlingphone" ng-blur="phonePatStyle(unbundlingForm.unbundlingaccount.$valid)" required />
+        <p class="searchPasscontent searchPasscontentjianr">
+            手机号：<input class="searchPinputS devicenumwidth unbindaccountval" type="text" ng-model="unbundling.account" name="unbundlingaccount" ng-pattern="unbundlingphone" ng-blur="phonePatStyle(unbundlingForm.unbundlingaccount.$valid)" required />
         </p>
-        <p class="searchPasscontent">
-            验证码：<input class="searchPinputS" type="number" ng-model="unbundling.verCodeContent" name="unbundlingverCodeContent" required />
+        <p class="searchPasscontent searchPasscontentjianr">
+            验证码：<input class="searchPinputS unbindvehiclecodevala" type="text" ng-model="unbundling.verCodeContent" name="unbundlingverCodeContent" ng-pattern="unbindingvehiclecodepatt" required />
             <button class="searchPverCodeBtn" ng-click="unbundlinggetVercode()" ng-disabled="unbundverCodedis"><span ng-bind="unbundvercodeBtnContent"></span></button>
         </p>
-        <p class="searchPBtnPStyle">
-            <button class="searchPBtnStyle searchPBtnNo" ng-click="backminePage()">取消</button>
-            <button class="searchPBtnStyle searchPBtnYes" ng-click="gounbundyes()" ng-disabled="unbundlingdis">确认</button>
+        <p class="searchPBtnPStyle searchPBtnPStylejianr">
+            <button class="searchPBtnStyle searchPBtnNo searchPBtnStylejianr" ng-click="backminePage()">取消</button>
+            <button class="searchPBtnStyle searchPBtnYes searchPBtnStylejianr" ng-click="gounbundyes()" ng-disabled="unbundlingdis">确认</button>
         </p>
     </form>
 </div>
@@ -40,7 +40,7 @@
 <div class="toggle model_warning" ng-if="loadapp.toggle" >
 </div>
 
-<div class="model_content model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
+<div class="backgroundnoload model_contentnot " ng-style="modelpositionStnot" ng-if="loadapp.toggle">
     <div class="modelPad">
         <img class="loadiconstyle" src="img/load.gif"/>
     </div>

@@ -5,9 +5,10 @@
 }
 .titlePall {
     width:16rem;
-    height:2.2rem;
+    height:3.6rem;
     background:#eee;
     position: relative;
+    color:#000;
 }
 .titleicon {
     width:1.6rem;
@@ -48,9 +49,8 @@
     width:4.5rem;
 }
 .alarmrecordcontent {
-    /*height:80%;*/
     position: absolute;
-    top:4.2rem;
+    top:5.6rem;
     bottom:2.6rem;
     left:0;
     right:0;
@@ -90,4 +90,83 @@
 }
 .alarmnew {
   display: none;
+}
+.alarmdateyespo{
+    position:absolute;
+    top:0.5rem;
+    right:1rem;
+
+}
+.titledatealarmstyle {
+    width:16rem;
+    font-size:0.6rem;
+    color:#305469;
+    padding:0 1rem;
+    height:1.5rem;
+    line-height:1.5rem;
+}
+.titledatebigp {
+    position: absolute;
+    top:2.2rem;
+    left:0rem;
+
+    /*border-bottom: 0.01rem solid #9fa3a6;*/
+}
+.titledatebigpbott {
+    position: absolute;
+    top:4rem;
+    left:0rem;
+}
+.alarmdateinputstyle {
+    width:5rem;
+    border:0.05rem solid #9fa3a6;
+    height:1.3rem;
+    -webkit-border-radius:0.4rem;
+    -moz-border-radius:0.4rem;
+    border-radius:0.4rem;
+    position:absolute;
+    right:8.3rem;
+    color:#305469;
+    text-align: center;
+}
+@media(min-device-height:751px){
+    .alarmdatayespojianr {
+        font-size: 0.5rem;
+    }
+    .alarmrecordcontentjianr {
+        position: absolute;
+        top:4.2rem;
+        bottom:2.3rem;
+        font-size:0.5rem;
+        left:0;
+        right:0;
+        overflow: auto;
+    }
+    .titlePalljianr {
+        height:2.5rem;
+    }
+}
+.colorthrnorm {
+    color:#fff;
+    font-size: 0.6rem;
+}
+.alarmallstatusmodelstyle {
+    width: 4.5rem;
+    border: 0.05rem solid #9fa3a6;
+    height: 1.3rem;
+    -webkit-border-radius: 0.4rem;
+    -moz-border-radius: 0.4rem;
+    border-radius: 0.4rem;
+    position: absolute;
+
+    right: 3rem;
+    color: #305469;
+    text-align: center;
+    font-size: 0.5rem;
+}
+.allstatusalarmblue {
+    background:#8fafb5;
+}
+.allstatusnoalarmblue {
+    background:#8fafb5;
 }
