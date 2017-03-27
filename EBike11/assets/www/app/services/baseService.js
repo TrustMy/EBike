@@ -777,3 +777,14 @@ baseService.prototype.getcarstatus = function(obj,url) {
 
     return q.promise;
 };
+
+//权限控制判断
+baseService.prototype.authorityControl = function (num) {
+    var authorityList = window.sessionStorage.getItem("Ufunction");
+    var nowauthority = "";
+    if(authorityList){
+        nowauthority = authorityList.charAt((64-num));
+    }
+    console.log(nowauthority);
+    return nowauthority
+}

@@ -145,11 +145,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
     private TimeTool timeTool = new TimeTool();
 
-    //定义一个过滤器；
-    private IntentFilter intentFilter;
 
-    //定义一个广播监听器；
-    private Delete netChangReceiver;
 
     //计时器
     private boolean hasBackgroundCountdownView = false;
@@ -632,16 +628,9 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initLocation() {
-        //实例化过滤器；
-        intentFilter = new IntentFilter();
-        //添加过滤的Action值；
-        intentFilter.addAction("Delete");
 
 
-        //实例化广播监听器；
-        netChangReceiver = new Delete();
-        //将广播监听器和过滤器注册在一起；
-        registerReceiver(netChangReceiver, intentFilter);
+
 
         coordinateTransformation = new CoordinateTransformation(context);
 
@@ -820,7 +809,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(netChangReceiver);
+
         super.onDestroy();
         mapView.onDestroy();
 
@@ -907,10 +896,6 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                     }
                     startGPSTracking(durationtime, EBikeConstant.ALWAYS_TRACKING, seconds);
 
-
-                    name = "alwaysSracking";
-
-                    Log.d("MapActivity", "当前按钮状态" + trackStatus);
                     }else
                     {
                         startErrorPopopWindow(EbFunction.Function_ERR);
@@ -935,12 +920,6 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
                         }
 
-                        name = "foundCar";
-
-
-//                postRequestClasz = new PostRequestClasz(context, EBikeConstant.BUZZER, handler);
-//                postRequestClasz.execute(EBikeSever.server_url + EBikeSever.open_buzzer, uid, operationType, operation, seq);
-
                         appSN = System.currentTimeMillis() / 1000;
 
                         Map<String, Object> map = new WeakHashMap<String, Object>();
@@ -950,7 +929,8 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                         map.put("on", isOpenBuzzerStatus);
 
 //                    postHttpRequest.doPostBUZZER(EBikeSever.server_url + EBikeSever.car_buzzer,termId,token,userPhone,appSN,isOpenBuzzerStatus,EBikeConstant.FOUND_CAR);
-                        postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_buzzer, token, map, EBikeConstant.FOUND_CAR);
+                        postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_buzzer,
+                                token, map, EBikeConstant.FOUND_CAR);
                     }
                     else
                     {
@@ -1217,11 +1197,5 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    public class Delete extends BroadcastReceiver {
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            finish();
-        }
-    }
 }

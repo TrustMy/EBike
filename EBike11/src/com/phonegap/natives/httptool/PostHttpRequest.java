@@ -157,7 +157,6 @@ public class PostHttpRequest {
                 message.arg1 = EBikeConstant.HTTP_EROOR;
                 message.arg2 = 100;
                 message.obj = "{\"status\":false,\"err\":\"网络连接超时!\"}";
-
                 postNet.sendMessage(message);
 
             }
@@ -185,7 +184,7 @@ public class PostHttpRequest {
                     message.what = EBikeConstant.ERROR;
                     message.arg1 = EBikeConstant.HTTP_EROOR;
                     message.arg2 = 100;
-                    message.obj =  "{status:false,err:"+response.code()+"}";
+                    message.obj =  "{status:false,err: 错误码"+response.code()+"}";
                     postNet.sendMessage(message);
                 }
 

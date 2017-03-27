@@ -80,6 +80,7 @@ public class PostNet extends Handler {
         Message message = new Message();
         res = (String) msg.obj;
         error = gson.fromJson(res,Error.class);
+        L.i("error toString: "+error.toString()+"|error :"+error.getErr());
 //        boolean isJson = true;
 //        try {
 //            new JSONObject(res);
@@ -175,7 +176,7 @@ public class PostNet extends Handler {
             case EBikeConstant.ERROR:
                 Message message1 = new Message();
                 message1.what = EBikeConstant.ERROR;
-                message1.obj = msg.obj;
+                message1.obj = error.getErr();
                 handler.sendMessage(message1);
                 break;
 
@@ -440,6 +441,7 @@ public class PostNet extends Handler {
         Message message = new Message();
         message.what = type;
         message.arg1 = EBikeConstant.HTTP_EROOR;//失败
+        L.i("commitTimeOutHandler err:"+msg.getErr());
         message.obj = msg.getErr();
         handler.sendMessage(message);
     }

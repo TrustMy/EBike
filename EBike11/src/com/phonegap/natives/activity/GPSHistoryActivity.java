@@ -64,11 +64,7 @@ import java.util.zip.GZIPOutputStream;
 public class GPSHistoryActivity extends Activity {
     private MapView mapView;
     private AMap aMap;
-    //定义一个过滤器；
-    private IntentFilter intentFilter;
 
-    //定义一个广播监听器；
-    private Delete netChangReceiver;
     private ImageView updateBtn;
     private Context context = GPSHistoryActivity.this;
     private List<LatLng> latLngs;
@@ -238,8 +234,10 @@ public class GPSHistoryActivity extends Activity {
         map.put("termId", termIdNew);
         map.put("startTime", startTime);
         map.put("endTime", endTime);
-        postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_history_location_url, token, map, EBikeConstant.CAR_LOCATION_HISTORICAL);
-//            postHttpRequest.doPostCheckCarHistoryLocation(EBikeSever.server_url+EBikeSever.car_history_location_url,termId,token,startTime,endTime,EBikeConstant.CAR_LOCATION_HISTORICAL);
+        postHttpRequest.toRequest(EBikeSever.server_url + EBikeSever.car_history_location_url,
+                token, map, EBikeConstant.CAR_LOCATION_HISTORICAL);
+//            postHttpRequest.doPostCheckCarHistoryLocation(EBikeSever.server_url+EBikeSever.
+// car_history_location_url,termId,token,startTime,endTime,EBikeConstant.CAR_LOCATION_HISTORICAL);
 
     }
 
@@ -298,7 +296,8 @@ public class GPSHistoryActivity extends Activity {
         token = intent.getStringExtra("token");
 
 
-        L.i("H5 data : startTime:" + startTime + "|endTime:" + endTime + "|startName:" + startName + "|endName:" + endName + "|termId:" + termId);
+        L.i("H5 data : startTime:" + startTime + "|endTime:" + endTime + "|startName:" +
+                startName + "|endName:" + endName + "|termId:" + termId);
 
         TimeTool time = new TimeTool();
         String st = startTime + "";
@@ -334,7 +333,9 @@ public class GPSHistoryActivity extends Activity {
 
 //        netWorkeAvailable.isWiFi(context);
 
-//        Log.d("MapActivity", "检查手机网络 : " + netWorkeAvailable.isMobile(context) + "|" + netWorkeAvailable.isNetworkAvailable(context) + "|" + netWorkeAvailable.isWiFi(context));
+//        Log.d("MapActivity", "检查手机网络 : " + netWorkeAvailable.
+// isMobile(context) + "|" + netWorkeAvailable.isNetworkAvailable(context) +
+// "|" + netWorkeAvailable.isWiFi(context));
         return netWorkeAvailable.isNetworkAvailable(context);
     }
 
@@ -355,20 +356,8 @@ public class GPSHistoryActivity extends Activity {
 
     private void initLocation() {
 
-
-        //实例化过滤器；
-        intentFilter = new IntentFilter();
-        //添加过滤的Action值；
-        intentFilter.addAction("Delete");
-
-
-        //实例化广播监听器；
-        netChangReceiver = new Delete();
-        //将广播监听器和过滤器注册在一起；
-        registerReceiver(netChangReceiver, intentFilter);
-
-
-//        getHttpRequest = new GetHttpRequest(context, handler, aMap, new GPSHistory(aMap, context,null));
+//        getHttpRequest = new GetHttpRequest(context, handler, aMap, new GPSHistory(
+// aMap, context,null));
         Toast.makeText(context, "正在获取历史行程,请稍后!", Toast.LENGTH_SHORT).show();
 
 
@@ -393,7 +382,8 @@ public class GPSHistoryActivity extends Activity {
         mMenuList.add(new TestCheckBean(0, "GPS定位"));
         mMenuList.add(new TestCheckBean(1, "基站定位"));
 
-        menyPopupWindow = new MenyPopupWindow(this, mMenuLayout, mMenuListView, mPopupWindowMenu, handler, EBikeConstant.REQUEST_TYPE);
+        menyPopupWindow = new MenyPopupWindow(this, mMenuLayout, mMenuListView,
+                mPopupWindowMenu, handler, EBikeConstant.REQUEST_TYPE);
         menyPopupWindow.showPopupWidow(historyMenu, getLayoutInflater(), extBtn, rlTopBar, mMenuList);
 
         updateBtn = (ImageView) findViewById(R.id.update);
@@ -441,7 +431,7 @@ public class GPSHistoryActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
-        unregisterReceiver(netChangReceiver);
+
         aMap.clear();
     }
 
@@ -459,11 +449,14 @@ public class GPSHistoryActivity extends Activity {
                 @Override
                 public void run() {
                     for (int i = carLocationHistorical.getContent().getGps().size() - 1; i >= 0; i--) {
-                        if (carLocationHistorical.getContent().getGps().get(i).getLat() == 0.0 || carLocationHistorical.getContent().getGps().get(i).getType() != 0) {
+                        if (carLocationHistorical.getContent().getGps().get(i).getLat() == 0.0 || carLocationHistorical.
+                                getContent().getGps().get(i).getType() != 0) {
                             continue;
                         } else {
-                            LatLng latLng = coordinateTransformation.transformation(new LatLng(carLocationHistorical.getContent().getGps().get(i).getLat(), carLocationHistorical.getContent().getGps().get(i).getLng()));
-                            LatLng GPS = new LatLng(carLocationHistorical.getContent().getGps().get(i).getLat(), carLocationHistorical.getContent().getGps().get(i).getLng());
+                            LatLng latLng = coordinateTransformation.transformation(new LatLng(carLocationHistorical.
+                                    getContent().getGps().get(i).getLat(), carLocationHistorical.getContent().getGps().get(i).getLng()));
+                            LatLng GPS = new LatLng(carLocationHistorical.getContent().getGps().get(i).getLat(), carLocationHistorical.
+                                    getContent().getGps().get(i).getLng());
 //                ml.add(new TraceLocation(GPS.latitude,GPS.longitude, 1, 1, 1));
                             latLngs.add(latLng);
                         }
@@ -552,12 +545,6 @@ public class GPSHistoryActivity extends Activity {
         }
     }
 
-    public class Delete extends BroadcastReceiver {
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            finish();
-        }
-    }
 
 }

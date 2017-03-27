@@ -164,13 +164,14 @@ public class Hub extends CordovaPlugin {
                 if(!PushId.ID .equals(push.getPushId()))
                 {
                     toPush();
+                    L.i("pushId different");
                 }else
                 {
-                    L.i("pushId 相同");
+                    L.i("pushId same");
                 }
             }else
             {
-               Toast.makeText(cordova.getActivity(), "报警通知初始化失败,请重新登录!", Toast.LENGTH_SHORT).show();
+               Toast.makeText(cordova.getActivity(), "报警通知初始化失败,请检查网络并重新登录!", Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -182,14 +183,17 @@ public class Hub extends CordovaPlugin {
     private void checkFunction(String function) {
 
 
-        EbFunction.Function_Car_Open = Integer.
-                parseInt(function.substring(function.length()-5,function.length()-4));
-        EbFunction.Function_Car_Close = Integer.
-                parseInt(function.substring(function.length()-6),function.length()-5);
-        EbFunction.Function_Tracking =
-                Integer.parseInt(function.substring(function.length()-7),function.length()-6);
+        EbFunction.Function_Car_Open = Character.
+                getNumericValue(function.charAt(function.length()-5));
+        EbFunction.Function_Car_Close =  Character.
+                getNumericValue(function.charAt(function.length()-6));
+        EbFunction.Function_Tracking =  Character.
+                getNumericValue(function.charAt(function.length()-7));
 
-        L.i("Function_Car_Open:"+ EbFunction.Function_Car_Open);
+        L.i("Function_Car_Open:"+ EbFunction.
+                Function_Car_Open+"Function_Car_Close:"+EbFunction.
+                Function_Car_Close+"Function_Tracking:"+EbFunction.Function_Tracking);
+
     }
 
     private void toPush() {

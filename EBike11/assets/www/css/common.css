@@ -142,6 +142,10 @@ button {
     border-radius:10px;
 }
 
+.authoritydisable{
+    disabled: true;
+}
+
 /*.colorY {*/
     /*color:#e4ac01;*/
 /*}*/

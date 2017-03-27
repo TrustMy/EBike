@@ -341,6 +341,7 @@ angular.module("app.demo.controllers",[])
                             $window.sessionStorage.setItem("Uemail", e.content.email);
                             $window.sessionStorage.setItem("Unick", e.content.nickName);
                             $window.sessionStorage.setItem("Uspeed", e.content.speed);
+                            $window.sessionStorage.setItem("Ufunction", e.content.function);
                             //$window.sessionStorage.setItem("cellPhone",e.user.celliphone);
                             ////存储用户的密码
                             //$window.sessionStorage.setItem("userpassword", e.user.passWord);
@@ -350,12 +351,9 @@ angular.module("app.demo.controllers",[])
                             //console.log(e.user.nickName);
                             //存储用户的报警数
 
-
                             //console.log($rootScope.alarmcount);
                             //
                             //iOS push regiser
-
-
 
                             if($rootScope.phonetyperoot == 4){
                             mybridge.callHandler('loginsucessObjcCallback', {"termId":$window.sessionStorage.getItem("UtermId"),"seq":registerService.randomsix(),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken")}, function(response) {
@@ -387,14 +385,9 @@ angular.module("app.demo.controllers",[])
                             //console.log(e.user);
 
                             //console.log($rootScope.mainUsercontent);
-                           navigator.intent.toPush(
-                             {"termId":$window.sessionStorage.getItem("UtermId"),
-                             "userPhone":$window.sessionStorage.getItem("Ucp"),
-                             "token":$window.sessionStorage.getItem("Utoken"),
-                             "pushId": e.content.pushId ,
-                             "function":e.content.function}
-                           );
-
+                            navigator.intent.toPush(
+                                {"termId":$window.sessionStorage.getItem("UtermId"),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken"),"pushId": e.content.pushId ,"function":e.content.function}
+                            );
                             if ($scope.noRemember == false){
                                 //存储cookie
                                 registerService.setCookie("CookieUserName", uname);
@@ -1558,6 +1551,7 @@ angular.module("app.demo.controllers",[])
                 console.log("toParams:"+JSON.stringify(toParams));
                 console.log("fromState:"+JSON.stringify(fromState));
                 console.log("fromParams:"+JSON.stringify(fromParams));
+                console.log("toState:",toState);
                 console.log("获取路由地址："+$location.path());
                 if(fromState.name=="mains.home"){
                     console.log($scope.timerr);
@@ -1571,6 +1565,19 @@ angular.module("app.demo.controllers",[])
                     prostatus();
                     $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
                     console.log("开启定时器获取报警数量")
+                }
+                //权限控制判断 2017年3月24日 09:43:00
+                if(toState.name == "mains.home.vehicleStatus"){
+                    if(registerService.authorityControl(1) == "1"){
+
+                    }else{
+                        event.preventDefault();
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = "您无此操作权限！";
+                        $scope.timersfreasonload = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
                 }
 
             });
@@ -1659,80 +1666,91 @@ angular.module("app.demo.controllers",[])
         };
         $scope.carstatusbellUrl = "/rest/cmd/queryStatus/";
         function prostatus(){
-            $scope.fortificationdis = true;
-            $scope.orFortification = "获取中";
-            $scope.loadapp = {"toggle":true};
-            $scope.timesfortiload = $timeout(function(){
-                $scope.loadapp = {"toggle":false};
-            },3000);
-            $scope.carstartusbellstarttimehs = new Date().getTime();
-            registerService.commonUser($scope.carstatusbellObj,$scope.carstatusbellUrl).then(function(e){
-                $scope.loadapp = {"toggle":false};
-                $scope.fortificationdis = false;
-                console.log(e);
-                console.log("报警数"+e.totleAlarm);
-                if(e.totleAlarm>=0){
-                    //$window.sessionStorage.setItem("useralarmcount", e.AlarmCount);
-                    if(0<= e.totleAlarm && e.totleAlarm<=99){
-                        $rootScope.alarmcount = e.totleAlarm;
+            if(registerService.authorityControl(1) == "1"){
+                console.log("authorityControl1:",registerService.authorityControl(1));
+                $scope.fortificationdis = true;
+                $scope.orFortification = "获取中";
+                $scope.loadapp = {"toggle":true};
+                $scope.timesfortiload = $timeout(function(){
+                    $scope.loadapp = {"toggle":false};
+                },3000);
+                $scope.carstartusbellstarttimehs = new Date().getTime();
+                registerService.commonUser($scope.carstatusbellObj,$scope.carstatusbellUrl).then(function(e){
+                    $scope.loadapp = {"toggle":false};
+                    $scope.fortificationdis = false;
+                    console.log(e);
+                    console.log("报警数"+e.totleAlarm);
+                    if(e.totleAlarm>=0){
+                        //$window.sessionStorage.setItem("useralarmcount", e.AlarmCount);
+                        if(0<= e.totleAlarm && e.totleAlarm<=99){
+                            $rootScope.alarmcount = e.totleAlarm;
+                        }else {
+                            $rootScope.alarmcount = "99+";
+                        }
+
                     }else {
-                        $rootScope.alarmcount = "99+";
+                        //$rootScope.alarmcount = 0;
                     }
+                    console.log("$rootScope.alarmcount:"+$rootScope.alarmcount);
+                    $scope.timealarmcontenttime = $timeout(function(){
+                        if($rootScope.alarmcount >0 || $rootScope.alarmcount == "99+"){
+                            console.log("icon显示");
+                            $rootScope.alarmiconcountnone= false;
+                        }else{
+                            console.log("icon隐藏");
+                            $rootScope.alarmiconcountnone= true;
+                        };
+                    },20);
 
-                }else {
-                    //$rootScope.alarmcount = 0;
-                }
-                console.log("$rootScope.alarmcount:"+$rootScope.alarmcount);
-                $scope.timealarmcontenttime = $timeout(function(){
-                    if($rootScope.alarmcount >0 || $rootScope.alarmcount == "99+"){
-                        console.log("icon显示");
-                        $rootScope.alarmiconcountnone= false;
+                    if(e.status == true){
+
+                        if(e.content.lockStatus == 0){
+                            $scope.orFortification = "设防";
+                            $scope.colorfffYes = true;
+                            $scope.coloryyyYes = false;
+                            $scope.colorfffNo= false;
+                            $scope.coloryyyNo = false;
+                        }else if(e.content.lockStatus == 1){
+                            $scope.orFortification = "解防";
+                            $scope.colorfffYes =false ;
+                            $scope.coloryyyYes = false;
+                            $scope.colorfffNo= true;
+                            $scope.coloryyyNo = false;
+                        }
                     }else{
-                        console.log("icon隐藏");
-                        $rootScope.alarmiconcountnone= true;
-                    };
-                },20);
-
-                if(e.status == true){
-
-                    if(e.content.lockStatus == 0){
-                        $scope.orFortification = "设防";
-                        $scope.colorfffYes = true;
-                        $scope.coloryyyYes = false;
-                        $scope.colorfffNo= false;
-                        $scope.coloryyyNo = false;
-                    }else if(e.content.lockStatus == 1){
-                        $scope.orFortification = "解防";
-                        $scope.colorfffYes =false ;
-                        $scope.coloryyyYes = false;
-                        $scope.colorfffNo= true;
-                        $scope.coloryyyNo = false;
+                        $scope.orFortification = "点击获取";
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = e.err+"！";
+                        $scope.timersfreasonload = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
                     }
-                }else{
+                },function(err){
+                    $scope.loadapp = {"toggle":false};
+                    $scope.fortificationdis = false;
                     $scope.orFortification = "点击获取";
                     $scope.subapp= {"toggle":true};
-                    $scope.submitWarning = e.err+"！";
-                    $scope.timersfreasonload = $timeout(function(){
+                    $scope.carstartusbellendtimehs = new Date().getTime();
+                    console.log("请求时间差："+$scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs);
+                    if($scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs>=6500){
+                        $scope.submitWarning = "请求超时！";
+                    }else {
+                        $scope.submitWarning = "网络连接失败！";
+                    }
+                    //$scope.submitWarning = "网络连接失败！";
+                    $scope.timersferrload = $timeout(function(){
                         $scope.subapp= {"toggle":false};
                     },2000);
-                }
-            },function(err){
-                $scope.loadapp = {"toggle":false};
-                $scope.fortificationdis = false;
+                })
+            }else{
                 $scope.orFortification = "点击获取";
-                $scope.subapp= {"toggle":true};
-                $scope.carstartusbellendtimehs = new Date().getTime();
-                console.log("请求时间差："+$scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs);
-                if($scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs>=6500){
-                    $scope.submitWarning = "请求超时！";
-                }else {
-                    $scope.submitWarning = "网络连接失败！";
-                }
-                //$scope.submitWarning = "网络连接失败！";
-                $scope.timersferrload = $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-            })
+                $rootScope.alarmiconcountnone= true;
+                // $scope.subapp= {"toggle":true};
+                // $scope.submitWarning = "您无此操作权限！";
+                // $scope.timersfreasonload = $timeout(function(){
+                //     $scope.subapp= {"toggle":false};
+                // },2000);
+            }
         }
         function prostatuswarningnum(){
             console.log("定时器");
@@ -1743,247 +1761,274 @@ angular.module("app.demo.controllers",[])
             //    $scope.loadapp = {"toggle":false};
             //},3000);
             //$scope.carstartusbellstarttimehs = new Date().getTime();
-            $scope.carstatusbellObj = {
-                appSN:parseInt(Number(new Date().getTime())/1000),
-                termId:Number($window.sessionStorage.getItem("UtermId")),
-                userCellPhone:Number($window.sessionStorage.getItem("Ucp"))
-            };
-            registerService.commonUser($scope.carstatusbellObj,$scope.carstatusbellUrl).then(function(e){
-                //$scope.loadapp = {"toggle":false};
-                //$scope.fortificationdis = false;
-                console.log(e);
-                console.log("报警数"+e.totleAlarm);
-                if(e.totleAlarm>=0){
-                    //$window.sessionStorage.setItem("useralarmcount", e.AlarmCount);
-                    if(0<= e.totleAlarm && e.totleAlarm<=99){
-                        $rootScope.alarmcount = e.totleAlarm;
+
+            if(registerService.authorityControl(1) == "1"){
+                console.log("authorityControl2:",registerService.authorityControl(1));
+                $scope.carstatusbellObj = {
+                    appSN:parseInt(Number(new Date().getTime())/1000),
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    userCellPhone:Number($window.sessionStorage.getItem("Ucp"))
+                };
+                registerService.commonUser($scope.carstatusbellObj,$scope.carstatusbellUrl).then(function(e){
+                    //$scope.loadapp = {"toggle":false};
+                    //$scope.fortificationdis = false;
+                    console.log(e);
+                    console.log("报警数"+e.totleAlarm);
+                    if(e.totleAlarm>=0){
+                        //$window.sessionStorage.setItem("useralarmcount", e.AlarmCount);
+                        if(0<= e.totleAlarm && e.totleAlarm<=99){
+                            $rootScope.alarmcount = e.totleAlarm;
+                        }else {
+                            $rootScope.alarmcount = "99+";
+                        }
+
                     }else {
-                        $rootScope.alarmcount = "99+";
+                        //$rootScope.alarmcount = 0;
                     }
+                    console.log("$rootScope.alarmcount:"+$rootScope.alarmcount);
+                    $scope.timealarmcontenttime = $timeout(function(){
+                        if($rootScope.alarmcount >0 || $rootScope.alarmcount == "99+"){
+                            console.log("icon显示");
+                            $rootScope.alarmiconcountnone= false;
+                        }else{
+                            console.log("icon隐藏");
+                            $rootScope.alarmiconcountnone= true;
+                        };
+                    },20);
+                    //
+                    if(e.status == true){
 
-                }else {
-                    //$rootScope.alarmcount = 0;
-                }
-                console.log("$rootScope.alarmcount:"+$rootScope.alarmcount);
-                $scope.timealarmcontenttime = $timeout(function(){
-                    if($rootScope.alarmcount >0 || $rootScope.alarmcount == "99+"){
-                        console.log("icon显示");
-                        $rootScope.alarmiconcountnone= false;
-                    }else{
-                        console.log("icon隐藏");
-                        $rootScope.alarmiconcountnone= true;
-                    };
-                },20);
-                //
-                if(e.status == true){
-
-                    if(e.content.lockStatus == 0){
-                        $scope.orFortification = "设防";
-                        $scope.colorfffYes = true;
-                        $scope.coloryyyYes = false;
-                        $scope.colorfffNo= false;
-                        $scope.coloryyyNo = false;
-                    }else if(e.content.lockStatus == 1){
-                        $scope.orFortification = "解防";
-                        $scope.colorfffYes =false ;
-                        $scope.coloryyyYes = false;
-                        $scope.colorfffNo= true;
-                        $scope.coloryyyNo = false;
+                        if(e.content.lockStatus == 0){
+                            $scope.orFortification = "设防";
+                            $scope.colorfffYes = true;
+                            $scope.coloryyyYes = false;
+                            $scope.colorfffNo= false;
+                            $scope.coloryyyNo = false;
+                        }else if(e.content.lockStatus == 1){
+                            $scope.orFortification = "解防";
+                            $scope.colorfffYes =false ;
+                            $scope.coloryyyYes = false;
+                            $scope.colorfffNo= true;
+                            $scope.coloryyyNo = false;
+                        }
                     }
-                }
-                 else{
-                    $scope.orFortification = "点击获取";
+                    else{
+                        $scope.orFortification = "点击获取";
+                        //$scope.subapp= {"toggle":true};
+                        //$scope.submitWarning = e.err+"！";
+                        //$scope.timersfreasonload = $timeout(function(){
+                        //    $scope.subapp= {"toggle":false};
+                        //},2000);
+                    }
+                },function(err){
+                    //$scope.loadapp = {"toggle":false};
+                    //$scope.fortificationdis = false;
+                    //$scope.orFortification = "点击获取";
                     //$scope.subapp= {"toggle":true};
-                    //$scope.submitWarning = e.err+"！";
-                    //$scope.timersfreasonload = $timeout(function(){
+                    //$scope.carstartusbellendtimehs = new Date().getTime();
+                    //console.log("请求时间差："+$scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs);
+                    //if($scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs>=6500){
+                    //    $scope.submitWarning = "请求超时！";
+                    //}else {
+                    //    $scope.submitWarning = "网络连接失败！";
+                    //}
+                    ////$scope.submitWarning = "网络连接失败！";
+                    //$scope.timersferrload = $timeout(function(){
                     //    $scope.subapp= {"toggle":false};
                     //},2000);
-                }
-            },function(err){
-                //$scope.loadapp = {"toggle":false};
-                //$scope.fortificationdis = false;
-                //$scope.orFortification = "点击获取";
-                //$scope.subapp= {"toggle":true};
-                //$scope.carstartusbellendtimehs = new Date().getTime();
-                //console.log("请求时间差："+$scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs);
-                //if($scope.carstartusbellendtimehs - $scope.carstartusbellstarttimehs>=6500){
-                //    $scope.submitWarning = "请求超时！";
-                //}else {
-                //    $scope.submitWarning = "网络连接失败！";
-                //}
-                ////$scope.submitWarning = "网络连接失败！";
-                //$scope.timersferrload = $timeout(function(){
-                //    $scope.subapp= {"toggle":false};
-                //},2000);
-            })
+                })
+            }else{
+                // $scope.subapp= {"toggle":true};
+                // $scope.submitWarning = "您无此操作权限！";
+                // $scope.timersfreasonload = $timeout(function(){
+                //     $scope.subapp= {"toggle":false};
+                // },2000);
+            }
+
         }
         if($location.path() == "/mains/home"){
+
             prostatus();
             $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
             console.log("开启定时器获取报警数量");
         }
         //点击解防或者设防的按钮
         $scope.fortificationStatus = function(){
-            console.log($location.path());
-            $scope.fortificationdis = true;
-            if($scope.orFortification == "设防"){
-                $scope.colorfffYes = false;
-                $scope.coloryyyYes =true ;
-                $scope.colorfffNo= false;
-                $scope.coloryyyNo = false;
-                $scope.vehiclesoperationObj = {
-                    termId:Number($window.sessionStorage.getItem("UtermId")),
-                    userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
-                    appSN:parseInt(Number(new Date().getTime())/1000),
-                    lock:true
-                }
-                $scope.vehiclesoperationUrl = "/rest/cmd/lock/";
-                $scope.loadapp = {"toggle":true};
-                $scope.vehiclesoperationstarttimehs = new Date().getTime();
-                registerService.commonUser($scope.vehiclesoperationObj,$scope.vehiclesoperationUrl).then(function(e){
-                    $scope.loadapp = {"toggle":false};
-                    $scope.fortificationdis = false;
-                    console.log(e);
-                    if(e.status == true){
-                        if(e.content.result == 0){
-                            $scope.orFortification = "解防";
-                            $scope.colorfffYes = false;
-                            $scope.coloryyyYes = false;
-                            $scope.colorfffNo=true ;
-                            $scope.coloryyyNo = false;
-                            $scope.hahaapp= {"toggle":true};
-                            $scope.submithappy = "恭喜您，设防成功！";
+            if(registerService.authorityControl(2) == "1"){
+                console.log("authorityControl3:",registerService.authorityControl(2));
+                $scope.fortificationdis = true;
+                if($scope.orFortification == "设防"){
+                    $scope.colorfffYes = false;
+                    $scope.coloryyyYes =true ;
+                    $scope.colorfffNo= false;
+                    $scope.coloryyyNo = false;
+                    $scope.vehiclesoperationObj = {
+                        termId:Number($window.sessionStorage.getItem("UtermId")),
+                        userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                        appSN:parseInt(Number(new Date().getTime())/1000),
+                        lock:true
+                    }
+                    $scope.vehiclesoperationUrl = "/rest/cmd/lock/";
+                    $scope.loadapp = {"toggle":true};
+                    $scope.vehiclesoperationstarttimehs = new Date().getTime();
+                    registerService.commonUser($scope.vehiclesoperationObj,$scope.vehiclesoperationUrl).then(function(e){
+                        $scope.loadapp = {"toggle":false};
+                        $scope.fortificationdis = false;
+                        console.log(e);
+                        if(e.status == true){
+                            if(e.content.result == 0){
+                                $scope.orFortification = "解防";
+                                $scope.colorfffYes = false;
+                                $scope.coloryyyYes = false;
+                                $scope.colorfffNo=true ;
+                                $scope.coloryyyNo = false;
+                                $scope.hahaapp= {"toggle":true};
+                                $scope.submithappy = "恭喜您，设防成功！";
 
-                            $scope.timenohapptime = $timeout(function(){
-                                $scope.hahaapp= {"toggle":false};
+                                $scope.timenohapptime = $timeout(function(){
+                                    $scope.hahaapp= {"toggle":false};
+                                },2000);
+                            }
+                            //else {
+                            //    $scope.colorfffYes =true ;
+                            //    $scope.coloryyyYes = false;
+                            //    $scope.colorfffNo=false ;
+                            //    $scope.coloryyyNo = false;
+                            //    $scope.subapp= {"toggle":true};
+                            //    $scope.submitWarning = "操作失败！";
+                            //    $timeout(function(){
+                            //        $scope.subapp= {"toggle":false};
+                            //    },2000);
+                            //}
+                        }else {
+                            $scope.colorfffYes =true ;
+                            $scope.coloryyyYes = false;
+                            $scope.colorfffNo=false ;
+                            $scope.coloryyyNo = false;
+                            $scope.subapp= {"toggle":true};
+                            $scope.submitWarning = e.err+"！";
+                            $scope.timenoreasontime = $timeout(function(){
+                                $scope.subapp= {"toggle":false};
                             },2000);
                         }
-                        //else {
-                        //    $scope.colorfffYes =true ;
-                        //    $scope.coloryyyYes = false;
-                        //    $scope.colorfffNo=false ;
-                        //    $scope.coloryyyNo = false;
-                        //    $scope.subapp= {"toggle":true};
-                        //    $scope.submitWarning = "操作失败！";
-                        //    $timeout(function(){
-                        //        $scope.subapp= {"toggle":false};
-                        //    },2000);
-                        //}
-                    }else {
+                    },function(err){
+                        $scope.loadapp = {"toggle":false};
+                        $scope.fortificationdis = false;
                         $scope.colorfffYes =true ;
                         $scope.coloryyyYes = false;
                         $scope.colorfffNo=false ;
                         $scope.coloryyyNo = false;
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.err+"！";
-                        $scope.timenoreasontime = $timeout(function(){
+                        $scope.vehiclesoperationendtimehs = new Date().getTime();
+                        console.log("请求时间差："+$scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs);
+                        if($scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs>=6500){
+                            $scope.submitWarning = "请求超时！";
+                        }else {
+                            $scope.submitWarning = "网络连接失败！";
+                        }
+                        //$scope.submitWarning = "网络连接失败！";
+                        $scope.timenoerrtime = $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000);
-                    }
-                },function(err){
-                    $scope.loadapp = {"toggle":false};
-                    $scope.fortificationdis = false;
-                    $scope.colorfffYes =true ;
-                    $scope.coloryyyYes = false;
-                    $scope.colorfffNo=false ;
-                    $scope.coloryyyNo = false;
-                    $scope.subapp= {"toggle":true};
-                    $scope.vehiclesoperationendtimehs = new Date().getTime();
-                    console.log("请求时间差："+$scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs);
-                    if($scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs>=6500){
-                        $scope.submitWarning = "请求超时！";
-                    }else {
-                        $scope.submitWarning = "网络连接失败！";
-                    }
-                    //$scope.submitWarning = "网络连接失败！";
-                    $scope.timenoerrtime = $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                })
+                    })
 
-            }else if($scope.orFortification == "解防"){
-                $scope.colorfffYes = false;
-                $scope.coloryyyYes = false;
-                $scope.colorfffNo= false;
-                $scope.coloryyyNo =true ;
-                $scope.vehiclesoperationObj = {
-                    termId:Number($window.sessionStorage.getItem("UtermId")),
-                    userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
-                    appSN:parseInt(Number(new Date().getTime())/1000),
-                    lock:false
-                }
-                $scope.vehiclesoperationUrl = "/rest/cmd/lock/";
-                $scope.loadapp = {"toggle":true};
-                $scope.vehiclesoperationstarttimehs = new Date().getTime();
-                registerService.commonUser($scope.vehiclesoperationObj,$scope.vehiclesoperationUrl).then(function(e){
-                    $scope.loadapp = {"toggle":false};
-                    console.log(e);
-                    $scope.fortificationdis = false;
-                    if(e.status == true){
-                        if(e.content.result == 0){
-                            $scope.orFortification = "设防";
-                            $scope.colorfffYes =true ;
+                }else if($scope.orFortification == "解防"){
+                    $scope.colorfffYes = false;
+                    $scope.coloryyyYes = false;
+                    $scope.colorfffNo= false;
+                    $scope.coloryyyNo =true ;
+                    $scope.vehiclesoperationObj = {
+                        termId:Number($window.sessionStorage.getItem("UtermId")),
+                        userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                        appSN:parseInt(Number(new Date().getTime())/1000),
+                        lock:false
+                    }
+                    $scope.vehiclesoperationUrl = "/rest/cmd/lock/";
+                    $scope.loadapp = {"toggle":true};
+                    $scope.vehiclesoperationstarttimehs = new Date().getTime();
+                    registerService.commonUser($scope.vehiclesoperationObj,$scope.vehiclesoperationUrl).then(function(e){
+                        $scope.loadapp = {"toggle":false};
+                        console.log(e);
+                        $scope.fortificationdis = false;
+                        if(e.status == true){
+                            if(e.content.result == 0){
+                                $scope.orFortification = "设防";
+                                $scope.colorfffYes =true ;
+                                $scope.coloryyyYes = false;
+                                $scope.colorfffNo=false ;
+                                $scope.coloryyyNo = false;
+                                $scope.hahaapp= {"toggle":true};
+                                $scope.submithappy = "恭喜您，解防成功！";
+                                $scope.timehaftime = $timeout(function(){
+                                    $scope.hahaapp= {"toggle":false};
+                                },2000);
+                            }
+                            //else {
+                            //    $scope.colorfffYes =false ;
+                            //    $scope.coloryyyYes = false;
+                            //    $scope.colorfffNo= true;
+                            //    $scope.coloryyyNo = false;
+                            //    $scope.subapp= {"toggle":true};
+                            //    $scope.submitWarning = "操作失败！";
+                            //    $timeout(function(){
+                            //        $scope.subapp= {"toggle":false};
+                            //    },2000);
+                            //}
+                        }else {
+                            $scope.colorfffYes = false;
                             $scope.coloryyyYes = false;
-                            $scope.colorfffNo=false ;
+                            $scope.colorfffNo= true;
                             $scope.coloryyyNo = false;
-                            $scope.hahaapp= {"toggle":true};
-                            $scope.submithappy = "恭喜您，解防成功！";
-                            $scope.timehaftime = $timeout(function(){
-                                $scope.hahaapp= {"toggle":false};
+                            $scope.subapp= {"toggle":true};
+                            $scope.submitWarning = e.err+"！";
+                            $scope.ftimereasontime = $timeout(function(){
+                                $scope.subapp= {"toggle":false};
                             },2000);
                         }
-                        //else {
-                        //    $scope.colorfffYes =false ;
-                        //    $scope.coloryyyYes = false;
-                        //    $scope.colorfffNo= true;
-                        //    $scope.coloryyyNo = false;
-                        //    $scope.subapp= {"toggle":true};
-                        //    $scope.submitWarning = "操作失败！";
-                        //    $timeout(function(){
-                        //        $scope.subapp= {"toggle":false};
-                        //    },2000);
-                        //}
-                    }else {
+                    },function(err){
+                        $scope.loadapp = {"toggle":false};
+                        $scope.fortificationdis = false;
                         $scope.colorfffYes = false;
                         $scope.coloryyyYes = false;
                         $scope.colorfffNo= true;
                         $scope.coloryyyNo = false;
                         $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.err+"！";
-                        $scope.ftimereasontime = $timeout(function(){
+                        $scope.vehiclesoperationendtimehs = new Date().getTime();
+                        console.log("请求时间差："+$scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs);
+                        if($scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs>=6500){
+                            $scope.submitWarning = "请求超时！";
+                        }else {
+                            $scope.submitWarning = "网络连接失败！";
+                        }
+                        //$scope.submitWarning = "网络连接失败！";
+                        $scope.ftimeerrtime = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    })
+                }else if($scope.orFortification == "点击获取"){
+                    if(registerService.authorityControl(1) == "1"){
+                        prostatus();
+                    }else{
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = "您无此操作权限！";
+                        $scope.timersfreasonload = $timeout(function(){
                             $scope.subapp= {"toggle":false};
                         },2000);
                     }
-                },function(err){
-                    $scope.loadapp = {"toggle":false};
-                    $scope.fortificationdis = false;
-                    $scope.colorfffYes = false;
-                    $scope.coloryyyYes = false;
-                    $scope.colorfffNo= true;
-                    $scope.coloryyyNo = false;
-                    $scope.subapp= {"toggle":true};
-                    $scope.vehiclesoperationendtimehs = new Date().getTime();
-                    console.log("请求时间差："+$scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs);
-                    if($scope.vehiclesoperationendtimehs - $scope.vehiclesoperationstarttimehs>=6500){
-                        $scope.submitWarning = "请求超时！";
-                    }else {
-                        $scope.submitWarning = "网络连接失败！";
-                    }
-                    //$scope.submitWarning = "网络连接失败！";
-                    $scope.ftimeerrtime = $timeout(function(){
-                        $scope.subapp= {"toggle":false};
-                    },2000);
-                })
-            }else if($scope.orFortification == "点击获取"){
-                prostatus();
+                }
+            }else{
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "您无此操作权限！";
+                $scope.timersfreasonload = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
             }
-
-
+            console.log($location.path());
         };
        $scope.changecolorStatus2 = function(){
-            $rootScope.colorfff2 = false;
-            $rootScope.coloryyy2 =true ;
-            console.log(222);
+           $rootScope.colorfff2 = false;
+           $rootScope.coloryyy2 =true ;
+           console.log(222);
         };
         $scope.changecolorStatus3 = function(){
             $rootScope.colorfff3 = false;
@@ -2018,8 +2063,10 @@ angular.module("app.demo.controllers",[])
 
         };
         $scope.changecolorStatus4 = function(){
-            $rootScope.colorfff4 = false;
-            $rootScope.coloryyy4 =true ;
+            if(registerService.authorityControl(1) == "1"){
+                $rootScope.colorfff4 = false;
+                $rootScope.coloryyy4 =true ;
+            }
         };
         $scope.changecolorStatus5 = function(){
             $rootScope.colorfff5 = false;
@@ -2199,9 +2246,7 @@ angular.module("app.demo.controllers",[])
         };
 
         $scope.searchPassBackBtn = function (e) {
-            e.preventDefault();
-            console.log("111111111111111111" , 121231)
-            // window.history.go(-1)
+            window.history.go(-1)
         };
 
         $scope.bikeyesnormal = true;
@@ -2240,127 +2285,135 @@ angular.module("app.demo.controllers",[])
 
         //点击开始检测 2017年3月21日 16:50:48
         $scope.selfInspectionclick = function () {
-            $scope.selfInspectionObj = {
-                termId:Number($window.sessionStorage.getItem("UtermId")),
-                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
-                appSN:parseInt(Number(new Date().getTime())/1000)
-            };
-            $scope.loadapp = {"toggle":true};
-            try{
-                registerService.selfInspection($scope.selfInspectionObj).then(
-                    function(e){
-                        $scope.loadapp = {"toggle": false };
-                        if(e.status == true){
-                            console.log("success:",e)
-                            if(e.content.fault){
-                                // "fault1": 1,//控制器保护(0：无，1：有)
-                                //"fault2": 1,// 电机相线脱落
-                                //"fault3": 1,//控制器故障
-                                //"fault4": 1 ,//电机霍尔故障
-                                //"fault5": 1 //转把故障
+            if(registerService.authorityControl(7) == "1"){
+                $scope.selfInspectionObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                    appSN:parseInt(Number(new Date().getTime())/1000)
+                };
+                $scope.loadapp = {"toggle":true};
+                try{
+                    registerService.selfInspection($scope.selfInspectionObj).then(
+                        function(e){
+                            $scope.loadapp = {"toggle": false };
+                            if(e.status == true){
+                                console.log("success:",e)
+                                if(e.content.fault){
+                                    // "fault1": 1,//控制器保护(0：无，1：有)
+                                    //"fault2": 1,// 电机相线脱落
+                                    //"fault3": 1,//控制器故障
+                                    //"fault4": 1 ,//电机霍尔故障
+                                    //"fault5": 1 //转把故障
 
-                                //控制器
-                                if(e.content.fault.fault3 == 1){
-                                    $scope.controllermortornormal = false;//控制器正常
-                                    $scope.controllermotorliproblem = true;//控制器异常
-                                    $scope.controllermotorliprotection = false;//控制器保护异常
-                                    $scope.controllerbindcontent = "故障";//正常，保护故障，故障
-                                    $scope.controllermortorinfo = "控制器异常,建议检修";//控制器正常
-                                    $scope.controllermortorinfoerror = true;
-                                }else{
-                                    $scope.controllermortornormal = true;//控制器正常
-                                    $scope.controllermotorliproblem = false;//控制器异常
-                                    $scope.controllermotorliprotection = false;//控制器保护异常
-                                    $scope.controllerbindcontent = "正常";//正常，保护故障，故障
-                                    $scope.controllermortorinfo = "控制器正常";//控制器正常
-                                    $scope.controllermortorinfoerror = false;
-                                }
+                                    //控制器
+                                    if(e.content.fault.fault3 == 1){
+                                        $scope.controllermortornormal = false;//控制器正常
+                                        $scope.controllermotorliproblem = true;//控制器异常
+                                        $scope.controllermotorliprotection = false;//控制器保护异常
+                                        $scope.controllerbindcontent = "故障";//正常，保护故障，故障
+                                        $scope.controllermortorinfo = "控制器异常,建议检修";//控制器正常
+                                        $scope.controllermortorinfoerror = true;
+                                    }else{
+                                        $scope.controllermortornormal = true;//控制器正常
+                                        $scope.controllermotorliproblem = false;//控制器异常
+                                        $scope.controllermotorliprotection = false;//控制器保护异常
+                                        $scope.controllerbindcontent = "正常";//正常，保护故障，故障
+                                        $scope.controllermortorinfo = "控制器正常";//控制器正常
+                                        $scope.controllermortorinfoerror = false;
+                                    }
 
-                                //电机相线
-                                if(e.content.fault.fault2 == 1){
-                                    $scope.wiremortornormal = false;//电线正常
-                                    $scope.wiremotorliproblem = true;//电线异常
-                                    $scope.wirebindcontent = "脱落";
-                                    $scope.wiremortorinfo = "电机相线脱落,建议检修";
-                                    $scope.wiremortorinfoerror = true;
-                                }else{
-                                    $scope.wiremortornormal = true;//电线正常
-                                    $scope.wiremotorliproblem = false;//电线异常
-                                    $scope.wirebindcontent = "正常";
-                                    $scope.wiremortorinfo = "电机电线正常";
-                                    $scope.wiremortorinfoerror = false;
-                                }
+                                    //电机相线
+                                    if(e.content.fault.fault2 == 1){
+                                        $scope.wiremortornormal = false;//电线正常
+                                        $scope.wiremotorliproblem = true;//电线异常
+                                        $scope.wirebindcontent = "脱落";
+                                        $scope.wiremortorinfo = "电机相线脱落,建议检修";
+                                        $scope.wiremortorinfoerror = true;
+                                    }else{
+                                        $scope.wiremortornormal = true;//电线正常
+                                        $scope.wiremotorliproblem = false;//电线异常
+                                        $scope.wirebindcontent = "正常";
+                                        $scope.wiremortorinfo = "电机电线正常";
+                                        $scope.wiremortorinfoerror = false;
+                                    }
 
-                                //控制器保护
-                                if(e.content.fault.fault1 == 1){
-                                    $scope.controllermortornormal = false;//控制器正常
-                                    $scope.controllermotorliproblem = false;//控制器异常
-                                    $scope.controllermotorliprotection = true;//控制器保护异常
-                                    $scope.controllerbindcontent = "故障";//正常，保护故障，故障
-                                    $scope.controllermortorinfo = "控制器保护异常,建议检修";//控制器正常
-                                    $scope.controllermortorinfoerror = true;
-                                }else{
-                                    $scope.controllermortornormal = true;//控制器正常
-                                    $scope.controllermotorliproblem = false;//控制器异常
-                                    $scope.controllermotorliprotection = false;//控制器保护异常
-                                    $scope.controllerbindcontent = "正常";//正常，保护故障，故障
-                                    $scope.controllermortorinfo = "控制器正常";//控制器正常
-                                    $scope.controllermortorinfoerror = false;
-                                }
+                                    //控制器保护
+                                    if(e.content.fault.fault1 == 1){
+                                        $scope.controllermortornormal = false;//控制器正常
+                                        $scope.controllermotorliproblem = false;//控制器异常
+                                        $scope.controllermotorliprotection = true;//控制器保护异常
+                                        $scope.controllerbindcontent = "保护";//正常，保护故障，故障
+                                        $scope.controllermortorinfo = "控制器保护异常,建议检修";//控制器正常
+                                        $scope.controllermortorinfoerror = true;
+                                    }else{
+                                        $scope.controllermortornormal = true;//控制器正常
+                                        $scope.controllermotorliproblem = false;//控制器异常
+                                        $scope.controllermotorliprotection = false;//控制器保护异常
+                                        $scope.controllerbindcontent = "正常";//正常，保护故障，故障
+                                        $scope.controllermortorinfo = "控制器正常";//控制器正常
+                                        $scope.controllermortorinfoerror = false;
+                                    }
 
-                                //电机霍尔
-                                if(e.content.fault.fault4 == 1){
-                                    $scope.hallmortornormal = false;//霍尔正常
-                                    $scope.hallmotorliproblem = true ;//霍尔故障
-                                    $scope.hallbindcontent = "故障";
-                                    $scope.hallmortorinfo = "电机霍尔故障,建议检修";  //检测信息
-                                    $scope.hallmortorinfoerror = true;  //检测信息正常
-                                }else{
-                                    $scope.hallmortornormal = true;//霍尔正常
-                                    $scope.hallmotorliproblem = false ;//霍尔故障
-                                    $scope.hallbindcontent = "正常";
-                                    $scope.hallmortorinfo = "电机霍尔正常";  //检测信息
-                                    $scope.hallmortorinfoerror = false;  //检测信息正常
-                                }
+                                    //电机霍尔
+                                    if(e.content.fault.fault4 == 1){
+                                        $scope.hallmortornormal = false;//霍尔正常
+                                        $scope.hallmotorliproblem = true ;//霍尔故障
+                                        $scope.hallbindcontent = "故障";
+                                        $scope.hallmortorinfo = "电机霍尔故障,建议检修";  //检测信息
+                                        $scope.hallmortorinfoerror = true;  //检测信息正常
+                                    }else{
+                                        $scope.hallmortornormal = true;//霍尔正常
+                                        $scope.hallmotorliproblem = false ;//霍尔故障
+                                        $scope.hallbindcontent = "正常";
+                                        $scope.hallmortorinfo = "电机霍尔正常";  //检测信息
+                                        $scope.hallmortorinfoerror = false;  //检测信息正常
+                                    }
 
-                                //转把
-                                if(e.content.fault.fault5 == 1){
-                                    $scope.handlemortornormal = false;//转把正常
-                                    $scope.handlemotorliproblem = true;//转把异常
-                                    $scope.handlebindcontent = "故障";
-                                    $scope.handlemortorinfo = "车辆转把故障,建议检修";
-                                    $scope.handlemortorinfoerror = true;
-                                }else{
-                                    $scope.handlemortornormal = true;//转把正常
-                                    $scope.handlemotorliproblem = false;//转把异常
-                                    $scope.handlebindcontent = "正常";
-                                    $scope.handlemortorinfo = "车辆转把正常";
-                                    $scope.handlemortorinfoerror = false;
+                                    //转把
+                                    if(e.content.fault.fault5 == 1){
+                                        $scope.handlemortornormal = false;//转把正常
+                                        $scope.handlemotorliproblem = true;//转把异常
+                                        $scope.handlebindcontent = "故障";
+                                        $scope.handlemortorinfo = "车辆转把故障,建议检修";
+                                        $scope.handlemortorinfoerror = true;
+                                    }else{
+                                        $scope.handlemortornormal = true;//转把正常
+                                        $scope.handlemotorliproblem = false;//转把异常
+                                        $scope.handlebindcontent = "正常";
+                                        $scope.handlemortorinfo = "车辆转把正常";
+                                        $scope.handlemortorinfoerror = false;
+                                    }
                                 }
+                            }else {
+                                $scope.subapp= {"toggle":true};
+                                $scope.submitWarning = e.err+"！";
+                                $scope.timenoreasontime = $timeout(function(){
+                                    $scope.subapp= {"toggle":false};
+                                },2000);
                             }
-                        }else {
+                        },
+                        function (e) {
+                            console.log("error:",e)
+                            $scope.loadapp = {"toggle": false };
                             $scope.subapp= {"toggle":true};
                             $scope.submitWarning = e.err+"！";
                             $scope.timenoreasontime = $timeout(function(){
                                 $scope.subapp= {"toggle":false};
                             },2000);
                         }
-                    },
-                    function (e) {
-                        console.log("error:",e)
-                        $scope.loadapp = {"toggle": false };
-                        $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.err+"！";
-                        $scope.timenoreasontime = $timeout(function(){
-                            $scope.subapp= {"toggle":false};
-                        },2000);
-                    }
-                );
-            }catch (err){
-                $scope.loadapp = {"toggle": false };
+                    );
+                }catch (err){
+                    $scope.loadapp = {"toggle": false };
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = "网络连接失败！";
+                    $scope.timenoreasontime = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                }
+            }else{
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $scope.timenoreasontime = $timeout(function(){
+                $scope.submitWarning = "您无此操作权限！";
+                $scope.timersfreasonload = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
             }
@@ -2373,6 +2426,8 @@ angular.module("app.demo.controllers",[])
             window.history.go(-1);
             //console.log(window.history);
         };
+        console.log(registerService.authorityControl(1));
+        $scope.isInauthority = true;
         $scope.backappbtn = function(){
 
             $scope.yesOrNo= {"toggle":true};
@@ -2382,7 +2437,7 @@ angular.module("app.demo.controllers",[])
         }
         $scope.yesOrnohide = function(){
             $scope.yesOrNo= {"toggle":false};
-        }
+        };
         $scope.backappYes = function(){
             $state.go("submits");
         };
@@ -2390,6 +2445,23 @@ angular.module("app.demo.controllers",[])
             "height":$rootScope.windoWHeihgt
         };
 
+        $scope.$on('$stateChangeStart',
+            function(event, toState, toParams, fromState, fromParams){
+                //权限控制判断 2017年3月24日 09:43:00
+                if(toState.name == "mains.mine.changelimitspeed"){
+                    if(registerService.authorityControl(8) == "1"){
+
+                    }else{
+                        event.preventDefault();
+                        $scope.subapp= {"toggle":true};
+                        $scope.submitWarning = "您无此操作权限！";
+                        $scope.timersfreasonload = $timeout(function(){
+                            $scope.subapp= {"toggle":false};
+                        },2000);
+                    }
+                }
+
+            });
         if(!$rootScope.mineuserphone || $rootScope.mineuserphone == ""){
             $rootScope.mineuserphone = $window.sessionStorage.getItem("Ucp");
         };
@@ -2427,165 +2499,191 @@ angular.module("app.demo.controllers",[])
             $scope.speedlimitif.toggle = !$scope.speedlimitif.toggle;
         };
         $scope.speedlimitchange = function (limit) {
-            $scope.speedlimitObj = {
-                termId:Number($window.sessionStorage.getItem("UtermId")),
-                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
-                appSN:parseInt(Number(new Date().getTime())/1000),
-                speed : limit
-            };
-            console.log($scope.speedlimitObj);
-            $scope.loadapp = {"toggle":true};
-            try{
-                registerService.speedlimit($scope.speedlimitObj).then(
-                    function(e){
-                        $scope.loadapp = {"toggle": false };
-                        console.log(e);
-                        if(e.status == true){
-                            if(e.content.result == 0){
-                                $scope.hahaapp= {"toggle":true};
-                                $scope.submithappy = "恭喜您，设置成功！";
-                                $scope.limitspeed = limit;
-                                $window.sessionStorage.setItem("Uspeed", limit);
-                                $scope.speedlimitif.toggle = !$scope.speedlimitif.toggle;
-                                $scope.timehaftime = $timeout(function(){
-                                    $scope.hahaapp= {"toggle":false};
+            if(registerService.authorityControl(8) == "1"){
+                $scope.speedlimitObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                    appSN:parseInt(Number(new Date().getTime())/1000),
+                    speed : limit
+                };
+                console.log($scope.speedlimitObj);
+                $scope.loadapp = {"toggle":true};
+                try{
+                    registerService.speedlimit($scope.speedlimitObj).then(
+                        function(e){
+                            $scope.loadapp = {"toggle": false };
+                            console.log(e);
+                            if(e.status == true){
+                                if(e.content.result == 0){
+                                    $scope.hahaapp= {"toggle":true};
+                                    $scope.submithappy = "恭喜您，设置成功！";
+                                    $scope.limitspeed = limit;
+                                    $window.sessionStorage.setItem("Uspeed", limit);
+                                    $scope.speedlimitif.toggle = !$scope.speedlimitif.toggle;
+                                    $scope.timehaftime = $timeout(function(){
+                                        $scope.hahaapp= {"toggle":false};
+                                    },2000);
+                                }
+                            }else {
+                                $scope.subapp= {"toggle":true};
+                                $scope.submitWarning = e.err+"！";
+                                $scope.timenoreasontime = $timeout(function(){
+                                    $scope.subapp= {"toggle":false};
                                 },2000);
                             }
-                        }else {
+
+                        },
+                        function (e) {
+                            console.log("error:",e)
+                            $scope.loadapp = {"toggle": false };
                             $scope.subapp= {"toggle":true};
                             $scope.submitWarning = e.err+"！";
                             $scope.timenoreasontime = $timeout(function(){
                                 $scope.subapp= {"toggle":false};
                             },2000);
                         }
-
-                    },
-                    function (e) {
-                        console.log("error:",e)
-                        $scope.loadapp = {"toggle": false };
-                        $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.err+"！";
-                        $scope.timenoreasontime = $timeout(function(){
-                            $scope.subapp= {"toggle":false};
-                        },2000);
-                    }
-                );
-            } catch (err) {
-                console.log("error22:",err)
-                $scope.loadapp = {"toggle": false };
+                    );
+                } catch (err) {
+                    console.log("error22:",err)
+                    $scope.loadapp = {"toggle": false };
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = "网络连接失败！";
+                    $scope.timenoreasontime = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                }
+            }else{
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $scope.timenoreasontime = $timeout(function(){
+                $scope.submitWarning = "您无此操作权限！";
+                $scope.timersfreasonload = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
             }
         };
         //点击断油or电
         $scope.oiloffclick = function () {
-
-            $scope.breakPowerObj = {
-                termId:Number($window.sessionStorage.getItem("UtermId")),
-                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
-                appSN:parseInt(Number(new Date().getTime())/1000),
-                mod: $scope.oiltdyes?1:0
-            };
-            $scope.loadapp = {"toggle":true};
-            try{
-                registerService.breakPower($scope.breakPowerObj).then(
-                    function(e){
-                        $scope.loadapp = {"toggle": false };
-                        if(e.status == true){
-                            if(e.content.result == 0){
-                                $scope.hahaapp= {"toggle":true};
-                                $scope.submithappy = "恭喜您，设置成功！";
-                                $scope.oiltdyes = !$scope.oiltdyes;
-                                $scope.oiltdno = !$scope.oiltdno;
-                                $scope.timehaftime = $timeout(function(){
-                                    $scope.hahaapp= {"toggle":false};
+            if(registerService.authorityControl(10) == "1"){
+                $scope.breakPowerObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                    appSN:parseInt(Number(new Date().getTime())/1000),
+                    mod: $scope.oiltdyes?1:0
+                };
+                $scope.loadapp = {"toggle":true};
+                try{
+                    registerService.breakPower($scope.breakPowerObj).then(
+                        function(e){
+                            $scope.loadapp = {"toggle": false };
+                            if(e.status == true){
+                                if(e.content.result == 0){
+                                    $scope.hahaapp= {"toggle":true};
+                                    $scope.submithappy = "恭喜您，设置成功！";
+                                    $scope.oiltdyes = !$scope.oiltdyes;
+                                    $scope.oiltdno = !$scope.oiltdno;
+                                    $scope.timehaftime = $timeout(function(){
+                                        $scope.hahaapp= {"toggle":false};
+                                    },2000);
+                                }
+                            }else {
+                                $scope.subapp= {"toggle":true};
+                                $scope.submitWarning = e.err+"！";
+                                $scope.timenoreasontime = $timeout(function(){
+                                    $scope.subapp= {"toggle":false};
                                 },2000);
                             }
-                        }else {
+
+                        },
+                        function (e) {
+                            console.log("error:",e)
+                            $scope.loadapp = {"toggle": false };
                             $scope.subapp= {"toggle":true};
                             $scope.submitWarning = e.err+"！";
                             $scope.timenoreasontime = $timeout(function(){
                                 $scope.subapp= {"toggle":false};
                             },2000);
                         }
-
-                    },
-                    function (e) {
-                        console.log("error:",e)
-                        $scope.loadapp = {"toggle": false };
-                        $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.err+"！";
-                        $scope.timenoreasontime = $timeout(function(){
-                            $scope.subapp= {"toggle":false};
-                        },2000);
-                    }
-                );
-            }catch (err){
-                $scope.loadapp = {"toggle": false };
+                    );
+                }catch (err){
+                    $scope.loadapp = {"toggle": false };
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = "网络连接失败！";
+                    $scope.timenoreasontime = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                }
+                console.log("断油");
+            }else{
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $scope.timenoreasontime = $timeout(function(){
+                $scope.submitWarning = "您无此操作权限！";
+                $scope.timersfreasonload = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
             }
-            console.log("断油");
+
         };
         //开or关灯
         $scope.lightoffclick = function () {
-            $scope.controlLightObj = {
-                termId:Number($window.sessionStorage.getItem("UtermId")),
-                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
-                appSN:parseInt(Number(new Date().getTime())/1000),
-                mod: $scope.lighttdyes?1:0
-            };
-            $scope.loadapp = {"toggle":true};
-            try{
-                registerService.controlLight($scope.controlLightObj).then(
-                    function(e){
-                        console.log("success:",e)
-                        $scope.loadapp = {"toggle": false };
-                        if(e.status == true){
-                            if(e.content.result == 0){
-                                $scope.hahaapp= {"toggle":true};
-                                $scope.submithappy = "恭喜您，设置成功！";
-                                $scope.lighttdyes = !$scope.lighttdyes;
-                                $scope.lighttdno = !$scope.lighttdno;
-                                $scope.timehaftime = $timeout(function(){
-                                    $scope.hahaapp= {"toggle":false};
+            console.log(registerService.authorityControl(9));
+            if(registerService.authorityControl(9) == "1"){
+                console.log("here??");
+                $scope.controlLightObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                    appSN:parseInt(Number(new Date().getTime())/1000),
+                    mod: $scope.lighttdyes?1:0
+                };
+                $scope.loadapp = {"toggle":true};
+                try{
+                    registerService.controlLight($scope.controlLightObj).then(
+                        function(e){
+                            console.log("success:",e)
+                            $scope.loadapp = {"toggle": false };
+                            if(e.status == true){
+                                if(e.content.result == 0){
+                                    $scope.hahaapp= {"toggle":true};
+                                    $scope.submithappy = "恭喜您，设置成功！";
+                                    $scope.lighttdyes = !$scope.lighttdyes;
+                                    $scope.lighttdno = !$scope.lighttdno;
+                                    $scope.timehaftime = $timeout(function(){
+                                        $scope.hahaapp= {"toggle":false};
+                                    },2000);
+                                }
+                            }else {
+                                $scope.subapp= {"toggle":true};
+                                $scope.submitWarning = e.err+"！";
+                                $scope.timenoreasontime = $timeout(function(){
+                                    $scope.subapp= {"toggle":false};
                                 },2000);
                             }
-                        }else {
+
+                        },
+                        function (e) {
+                            console.log("error:",e);
+                            $scope.loadapp = {"toggle": false };
                             $scope.subapp= {"toggle":true};
                             $scope.submitWarning = e.err+"！";
                             $scope.timenoreasontime = $timeout(function(){
                                 $scope.subapp= {"toggle":false};
                             },2000);
                         }
-
-                    },
-                    function (e) {
-                        console.log("error:",e);
-                        $scope.loadapp = {"toggle": false };
-                        $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = e.err+"！";
-                        $scope.timenoreasontime = $timeout(function(){
-                            $scope.subapp= {"toggle":false};
-                        },2000);
-                    }
-                );
-            }catch (err){
-                console.log("err:",err);
-                $scope.loadapp = {"toggle": false };
+                    );
+                }catch (err){
+                    console.log("err:",err);
+                    $scope.loadapp = {"toggle": false };
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = "网络连接失败！";
+                    $scope.timenoreasontime = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                }
+                console.log("亮灯")
+            }else{
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $scope.timenoreasontime = $timeout(function(){
+                $scope.submitWarning = "您无此操作权限！";
+                $scope.timersfreasonload = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
             }
-            console.log("亮灯")
         }
 
     })
@@ -6945,59 +7043,67 @@ angular.module("app.demo.controllers",[])
             "height":$rootScope.windoWHeihgt
         };
         $scope.changelimitspeedbtn = function(){
-            var changelimit = $("input[name='changeSpeedLimit']:checked").attr("value");
-            $scope.changeSpeedDIS = true;
-            $scope.speedlimitObj = {
-                termId:Number($window.sessionStorage.getItem("UtermId")),
-                userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
-                appSN:parseInt(Number(new Date().getTime())/1000),
-                speed : Number(changelimit)
-            };
-            console.log($scope.speedlimitObj);
-            $scope.loadapp = {"toggle":true};
-            try{
-                registerService.speedlimit($scope.speedlimitObj).then(
-                    function(e){
-                        $scope.loadapp = {"toggle": false };
-                        $scope.changeSpeedDIS = false;
-                        console.log(e);
-                        if(e.status == true){
-                            if(e.content.result == 0){
-                                $scope.hahaapp= {"toggle":true};
-                                $scope.submithappy = "恭喜您，设置成功！";
-                                $window.sessionStorage.setItem("Uspeed", Number(changelimit));
-                                $scope.$parent.limitspeed = Number(changelimit);
-                                $scope.timehaftime = $timeout(function(){
-                                    $scope.hahaapp= {"toggle":false};
-                                    // window.history.go(-1);
+            if(registerService.authorityControl(8) == "1"){
+                var changelimit = $("input[name='changeSpeedLimit']:checked").attr("value");
+                $scope.changeSpeedDIS = true;
+                $scope.speedlimitObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    userCellPhone:Number($window.sessionStorage.getItem("Ucp")),
+                    appSN:parseInt(Number(new Date().getTime())/1000),
+                    speed : Number(changelimit)
+                };
+                console.log($scope.speedlimitObj);
+                $scope.loadapp = {"toggle":true};
+                try{
+                    registerService.speedlimit($scope.speedlimitObj).then(
+                        function(e){
+                            $scope.loadapp = {"toggle": false };
+                            $scope.changeSpeedDIS = false;
+                            console.log(e);
+                            if(e.status == true){
+                                if(e.content.result == 0){
+                                    $scope.hahaapp= {"toggle":true};
+                                    $scope.submithappy = "恭喜您，设置成功！";
+                                    $window.sessionStorage.setItem("Uspeed", Number(changelimit));
+                                    $scope.$parent.limitspeed = Number(changelimit);
+                                    $scope.timehaftime = $timeout(function(){
+                                        $scope.hahaapp= {"toggle":false};
+                                        // window.history.go(-1);
+                                    },2000);
+                                }
+                            }else {
+                                $scope.subapp= {"toggle":true};
+                                $scope.submitWarning = e.err+"！";
+                                $scope.timenoreasontime = $timeout(function(){
+                                    $scope.subapp= {"toggle":false};
                                 },2000);
                             }
-                        }else {
+
+                        },
+                        function (e) {
+                            console.log("error:",e)
+                            $scope.changeSpeedDIS = false;
+                            $scope.loadapp = {"toggle": false };
                             $scope.subapp= {"toggle":true};
-                            $scope.submitWarning = e.err+"！";
+                            $scope.submitWarning = "网络连接失败！";
                             $scope.timenoreasontime = $timeout(function(){
                                 $scope.subapp= {"toggle":false};
                             },2000);
                         }
-
-                    },
-                    function (e) {
-                        console.log("error:",e)
-                        $scope.changeSpeedDIS = false;
-                        $scope.loadapp = {"toggle": false };
-                        $scope.subapp= {"toggle":true};
-                        $scope.submitWarning = "网络连接失败！";
-                        $scope.timenoreasontime = $timeout(function(){
-                            $scope.subapp= {"toggle":false};
-                        },2000);
-                    }
-                );
-            } catch (err) {
-                $scope.changeSpeedDIS = false;
-                $scope.loadapp = {"toggle": false };
+                    );
+                } catch (err) {
+                    $scope.changeSpeedDIS = false;
+                    $scope.loadapp = {"toggle": false };
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = "网络连接失败！";
+                    $scope.timenoreasontime = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                }
+            }else{
                 $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "网络连接失败！";
-                $scope.timenoreasontime = $timeout(function(){
+                $scope.submitWarning = "您无此操作权限！";
+                $scope.timersfreasonload = $timeout(function(){
                     $scope.subapp= {"toggle":false};
                 },2000);
             }
