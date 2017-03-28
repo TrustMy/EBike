@@ -50,4 +50,6 @@ public  class EBikeConstant {
 
     public static final int DIALOG = 16;
 
+    public static final int Gone_View = 17;
+
 }

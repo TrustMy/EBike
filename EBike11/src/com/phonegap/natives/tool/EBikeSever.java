@@ -17,7 +17,9 @@ public class EBikeSever {
 
 
 
-    public static final String server_url = "https://180.168.194.98:8443/EBWebServer-2.0/";
+    public static final String server_url_old1 = "https://180.168.194.98:8443/EBWebServer-2.0/";
+    public static final String server_url = "http://139.196.229.233:8080/EBWebServer-2.0/";
+
 
     public static final String car_location_url = "rest/gps/latest/";
 

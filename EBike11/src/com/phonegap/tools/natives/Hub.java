@@ -182,13 +182,13 @@ public class Hub extends CordovaPlugin {
 
     private void checkFunction(String function) {
 
-
+        L.i("function:"+function);
         EbFunction.Function_Car_Open = Character.
-                getNumericValue(function.charAt(function.length()-5));
+                getNumericValue(function.charAt(function.length()-4));
         EbFunction.Function_Car_Close =  Character.
-                getNumericValue(function.charAt(function.length()-6));
+                getNumericValue(function.charAt(function.length()-5));
         EbFunction.Function_Tracking =  Character.
-                getNumericValue(function.charAt(function.length()-7));
+                getNumericValue(function.charAt(function.length()-6));
 
         L.i("Function_Car_Open:"+ EbFunction.
                 Function_Car_Open+"Function_Car_Close:"+EbFunction.

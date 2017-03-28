@@ -1556,14 +1556,14 @@ angular.module("app.demo.controllers",[])
                 if(fromState.name=="mains.home"){
                     console.log($scope.timerr);
                     $interval.cancel($scope.timerr);
-                    $interval.cancel($scope.warningnumtimesa);
+//                    $interval.cancel($scope.warningnumtimesa);
                     console.log("关闭定时获取报警数量！");
                     console.log("关闭定时器,先出来");
                     console.log($scope.warningnumtimesa);
                 };
                 if(toState.name == "mains.home"){
                     prostatus();
-                    $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
+//                    $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
                     console.log("开启定时器获取报警数量")
                 }
                 //权限控制判断 2017年3月24日 09:43:00
@@ -1849,7 +1849,7 @@ angular.module("app.demo.controllers",[])
         if($location.path() == "/mains/home"){
 
             prostatus();
-            $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
+//            $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
             console.log("开启定时器获取报警数量");
         }
         //点击解防或者设防的按钮

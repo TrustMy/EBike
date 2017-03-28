@@ -328,6 +328,8 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                                         foundCar.setImageResource(R.drawable.bell_5);
                                     }
 
+                                    handler.removeMessages(10);
+
 
                                 } else {
                                     //开始
@@ -344,22 +346,20 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                                     followMe.setClickable(false);
                                     followMe.setImageResource(R.drawable.walk_2);
 
-                                    carLocation.setClickable(true);
+                                    carLocation.setClickable(false);
                                     carLocation.setImageResource(R.drawable.bike_2);
 
                                     timeTest = new TimeTest(0, context, handler);
                                     timeTest.startTime();
 
+                                    /*
                                     isNoShow = new Reminder(300, context, handler, 10);
                                     isNoShow.startReminder();
-
+                                    */
 
                                     foundCar.setClickable(false);
-                                    if (buzzerStatus) {
-                                        foundCar.setImageResource(R.drawable.bell_4);
-                                    } else {
-                                        foundCar.setImageResource(R.drawable.bell_5);
-                                    }
+                                    foundCar.setImageResource(R.drawable.bell_4);
+                                    handler.sendEmptyMessageDelayed(10, 5*60*1000);
                                 }
 
 
@@ -816,6 +816,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
         if (timeTest != null) {
             timeTest.stopTime();
+            handler.removeMessages(10);
         }
 
         if (lwaysTrackingLine != null) {
