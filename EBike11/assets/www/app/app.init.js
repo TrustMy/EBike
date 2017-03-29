@@ -96,7 +96,13 @@ angular.module("myApp",["ui.router","app.demo.controllers","app.demo.service","a
                         controller:"serviceHelpController"
                     }
                 }
-            }).state("mains.vehicle",{
+            })
+            .state("userGuide",{
+                url:"/userGuide",
+                templateUrl:"app/views/main.home.userGuide.html",
+                controller:"userGuideController"
+            })
+            .state("mains.vehicle",{
             url:"/vehicle",
             views:{
                 'tab-main':{

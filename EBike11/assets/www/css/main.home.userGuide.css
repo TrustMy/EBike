@@ -1,0 +1,138 @@
+
+.pic1{
+    position: absolute;
+    z-index: 100;
+    top:2rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url("../img/userGuide/1.png");
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.pic2{
+    position: absolute;
+    z-index: 100;
+    top:2rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url("../img/userGuide/2.png");
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.pic3{
+    position: absolute;
+    z-index: 100;
+    top:2rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url("../img/userGuide/3.png");
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.pic4{
+    position: absolute;
+    z-index: 100;
+    top:2rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url("../img/userGuide/4.png");
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.pic5{
+    position: absolute;
+    z-index: 100;
+    top:2rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url("../img/userGuide/5.png") ;
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.pic6{
+    position: absolute;
+    z-index: 100;
+    top:2rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url("../img/userGuide/6.png");
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.pic7{
+    position: absolute;
+    z-index: 100;
+    top:2rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url("../img/userGuide/7.png");
+    -webkit-background-size:contain;
+    background-size:contain;
+}
+.specify{
+    position: absolute;
+    top: 2rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /*color: #3c7500;*/
+}
+.specify_title{
+    font-size: 24px;
+    color: black;
+    margin-top: 4rem;
+    text-align: center;
+}
+.specify_list{
+    position: relative;
+    top: 2rem;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 3rem;
+}
+
+.specify_page{
+    display: inline-block;
+    fontsize:1rem;
+    height: 3rem;
+    line-height: 3rem;
+    text-align: center;
+    width: 4rem;
+    background-color: #5a8a94;
+    border: 1px solid black;
+}
+.nextpagehide{
+    visibility: hidden
+}
+
+
+
+.nextpage{
+    position: absolute;
+    z-index: 100;
+    bottom: 1rem;
+    left: 40%;
+    background: #5a8a94;
+    width: 2rem;
+    height: 2rem;
+    text-align: center;
+    line-height: 2rem;
+    border-radius: 2rem;
+    animation: shadow 2s linear infinite;
+}
+@keyframes shadow {
+    0%, 100% {
+        transform:translateY(0);
+    }
+    50% {
+        transform:translateY(0.5rem);
+    }
+}

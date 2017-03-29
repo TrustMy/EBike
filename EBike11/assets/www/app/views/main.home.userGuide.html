@@ -1,0 +1,29 @@
+<div class="searchPassBack" ng-style="winHeight">
+    <p class="searchPassTitle searchpasstitlejianr">
+        <button class="searchBackBtn searchBackbtnjianr" ng-click="searchPassBackBtn()"></button>
+        <span class="searchPassTitleContent searchpasstitlecontentjianr">使用说明</span>
+    </p>
+    <div>
+        <!--<p ng-class="{'pic1':index==1;'pic2':index==2;'pic3':index==3;'pic4':index==4;}" ></p>-->
+        <div class="specify">
+            <p class="specify_title">使用说明</p>
+            <div class="specify_list">
+                <span class="specify_page" ng-click="nextpageclick(1)">封面</span>
+                <span class="specify_page" ng-click="nextpageclick(2)">产品概述</span>
+                <span class="specify_page" ng-click="nextpageclick(3)">常见问题</span>
+            </div>
+            <div class="specify_list">
+                <span class="specify_page" ng-click="nextpageclick(4)">安装示意图</span>
+                <span class="specify_page" ng-click="nextpageclick(5)">参数</span>
+                <span class="specify_page" ng-click="nextpageclick(6)">安装位置</span>
+            </div>
+            <div class="specify_list">
+                <span class="specify_page" ng-click="nextpageclick(7)">常用说明</span>
+                <span class="specify_page" style="visibility: hidden">常用说明</span>
+                <span class="specify_page" style="visibility: hidden" >常用说明</span>
+            </div>
+        </div>
+        <p ng-class="{'1':'pic1','2':'pic2','3':'pic3','4':'pic4','5':'pic5','6':'pic6','7':'pic7'}[indexl]" id="slider"></p>
+        <span ng-class="{'nextpage':indexl>0,'nextpagehide': indexl==0}" class="animated" ng-click="nextpageclick()" ng-style="nextpagestyle">{{nextpageInfo}}</span>
+    </div>
+</div>

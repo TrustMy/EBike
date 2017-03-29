@@ -260,6 +260,7 @@ angular.module("app.demo.controllers",[])
                 $("input").blur();
             };
             $scope.hideKeyboard();
+
             if(!uname && !upass ){
 
                 $scope.submitdis = false;
@@ -319,6 +320,7 @@ angular.module("app.demo.controllers",[])
                     };
                     $scope.substarttimehs = new Date().getTime();
                     console.log(333333,$scope.substarttimehs);
+
                     registerService.submits($scope.subObj).then(function(e){
                         $scope.subaccountdis = false;
                         $scope.subpassdis = false;
@@ -354,12 +356,11 @@ angular.module("app.demo.controllers",[])
                             //console.log($rootScope.alarmcount);
                             //
                             //iOS push regiser
-
                             if($rootScope.phonetyperoot == 4){
-                            mybridge.callHandler('loginsucessObjcCallback', {"termId":$window.sessionStorage.getItem("UtermId"),"seq":registerService.randomsix(),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken")}, function(response) {
-                                log('JS got response', response)
-                            })
-                                                                }
+                                mybridge.callHandler('loginsucessObjcCallback', {"termId":$window.sessionStorage.getItem("UtermId"),"seq":registerService.randomsix(),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken")}, function(response) {
+                                    log('JS got response', response)
+                                })
+                             }
 
                             $rootScope.mineuserphone = uname;
 
@@ -404,6 +405,7 @@ angular.module("app.demo.controllers",[])
                                 $rootScope.lastPage = "登录";
                                 $state.go("vehiclebind");
                             }else {
+
                                 $state.go("mains.home");
                             }
 
@@ -1556,14 +1558,14 @@ angular.module("app.demo.controllers",[])
                 if(fromState.name=="mains.home"){
                     console.log($scope.timerr);
                     $interval.cancel($scope.timerr);
-//                    $interval.cancel($scope.warningnumtimesa);
+                    $interval.cancel($scope.warningnumtimesa);
                     console.log("关闭定时获取报警数量！");
                     console.log("关闭定时器,先出来");
                     console.log($scope.warningnumtimesa);
                 };
                 if(toState.name == "mains.home"){
                     prostatus();
-//                    $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
+                    // $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
                     console.log("开启定时器获取报警数量")
                 }
                 //权限控制判断 2017年3月24日 09:43:00
@@ -1609,7 +1611,13 @@ angular.module("app.demo.controllers",[])
 
         $scope.backappYes= function(){
             //window.location.replace("index.html");
+            if($rootScope.phonetyperoot == 4){
+                mybridge.callHandler('exitObjcCallback', function(response) {
+                    log('JS got response', response)
+                })
+            }
             $state.go("submits");
+
         };
         $scope.yesOrnohide= function(){
             $scope.yesOrNo= {"toggle":false};
@@ -1849,7 +1857,7 @@ angular.module("app.demo.controllers",[])
         if($location.path() == "/mains/home"){
 
             prostatus();
-//            $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
+            // $scope.warningnumtimesa = $interval(prostatuswarningnum,12000);
             console.log("开启定时器获取报警数量");
         }
         //点击解防或者设防的按钮
@@ -2439,6 +2447,11 @@ angular.module("app.demo.controllers",[])
             $scope.yesOrNo= {"toggle":false};
         };
         $scope.backappYes = function(){
+            if($rootScope.phonetyperoot == 4){
+                mybridge.callHandler('exitObjcCallback', function(response) {
+                    log('JS got response', response)
+                })
+            }
             $state.go("submits");
         };
         $scope.winHeight = {
@@ -6434,14 +6447,9 @@ angular.module("app.demo.controllers",[])
         $scope.searchPassBackBtn = function(){
             window.history.go(-1);
         };
-        //function prostatus(){
-        //    return false;
-        //}
-        //prostatus()
-        //$scope.backappfunctionsmall = function(){
-        //    registerService.removeevent();
-        //};
-        //$scope.backappfunctionsmall();
+        $scope.userGuideClick = function () {
+            $state.go("userGuide");
+        };
         $scope.warderingnum = "500M";
     })
     //修改密码
@@ -7107,5 +7115,177 @@ angular.module("app.demo.controllers",[])
                     $scope.subapp= {"toggle":false};
                 },2000);
             }
+        }
+    })
+
+    .controller("userGuideController",function ($scope,$rootScope,$state,registerService) {
+        $scope.searchPassBackBtn = function(){
+            window.history.go(-1);
+        };
+        $scope.indexl = 0;
+        $scope.nextpageInfo = "︾";
+        $scope.nextpageclick = function (indexnum) {
+            if(!indexnum){
+                if($scope.indexl > 6){
+                    $scope.indexl = 0;
+                    $scope.nextpageInfo = "目录";
+                }
+                else if($scope.indexl == 6){
+                    $scope.nextpageInfo = "目录";
+                    $scope.nextpagestyle = {
+                        "-webkit-transform": 'rotate(0deg)',
+                        "-moz-transform": 'rotate(0deg)',
+                        "-o-transform":'rotate(0deg)',
+                        "-ms-transform":'rotate(0deg)',
+                        "transform":'rotate(0deg)'
+                    };
+                    $scope.indexl = $scope.indexl + 1
+                }else{
+                    $scope.nextpageInfo = "︾";
+                    $scope.nextpagestyle = {
+                        "-webkit-transform": 'rotate(90deg)',
+                        "-moz-transform": 'rotate(90deg)',
+                        "-o-transform":'rotate(90deg)',
+                        "-ms-transform":'rotate(90deg)',
+                        "transform":'rotate(90deg)'
+                    };
+                    $scope.indexl = $scope.indexl + 1
+                }
+            }else {
+                if(indexnum == 7){
+                    $scope.nextpageInfo = "目录";
+                    $scope.nextpagestyle = {
+                        "-webkit-transform": 'rotate(0deg)',
+                        "-moz-transform": 'rotate(0deg)',
+                        "-o-transform":'rotate(0deg)',
+                        "-ms-transform":'rotate(0deg)',
+                        "transform":'rotate(0deg)'
+                    };
+                }else{
+                    $scope.nextpageInfo = "︾";
+                    $scope.nextpagestyle = {
+                        "-webkit-transform": 'rotate(90deg)',
+                        "-moz-transform": 'rotate(90deg)',
+                        "-o-transform":'rotate(90deg)',
+                        "-ms-transform":'rotate(90deg)',
+                        "transform":'rotate(90deg)'
+                    };
+                }
+                $scope.indexl = indexnum;
+            }
+        }
+
+        var slider = document.getElementById('slider');
+        if(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch){
+            $("#slider").on('touchstart',function (event) {
+                var touch = event.originalEvent.targetTouches[0];     //touches数组对象获得屏幕上所有的touch，取第一个touch
+                startPos = {x:touch.pageX,y:touch.pageY,time:+new Date};    //取第一个touch的坐标值
+                isScrolling = 0;   //这个参数判断是垂直滚动还是水平滚动
+
+                $("#slider").on('touchmove',function (event) {
+                    if(event.originalEvent.targetTouches.length > 1 ) return;
+                    var touch = event.originalEvent.targetTouches[0];
+                    endPos = {x:touch.pageX - startPos.x,y:touch.pageY - startPos.y};
+                    isScrolling = Math.abs(endPos.x) < Math.abs(endPos.y) ? 1:0;    //isScrolling为1时，表示纵向滑动，0为横向滑动
+                    if(isScrolling === 1){
+                        // event.preventDefault();      //阻止触摸事件的默认行为，即阻止滚屏
+                        //纵向滑动
+                    }
+                })
+
+                $("#slider").on('touchend',function (event) {
+                    event.preventDefault();
+                    var duration = +new Date - startPos.time;    //滑动的持续时间
+                    if(isScrolling === 1) {    //当为水平滚动时
+                        if (Number(duration) > 10) {
+                            //判断是左移还是右移，当偏移量大于10时执行
+                            if (endPos.y < -10) {
+                                if ($scope.indexl == 7) {
+                                    $scope.$apply(function () {
+                                        $scope.indexl = 0
+                                    });
+                                } else {
+                                    $scope.$apply(function () {
+                                        $scope.indexl = $scope.indexl + 1;
+                                        if( $scope.indexl == 7){
+                                            $scope.nextpageInfo = "目录";
+                                        }
+                                    });
+                                }
+                            } else if (endPos.y > 10) {
+                                if ($scope.indexl == 1) {
+                                    $scope.$apply(function () {
+                                        $scope.indexl = 0
+                                    });
+                                } else {
+                                    $scope.$apply(function () {
+                                        $scope.indexl = $scope.indexl - 1;
+                                        if( $scope.indexl < 7){
+                                            $scope.nextpageInfo = "︾";
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    $("#slider").off('touchmove');
+                    $("#slider").off('touchend');
+                })
+
+            })
+            slider.addEventListener('touchstart',function (event) {
+                var touch = event.targetTouches[0];     //touches数组对象获得屏幕上所有的touch，取第一个touch
+                startPos = {x:touch.pageX,y:touch.pageY,time:+new Date};    //取第一个touch的坐标值
+                isScrolling = 0;   //这个参数判断是垂直滚动还是水平滚动
+                console.log("startPos:",event);
+
+                // slider.addEventListener('touchmove',function (event) {
+                //     event.preventDefault();
+                //     if(event.targetTouches.length > 1 || event.scale && event.scale !== 1) return;
+                //     var touch = event.targetTouches[0];
+                //     endPos = {x:touch.pageX - startPos.x,y:touch.pageY - startPos.y};
+                //     isScrolling = Math.abs(endPos.x) < Math.abs(endPos.y) ? 1:0;    //isScrolling为1时，表示纵向滑动，0为横向滑动
+                //     if(isScrolling === 1){
+                //         // event.preventDefault();      //阻止触摸事件的默认行为，即阻止滚屏
+                //         //纵向滑动
+                //     }
+                // },false);
+                // slider.addEventListener('touchend',function (event) {
+                //     event.preventDefault();
+                //     var duration = +new Date - startPos.time;    //滑动的持续时间
+                //     slider.removeEventListener('touchmove');
+                //     slider.removeEventListener('touchend');
+                //     if(isScrolling === 1) {    //当为水平滚动时
+                //         if (Number(duration) > 10) {
+                //             //判断是左移还是右移，当偏移量大于10时执行
+                //             console.log(endPos.y ,$scope.indexl);
+                //             console.log(event);
+                //             if (endPos.y < -10) {
+                //                 if ($scope.indexl == 7) {
+                //                     $scope.$apply(function () {
+                //                         $scope.indexl = 0
+                //                     });
+                //                 } else {
+                //                     $scope.$apply(function () {
+                //                         $scope.indexl = $scope.indexl + 1
+                //                     });
+                //                 }
+                //             } else if (endPos.y > 10) {
+                //                 if ($scope.indexl == 1) {
+                //                     $scope.$apply(function () {
+                //                         $scope.indexl = 0
+                //                     });
+                //                 } else {
+                //                     $scope.$apply(function () {
+                //                         $scope.indexl = $scope.indexl - 1;
+                //                     });
+                //                 }
+                //             }
+                //         }
+                //     }
+                //
+                // },false);
+
+            },false)
         }
     })
