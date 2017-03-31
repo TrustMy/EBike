@@ -6,9 +6,10 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: url("../img/userGuide/1.png");
-    -webkit-background-size:contain;
-    background-size:contain;
+    background: url("../img/userGuide/1.png") no-repeat;
+    /*-webkit-background-size:contain;*/
+    /*background-size:contain;*/
+    background-size:100% 100%;
 }
 .pic2{
     position: absolute;
@@ -18,8 +19,9 @@
     left: 0;
     right: 0;
     background: url("../img/userGuide/2.png");
-    -webkit-background-size:contain;
-    background-size:contain;
+    /*-webkit-background-size:contain;*/
+    /*background-size:contain;*/
+    background-size:100% 100%;
 }
 .pic3{
     position: absolute;
@@ -29,8 +31,9 @@
     left: 0;
     right: 0;
     background: url("../img/userGuide/3.png");
-    -webkit-background-size:contain;
-    background-size:contain;
+    /*-webkit-background-size:contain;*/
+    /*background-size:contain;*/
+    background-size:100% 100%;
 }
 .pic4{
     position: absolute;
@@ -40,8 +43,9 @@
     left: 0;
     right: 0;
     background: url("../img/userGuide/4.png");
-    -webkit-background-size:contain;
-    background-size:contain;
+    /*-webkit-background-size:contain;*/
+    /*background-size:contain;*/
+    background-size:100% 100%;
 }
 .pic5{
     position: absolute;
@@ -51,8 +55,9 @@
     left: 0;
     right: 0;
     background: url("../img/userGuide/5.png") ;
-    -webkit-background-size:contain;
-    background-size:contain;
+    /*-webkit-background-size:contain;*/
+    /*background-size:contain;*/
+    background-size:100% 100%;
 }
 .pic6{
     position: absolute;
@@ -62,8 +67,9 @@
     left: 0;
     right: 0;
     background: url("../img/userGuide/6.png");
-    -webkit-background-size:contain;
-    background-size:contain;
+    /*-webkit-background-size:contain;*/
+    /*background-size:contain;*/
+    background-size:100% 100%;
 }
 .pic7{
     position: absolute;
@@ -73,8 +79,9 @@
     left: 0;
     right: 0;
     background: url("../img/userGuide/7.png");
-    -webkit-background-size:contain;
-    background-size:contain;
+    /*-webkit-background-size:contain;*/
+    /*background-size:contain;*/
+    background-size:100% 100%;
 }
 .specify{
     position: absolute;
