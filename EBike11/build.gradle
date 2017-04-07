@@ -233,13 +233,19 @@ android {
                 storePassword = "__unset"
             }
         }
-        buildTypes {
-            release {
-                signingConfig signingConfigs.release
-            }
-        }
+
         addSigningProps(cdvReleaseSigningPropertiesFile, signingConfigs.release)
     }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+//          //签名
+            signingConfig signingConfigs.debug
+        }
+    }
+
     if (cdvDebugSigningPropertiesFile) {
         addSigningProps(cdvDebugSigningPropertiesFile, signingConfigs.debug)
     }
