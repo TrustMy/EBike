@@ -55,23 +55,15 @@
                 <p class="searchdateline">
 
                     <p class="cartrippositionleft">
-                        <label for="appDate">开始日期：</label><br>
-                        <input type="text" ng-model="ostartTimes" class="datewidthcj" readonly="readonly" name="appDate" id="appDate" ng-click="starttripclick()"/>
+                        <input type="text" ng-model="ostartTimes" class="datewidthcj2" readonly="readonly" name="appDate"/>
                     </p>
-
-                    <!--<label for="appDate">日期</label>-->
-
-                    <!--<input value="" class="datewidthcj" readonly="readonly" name="appDate" id="appDate" type="text">-->
-                    <!--<button class="dateicon" ng-click="showdatemodelbtn()"></button>-->
+                    <p class="cartrippositionleftmid">
+                        ~
+                    </p>
                     <p class="cartrippositionright">
-                        <label for="appDate">结束日期：</label><br>
-                        <!--<span >{{overTime}}</span> -->
-                        <input type="text" ng-model="overTimes" class="datewidthcj" readonly="readonly" name="appDate" id="appDateover" />
+                        <input type="text" ng-model="overTimes" class="datewidthcj2" readonly="readonly" name="appDate" />
                     </p>
-                    <button ng-click="changedatebtnsearch()" class="searchdatebtnstyle bottomtripstyle">搜索</button>
-                    <button ng-click="datetripbtninit()" class="searchdatebtnstyleno bottomtripstyle">取消</button>
-
-
+                     <p class="tripsearchmore" ui-sref="searchmore">查询更多</p>
                 </p>
             </form>
             <div class="lastdivheight lastdivheightjianr">

@@ -61,12 +61,33 @@
 .cartrippositionleft {
     position:absolute;
     left:0.5rem;
-    top:0;
+    height: 1.3rem;
+    line-height: 1.3rem;
+    top: 0;
+    color: white;
+}
+.cartrippositionleftmid{
+    position:absolute;
+    left:3.9rem;
+    height: 1.3rem;
+    line-height: 1.3rem;
+    top: 0;
+    color: white;
+}
+.datewidthcj2 {
+    width:3.5rem;
+    height:1.3rem;
+    line-height: 1.3rem;
+    color:white;
+    outline: none;
 }
 .cartrippositionright {
     position: absolute;
-    top:0;
-    left:4.5rem;
+    top: 0;
+    height: 1.3rem;
+    line-height: 1.3rem;
+    left:4.6rem;
+    color: white;
 }
 .datecontent {
     width:15rem;
@@ -141,7 +162,28 @@
     width:16rem;
     height:2rem;
     line-height:1rem;
+    background-color: #1e455c ;
+    margin-top: -0.5rem;
+    margin-left: -0.5rem;
+    /*margin:-0.5rem -0.5rem;*/
 }
+
+.tripsearchmore{
+    position:absolute;
+    height: 1.2rem;
+    line-height: 1.2rem;
+    top:0;
+    left:8.5rem;
+    width: 6rem;
+    text-align: center;
+    background-color: #082f45;
+    color: white;
+    border:0.05rem solid #9fa3a6;
+    -webkit-border-radius:0.4rem;
+    -moz-border-radius:0.4rem;
+    border-radius:0.4rem;
+}
+
 .dontcartrip {
     display:none;
 }
@@ -252,6 +294,25 @@
     top:0.5rem;
     left:12rem;
 }
+.searchdatebtntoday{
+    position: absolute;
+    top:0rem;
+    left:8.5rem;
+    color: #ffba00 ;
+}
+.searchdatebtnlastday{
+    position: absolute;
+    top:0rem;
+    left:10.5rem;
+    color: #ffba00 ;
+}
+.searchdatebtnweek{
+    position: absolute;
+    top:0rem;
+    left:12.5rem;
+    color: #ffba00 ;
+}
+
 .clickandaddload {
     display: none;
 }

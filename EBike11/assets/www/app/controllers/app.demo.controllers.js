@@ -103,7 +103,6 @@ angular.module("app.demo.controllers",[])
         console.log(333333222,new Date(1488983606000));
         //console.log(22222,new Date(1484495999000));
         //console.log(44445,new Date("2012/12/25 20:11:11").getTime() - new Date("2012/12/18 20:11:11").getTime());
-
     })
     //登录部分
     .controller("submitsController",["$scope","$state","$rootScope","registerService","$window","$timeout","$location",function($scope,$state,$rootScope,registerService,$window,$timeout,$location){
@@ -386,9 +385,9 @@ angular.module("app.demo.controllers",[])
                             //console.log(e.user);
 
                             //console.log($rootScope.mainUsercontent);
-                            navigator.intent.toPush(
-                                {"termId":$window.sessionStorage.getItem("UtermId"),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken"),"pushId": e.content.pushId ,"function":e.content.function}
-                            );
+                            //navigator.intent.toPush(
+                            //    {"termId":$window.sessionStorage.getItem("UtermId"),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken"),"pushId": e.content.pushId,"function":e.content.function}
+                            //);
                             if ($scope.noRemember == false){
                                 //存储cookie
                                 registerService.setCookie("CookieUserName", uname);
@@ -1549,12 +1548,13 @@ angular.module("app.demo.controllers",[])
         $scope.$on('$stateChangeStart',
 
             function(event, toState, toParams, fromState, fromParams){
-                console.log("toState:"+JSON.stringify(toState));
-                console.log("toParams:"+JSON.stringify(toParams));
-                console.log("fromState:"+JSON.stringify(fromState));
-                console.log("fromParams:"+JSON.stringify(fromParams));
-                console.log("toState:",toState);
-                console.log("获取路由地址："+$location.path());
+                // console.log("toState:"+JSON.stringify(toState));
+                // console.log("toParams:"+JSON.stringify(toParams));
+                // console.log("fromState:"+JSON.stringify(fromState));
+                // console.log("fromParams:"+JSON.stringify(fromParams));
+                // console.log("toState:",toState);
+                // console.log("获取路由地址："+$location.path());
+                // console.log($scope);
                 if(fromState.name=="mains.home"){
                     console.log($scope.timerr);
                     $interval.cancel($scope.timerr);
@@ -1582,6 +1582,10 @@ angular.module("app.demo.controllers",[])
                     }
                 }
 
+                if(toState.name == "mains.home.alarmRecord"){
+                    $rootScope.alarmstartTime = "";
+                    $rootScope.alarmoverTime = ""
+                }
             });
         //$scope.timetimetime = $timeout(function(){
         //    console.log(333333333333333,$scope.timerr)
@@ -2701,7 +2705,7 @@ angular.module("app.demo.controllers",[])
 
     })
     //用车记录
-    .controller("cartripController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout,$location){
+    .controller("cartripController",function($scope,$rootScope,$state,registerService,$interval,$window,$timeout,$location , a ,b ){
 
         $scope.timerss = $timeout(function(){
             registerService.datecommon();
@@ -2709,6 +2713,7 @@ angular.module("app.demo.controllers",[])
         $scope.dateinputdis = true;
         $rootScope.colorfff2 = true;
         $rootScope.coloryyy2 = false;
+
         //返回按钮
         $scope.searchPassBackBtn = function(){
             window.history.go(-1);
@@ -2750,6 +2755,9 @@ angular.module("app.demo.controllers",[])
                 $scope.cartriploading = true;//加载中
                 $scope.thelastpagecartripover =true ;//加载完全
                 $scope.clickandaddloads = true;//继续加载
+                $scope.startDate="";
+                $scope.endDate="";
+                // $scope.changedatebtnsearch();
             }
         });
         //console.log(registerService.getcurrentTime);
@@ -3380,11 +3388,15 @@ angular.module("app.demo.controllers",[])
             $scope.todayF();
         }
         //前一天的行程
-        console.log(registerService.getTime());
         $scope.ostartTimes = registerService.getdatestr(-2);
         $scope.overTimes = registerService.getdatestr(-1);
-        //$scope.lasthavedate = true;
-        //$scope.lastdontdate = false;
+        console.log(a , b);
+        if(a && b){
+
+            $scope.ostartTimes = $rootScope.tripstartTime;
+            $scope.overTimes =  $rootScope.tripoverTime;
+        }
+        console.log($scope.ostartTimes , $scope.overTimes);
         //四种样式
 
         $scope.normaldianlastdontdate = true;
@@ -4214,17 +4226,26 @@ angular.module("app.demo.controllers",[])
         };
         $scope.timelastnulltime = $timeout(function(){
             $scope.lastpagenumbera = 0;
-            $scope.lasttripObj = {
-                termId:Number($window.sessionStorage.getItem("UtermId")),
-                startTime:new Date($scope.ajaxstarttime+' 00:00:00').getTime(),
-                endTime:new Date($scope.ajaxendtime+' 23:59:59').getTime(),
-                pageIndex:$scope.lastpagenumbera,
-                pageSize:3
-                //,pageNumber:$scope.lastdatepage,
-                //limit:2
-            };
-            $scope.islastandload = false;
-            $scope.lastdate();
+            if((new Date($scope.ajaxendtime+" 23:59:59").getTime() - new Date($scope.ajaxstarttime+" 00:00:00").getTime()) > 604800000){
+                $scope.islastandload = false;
+                $scope.subapp= {"toggle":true};
+                $scope.submitWarning = "开始,结束日期不能相差超过7天，请您重新确认！";
+                $scope.timesevenoverdate = $timeout(function(){
+                    $scope.subapp= {"toggle":false};
+                },2000);
+            }else{
+                $scope.lasttripObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    startTime:new Date($scope.ajaxstarttime+' 00:00:00').getTime(),
+                    endTime:new Date($scope.ajaxendtime+' 23:59:59').getTime(),
+                    pageIndex:$scope.lastpagenumbera,
+                    pageSize:3
+                    //,pageNumber:$scope.lastdatepage,
+                    //limit:2
+                };
+                $scope.islastandload = false;
+                $scope.lastdate();
+            }
         },2);
         $scope.datetripbtninit = function(){
             $scope.ostartTimes = registerService.getdatestr(-2);
@@ -4252,55 +4273,71 @@ angular.module("app.demo.controllers",[])
             },2);
         };
 
-        $scope.changedatebtnsearch = function(){
-            $scope.coverostarttime = $("#appDate").val().replace('-','').replace('-','');
-            $scope.coverovertime = $("#appDateover").val().replace('-','').replace('-','');
-            $scope.coverostarttimeeeeee = $("#appDate").val().replace('-','/').replace('-','/');
-            $scope.coverovertimeeeeee = $("#appDateover").val().replace('-','/').replace('-','/');
-            console.log($scope.coverostarttime,$scope.coverovertime);
+        $scope.changedatebtnsearch = function(startDateParms,endDateParms){
+            // $scope.coverostarttime = $("#appDate").val().replace('-','').replace('-','');
+            // $scope.coverovertime = $("#appDateover").val().replace('-','').replace('-','');
+            $scope.coverostarttimeeeeee = $scope.ostartTimes.replace('-','/').replace('-','/');
+            $scope.coverovertimeeeeee = $scope.overTimes.replace('-','/').replace('-','/');
             $scope.ajaxstarttime =$scope.coverostarttimeeeeee ;
             $scope.ajaxendtime = $scope.coverovertimeeeeee;
-            console.log(new Date($scope.coverostarttimeeeeee+" 00:00:00").getTime());
-            console.log(new Date($scope.coverovertimeeeeee+" 00:00:00").getTime());
-            if((new Date($scope.coverovertimeeeeee+" 23:59:59").getTime() - new Date($scope.coverostarttimeeeeee+" 00:00:00").getTime()) >604800000){
-                console.log("时间太长了啊啊啊啊");
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "开始,结束日期不能相差超过7天，请您重新确认！";
-
-                $scope.timesevenoverdate = $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-                console.log("看这里啊");
-            } else if($scope.ajaxendtime>= $scope.ajaxstarttime){
+            //处理今天昨天近七天按钮
+            if(startDateParms&&endDateParms){
                 $scope.lastdatepage=0;
                 $scope.timelastnulltimedatesed = $timeout(function(){
                     //$scope.dituiditui = true;
                     $scope.lastdateinfo = null;
                     $scope.islastandload = false;
                     $scope.lastpagenumbera = 0;
-                    console.log($scope.ajaxstarttime,$scope.ajaxendtime)
+                    console.log("CommonTime:",startDateParms , endDateParms);
                     $scope.lasttripObj = {
                         termId:Number($window.sessionStorage.getItem("UtermId")),
-                        startTime:new Date($scope.ajaxstarttime+' 00:00:00').getTime(),
-                        endTime:new Date($scope.ajaxendtime+' 23:59:59').getTime(),
+                        startTime:startDateParms,
+                        endTime:endDateParms,
                         pageIndex:$scope.lastpagenumbera,
                         pageSize:3
-                        //,pageNumber:$scope.lastdatepage,
-                        //limit:2
                     };
                     $scope.lasttripUrl = "/rest/trips/period/";
                     $scope.lastdate();
                 },2);
-                console.log("看这里啊");
-            } else {
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "开始日期大于结束日期，请您重新确认！";
-                $scope.timesevenoverdateall = $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-                console.log("看这里啊");
             }
+            else{
+                if((new Date($scope.coverovertimeeeeee+" 23:59:59").getTime() - new Date($scope.coverostarttimeeeeee+" 00:00:00").getTime()) >604800000){
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = "开始,结束日期不能相差超过7天，请您重新确认！";
 
+                    $scope.timesevenoverdate = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                } else if($scope.ajaxendtime>= $scope.ajaxstarttime){
+                    $scope.lastdatepage=0;
+                    $scope.timelastnulltimedatesed = $timeout(function(){
+                        //$scope.dituiditui = true;
+                        $scope.lastdateinfo = null;
+                        $scope.islastandload = false;
+                        $scope.lastpagenumbera = 0;
+                        console.log($scope.ajaxstarttime,$scope.ajaxendtime)
+                        $scope.lasttripObj = {
+                            termId:Number($window.sessionStorage.getItem("UtermId")),
+                            startTime:new Date($scope.ajaxstarttime+' 00:00:00').getTime(),
+                            endTime:new Date($scope.ajaxendtime+' 23:59:59').getTime(),
+                            pageIndex:$scope.lastpagenumbera,
+                            pageSize:3
+                            //,pageNumber:$scope.lastdatepage,
+                            //limit:2
+                        };
+                        $scope.lasttripUrl = "/rest/trips/period/";
+                        $scope.lastdate();
+                    },2);
+                    console.log("看这里啊");
+                } else {
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = "开始日期大于结束日期，请您重新确认！";
+                    $scope.timesevenoverdateall = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                    console.log("看这里啊");
+                }
+            }
         }
         $scope.clickLasttripOnload = function(){
             //$scope.timelastnulltimedatefirbtn = $timeout(function(){
@@ -4310,6 +4347,7 @@ angular.module("app.demo.controllers",[])
             //},2);
             $scope.changedatebtnsearch();
         };
+
         //$scope.dateModelhide = function(){
         //    $scope.datediv = {toggle:false};
         //    console.log(1);
@@ -4613,15 +4651,28 @@ angular.module("app.demo.controllers",[])
             $scope.lastandloadtripdis= true;//last的行程不可点击
             $scope.islastandload = true;
             console.log("点击了继续加载："+$scope.lastpagenumbera);
-            $scope.lasttripObj = {
-                termId:Number($window.sessionStorage.getItem("UtermId")),
-                startTime:new Date($scope.ajaxstarttime+' 00:00:00').getTime(),
-                endTime:new Date($scope.ajaxendtime+' 23:59:59').getTime(),
-                pageIndex:$scope.lastpagenumbera,
-                pageSize:3
-                //,pageNumber:$scope.lastdatepage,
-                //limit:2
-            };
+            if($scope.startDate&&$scope.endDate){
+                $scope.lasttripObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    startTime:$scope.startDate,
+                    endTime:$scope.endDate,
+                    pageIndex:$scope.lastpagenumbera,
+                    pageSize:3
+                    //,pageNumber:$scope.lastdatepage,
+                    //limit:2
+                };
+            }else{
+                $scope.lasttripObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    startTime:new Date($scope.ajaxstarttime+' 00:00:00').getTime(),
+                    endTime:new Date($scope.ajaxendtime+' 23:59:59').getTime(),
+                    pageIndex:$scope.lastpagenumbera,
+                    pageSize:3
+                    //,pageNumber:$scope.lastdatepage,
+                    //limit:2
+                };
+            }
+
             $scope.lasttripUrl = "/rest/trips/period/";
             $scope.notripcontent = true;//无行程
             $scope.clickonload = true;//点击加载
@@ -5300,9 +5351,6 @@ angular.module("app.demo.controllers",[])
             <!--navigator.intent.startGPS("  Json");-->
             <!--navigator.intent.startGPS("  Json");-->
             navigator.intent.toHistory(
-
-
-
                 {"termId":$window.sessionStorage.getItem("UtermId"),"token":$window.sessionStorage.getItem("Utoken"),"startTime":$rootScope.starttimee,"endTime":$rootScope.endtimee,"seq":123456,"startName":$rootScope.startaddresse,"endName":$rootScope.endaddresse
                 });
         };
@@ -5387,7 +5435,7 @@ angular.module("app.demo.controllers",[])
             });
     })
     //车辆报警
-    .controller("alarmrecordController",function($location,$scope,$rootScope,$state,registerService,$interval,$window,$timeout){
+    .controller("alarmrecordController",function($location,$scope,$rootScope,$state,registerService,$interval,$window,$timeout ,a ,b){
         $scope.timealarmcordfir = $timeout(function(){
             registerService.datecommon();
         },200);
@@ -5432,6 +5480,9 @@ angular.module("app.demo.controllers",[])
                 $scope.alarmclicknew =false ;
                 $scope.alarmclick3= true;
                 $scope.alarmclick4 = true;
+                $scope.startDate="";
+                $scope.endDate="";
+                // $scope.alarmdateyesbtn();
             }
         });
         //$(".dwb-s").click(function(){
@@ -5587,6 +5638,12 @@ angular.module("app.demo.controllers",[])
             "height":$rootScope.windoWHeihgt
         };
         $scope.alarmrecordPage = 0;
+
+        //监听路由的变化
+        console.log($state)
+        $scope.alarmrecordPage = 0;
+        $scope.oalarmstartTime = registerService.getdatestr(-10);
+        $scope.alarmoverTime=  registerService.getdatestr(0);
         $scope.alarmfirObj = {
             termId:Number($window.sessionStorage.getItem("UtermId")),
             startTime:Number(new Date(registerService.getdatestrnochinese(-10)+" 00:00:00").getTime()),
@@ -5594,9 +5651,54 @@ angular.module("app.demo.controllers",[])
             pageIndex:$scope.alarmrecordPage,
             pageSize:6
         };
-        $scope.oalarmstartTime = registerService.getdatestr(-10);
-        $scope.alarmoverTime=  registerService.getdatestr(0);
-        console.log(registerService.getTime());
+        if(a&&b){
+            $scope.alarmfirObj = {
+                termId:Number($window.sessionStorage.getItem("UtermId")),
+                startTime:Number(new Date($rootScope.alarmstartTime +" 00:00:00").getTime()),
+                endTime:Number(new Date($rootScope.alarmoverTime +" 23:59:59").getTime()),
+                pageIndex:$scope.alarmrecordPage,
+                pageSize:6
+            };
+            $scope.oalarmstartTime = $rootScope.alarmstartTime;
+            $scope.alarmoverTime =  $rootScope.alarmoverTime;
+        }
+        $scope.$on('$stateChangeStart',
+            function(event, toState, toParams, fromState, fromParams){
+                console.log("toState:"+JSON.stringify(toState));
+                console.log("toParams:"+JSON.stringify(toParams));
+                console.log("fromState:"+JSON.stringify(fromState));
+                console.log("fromParams:"+JSON.stringify(fromParams));
+                console.log("获取路由地址："+$location.path());
+                if(fromState.name=="mains.home.alarmRecord"){
+                    $(".dw-persp").css({"display":"none"});
+                }
+                $scope.alarmrecordPage = 0;
+                $scope.alarmfirObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    startTime:Number(new Date(registerService.getdatestrnochinese(-10)+" 00:00:00").getTime()),
+                    endTime:Number(new Date(registerService.getTimems()+" 23:59:59").getTime()),
+                    pageIndex:$scope.alarmrecordPage,
+                    pageSize:6
+                };
+                $scope.oalarmstartTime = registerService.getdatestr(-10);
+                $scope.alarmoverTime=  registerService.getdatestr(0);
+                console.log("????????");
+                if(fromState.name == "searchmore"){
+                    $scope.alarmfirObj = {
+                        termId:Number($window.sessionStorage.getItem("UtermId")),
+                        startTime:Number(new Date($rootScope.alarmstartTime +" 00:00:00").getTime()),
+                        endTime:Number(new Date($rootScope.alarmoverTime +" 23:59:59").getTime()),
+                        pageIndex:$scope.alarmrecordPage,
+                        pageSize:6
+                    };
+                    $scope.oalarmstartTime = $rootScope.alarmstartTime;
+                    $scope.alarmoverTime =  $rootScope.alarmoverTime;
+                }
+
+            });
+
+
+
         $scope.alarmUrl = "/rest/alarms/period/";
         $scope.alarminit = function(){
             $scope.alarmandloaddis = true;//继续加载不能点击
@@ -5917,13 +6019,24 @@ angular.module("app.demo.controllers",[])
             //    $scope.firendtime = registerService.getTime()+"235959";
             //}
             $scope.alarmandloaddis = true;//继续加载不可以点击
-            $scope.alarmfirObj = {
-                termId:Number($window.sessionStorage.getItem("UtermId")),
-                startTime:Number(new Date($("#appDate").val().replace('-',"/").replace('-',"/")+" 00:00:00").getTime()),
-                endTime:Number(new Date($("#appDateover").val().replace('-',"/").replace('-',"/")+" 23:59:59").getTime()),
-                pageIndex:$scope.alarmrecordPage,
-                pageSize:6
-            };
+            if($scope.startDate&&$scope.endDate){
+                $scope.alarmfirObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    startTime:$scope.startDate,
+                    endTime:$scope.endDate,
+                    pageIndex:$scope.alarmrecordPage,
+                    pageSize:6
+                };
+            }else{
+                $scope.alarmfirObj = {
+                    termId:Number($window.sessionStorage.getItem("UtermId")),
+                    startTime:Number(new Date($("#appDate").val().replace('-',"/").replace('-',"/")+" 00:00:00").getTime()),
+                    endTime:Number(new Date($("#appDateover").val().replace('-',"/").replace('-',"/")+" 23:59:59").getTime()),
+                    pageIndex:$scope.alarmrecordPage,
+                    pageSize:6
+                };
+            }
+            console.log($scope.alarmfirObj);
            //$scope.alarminit();
             $scope.loadapp = {"toggle":true};
             $scope.alarmfirstarttimehs = new Date().getTime();
@@ -6102,7 +6215,6 @@ angular.module("app.demo.controllers",[])
                         },2000);
                     }
                 },500);
-
             },function(err){
                 $scope.alarmandloaddis = false;//继续加载可以点击
                 $scope.loadapp = {"toggle":false};
@@ -6127,62 +6239,51 @@ angular.module("app.demo.controllers",[])
         };
 
         //点击搜索
-        $scope.alarmdateyesbtn = function(){
-            $scope.searchalarmstart = $("#appDate").val().replace('-',"/").replace('-',"/")+" 00:00:00";
-            $scope.searchalarmover = $("#appDateover").val().replace('-',"/").replace('-',"/")+" 23:59:59";
-            if($scope.searchalarmstart < $scope.searchalarmover){
+        $scope.alarmdateyesbtn = function(startTimeParms ,endTimeParms ){
+            if(startTimeParms&&endTimeParms){
                 $scope.alarmrecordPage = 0;
                 $scope.alarmfirObj = {
                     termId:Number($window.sessionStorage.getItem("UtermId")),
-                    startTime:Number(new Date($scope.searchalarmstart).getTime()),
-                    endTime:Number(new Date($scope.searchalarmover).getTime()),
+                    startTime:startTimeParms,
+                    endTime:endTimeParms,
                     pageIndex:$scope.alarmrecordPage,
                     pageSize:6
                 };
-                console.log(registerService.getTime());
                 $scope.alarmUrl = "/rest/alarms/period/";
                 //初始加载
                 $scope.alarminit();
-            }else {
-                $scope.subapp= {"toggle":true};
-                $scope.submitWarning = "开始日期大于结束日期，请您重新确认！";
-                $scope.timedataalarmdataerr = $timeout(function(){
-                    $scope.subapp= {"toggle":false};
-                },2000);
-                console.log("看这里啊");
+            }else{
+                $scope.searchalarmstart = $("#appDate").val().replace('-',"/").replace('-',"/")+" 00:00:00";
+                $scope.searchalarmover = $("#appDateover").val().replace('-',"/").replace('-',"/")+" 23:59:59";
+                if($scope.searchalarmstart < $scope.searchalarmover){
+                    $scope.alarmrecordPage = 0;
+                    $scope.alarmfirObj = {
+                        termId:Number($window.sessionStorage.getItem("UtermId")),
+                        startTime:Number(new Date($scope.searchalarmstart).getTime()),
+                        endTime:Number(new Date($scope.searchalarmover).getTime()),
+                        pageIndex:$scope.alarmrecordPage,
+                        pageSize:6
+                    };
+                    console.log(registerService.getTime());
+                    $scope.alarmUrl = "/rest/alarms/period/";
+                    //初始加载
+                    $scope.alarminit();
+                }else {
+                    $scope.subapp= {"toggle":true};
+                    $scope.submitWarning = "开始日期大于结束日期，请您重新确认！";
+                    $scope.timedataalarmdataerr = $timeout(function(){
+                        $scope.subapp= {"toggle":false};
+                    },2000);
+                    console.log("看这里啊");
+                }
+
             }
 
         };
         //重新加载
         $scope.alarmrecordloadnew = function(){
-            //$scope.alarmrecordPage = 0;
-            //$scope.alarmfirObj = {
-            //    termId:Number($window.sessionStorage.getItem("UtermId")),
-            //    startTime:Number(new Date($("#appDate").val().replace('-',"/").replace('-',"/")+" 00:00:00").getTime()),
-            //    endTime:Number(new Date($("#appDateover").val().replace('-',"/").replace('-',"/")+" 23:59:59").getTime()),
-            //    pageIndex:$scope.alarmrecordPage,
-            //    pageSize:6
-            //};
-            //console.log(registerService.getTime());
-            //$scope.alarmUrl = "/rest/alarms/period/";
-            ////初始加载
-            //$scope.alarminit();
             $scope.alarmdateyesbtn();
         };
-        //监听路由的变化
-        $scope.$on('$stateChangeStart',
-
-            function(event, toState, toParams, fromState, fromParams){
-                console.log("toState:"+JSON.stringify(toState));
-                console.log("toParams:"+JSON.stringify(toParams));
-                console.log("fromState:"+JSON.stringify(fromState));
-                console.log("fromParams:"+JSON.stringify(fromParams));
-                console.log("获取路由地址："+$location.path());
-                if(fromState.name=="mains.home.alarmRecord"){
-                    $(".dw-persp").css({"display":"none"});
-                }
-
-            });
 
     })
     //车辆状态
@@ -7191,7 +7292,7 @@ angular.module("app.demo.controllers",[])
                         // event.preventDefault();      //阻止触摸事件的默认行为，即阻止滚屏
                         //纵向滑动
                     }
-                })
+                });
 
                 $("#slider").on('touchend',function (event) {
                     event.preventDefault();
@@ -7230,62 +7331,103 @@ angular.module("app.demo.controllers",[])
                     }
                     $("#slider").off('touchmove');
                     $("#slider").off('touchend');
-                })
-
-            })
-            slider.addEventListener('touchstart',function (event) {
-                var touch = event.targetTouches[0];     //touches数组对象获得屏幕上所有的touch，取第一个touch
-                startPos = {x:touch.pageX,y:touch.pageY,time:+new Date};    //取第一个touch的坐标值
-                isScrolling = 0;   //这个参数判断是垂直滚动还是水平滚动
-                console.log("startPos:",event);
-
-                // slider.addEventListener('touchmove',function (event) {
-                //     event.preventDefault();
-                //     if(event.targetTouches.length > 1 || event.scale && event.scale !== 1) return;
-                //     var touch = event.targetTouches[0];
-                //     endPos = {x:touch.pageX - startPos.x,y:touch.pageY - startPos.y};
-                //     isScrolling = Math.abs(endPos.x) < Math.abs(endPos.y) ? 1:0;    //isScrolling为1时，表示纵向滑动，0为横向滑动
-                //     if(isScrolling === 1){
-                //         // event.preventDefault();      //阻止触摸事件的默认行为，即阻止滚屏
-                //         //纵向滑动
-                //     }
-                // },false);
-                // slider.addEventListener('touchend',function (event) {
-                //     event.preventDefault();
-                //     var duration = +new Date - startPos.time;    //滑动的持续时间
-                //     slider.removeEventListener('touchmove');
-                //     slider.removeEventListener('touchend');
-                //     if(isScrolling === 1) {    //当为水平滚动时
-                //         if (Number(duration) > 10) {
-                //             //判断是左移还是右移，当偏移量大于10时执行
-                //             console.log(endPos.y ,$scope.indexl);
-                //             console.log(event);
-                //             if (endPos.y < -10) {
-                //                 if ($scope.indexl == 7) {
-                //                     $scope.$apply(function () {
-                //                         $scope.indexl = 0
-                //                     });
-                //                 } else {
-                //                     $scope.$apply(function () {
-                //                         $scope.indexl = $scope.indexl + 1
-                //                     });
-                //                 }
-                //             } else if (endPos.y > 10) {
-                //                 if ($scope.indexl == 1) {
-                //                     $scope.$apply(function () {
-                //                         $scope.indexl = 0
-                //                     });
-                //                 } else {
-                //                     $scope.$apply(function () {
-                //                         $scope.indexl = $scope.indexl - 1;
-                //                     });
-                //                 }
-                //             }
-                //         }
-                //     }
-                //
-                // },false);
-
-            },false)
+                });
+            });
+            // slider.addEventListener('touchstart',function (event) {
+            //     var touch = event.targetTouches[0];     //touches数组对象获得屏幕上所有的touch，取第一个touch
+            //     startPos = {x:touch.pageX,y:touch.pageY,time:+new Date};    //取第一个touch的坐标值
+            //     isScrolling = 0;   //这个参数判断是垂直滚动还是水平滚动
+            //     console.log("startPos:",event);
+            //
+            //     // slider.addEventListener('touchmove',function (event) {
+            //     //     event.preventDefault();
+            //     //     if(event.targetTouches.length > 1 || event.scale && event.scale !== 1) return;
+            //     //     var touch = event.targetTouches[0];
+            //     //     endPos = {x:touch.pageX - startPos.x,y:touch.pageY - startPos.y};
+            //     //     isScrolling = Math.abs(endPos.x) < Math.abs(endPos.y) ? 1:0;    //isScrolling为1时，表示纵向滑动，0为横向滑动
+            //     //     if(isScrolling === 1){
+            //     //         // event.preventDefault();      //阻止触摸事件的默认行为，即阻止滚屏
+            //     //         //纵向滑动
+            //     //     }
+            //     // },false);
+            //     // slider.addEventListener('touchend',function (event) {
+            //     //     event.preventDefault();
+            //     //     var duration = +new Date - startPos.time;    //滑动的持续时间
+            //     //     slider.removeEventListener('touchmove');
+            //     //     slider.removeEventListener('touchend');
+            //     //     if(isScrolling === 1) {    //当为水平滚动时
+            //     //         if (Number(duration) > 10) {
+            //     //             //判断是左移还是右移，当偏移量大于10时执行
+            //     //             console.log(endPos.y ,$scope.indexl);
+            //     //             console.log(event);
+            //     //             if (endPos.y < -10) {
+            //     //                 if ($scope.indexl == 7) {
+            //     //                     $scope.$apply(function () {
+            //     //                         $scope.indexl = 0
+            //     //                     });
+            //     //                 } else {
+            //     //                     $scope.$apply(function () {
+            //     //                         $scope.indexl = $scope.indexl + 1
+            //     //                     });
+            //     //                 }
+            //     //             } else if (endPos.y > 10) {
+            //     //                 if ($scope.indexl == 1) {
+            //     //                     $scope.$apply(function () {
+            //     //                         $scope.indexl = 0
+            //     //                     });
+            //     //                 } else {
+            //     //                     $scope.$apply(function () {
+            //     //                         $scope.indexl = $scope.indexl - 1;
+            //     //                     });
+            //     //                 }
+            //     //             }
+            //     //         }
+            //     //     }
+            //     //
+            //     // },false);
+            //
+            // },false)
         }
+    })
+
+    //查询条件
+    .controller("searchmoreController",function($scope,$rootScope,$state,registerService,$timeout , $location){
+        $scope.searchPassBackBtn = function(){
+            $scope.oalarmstartTime = "";
+            $scope.alarmoverTime = "";
+            window.history.go(-1);
+        };
+        $scope.timealarmcordfir = $timeout(function(){
+            registerService.datecommon();
+        },200);
+        $scope.oalarmstartTime = registerService.getdatestr(0);
+        $scope.alarmoverTime= registerService.getdatestr(0);
+        $scope.today = function () {
+            $scope.oalarmstartTime = registerService.getdatestr(0);
+            $scope.alarmoverTime= registerService.getdatestr(0);
+        };
+        $scope.yesterday = function () {
+            $scope.oalarmstartTime = registerService.getdatestr(-1 );
+            $scope.alarmoverTime= registerService.getdatestr(0);
+        };
+        $scope.latestedseven = function () {
+            $scope.oalarmstartTime = registerService.getdatestr(-6);
+            $scope.alarmoverTime= registerService.getdatestr(0);
+        };
+        $scope.$on('$stateChangeStart',
+            function(event, toState, toParams, fromState, fromParams){
+                if(toState.name == "mains.home.alarmRecord"){
+                    $rootScope.alarmstartTime = $scope.oalarmstartTime;
+                    $rootScope.alarmoverTime = $scope.alarmoverTime;
+                }
+                if(toState.name == "mains.home.cartripInformation"){
+                    // event.preventDefault();
+                    $rootScope.tripstartTime = $scope.oalarmstartTime;
+                    $rootScope.tripoverTime = $scope.alarmoverTime;
+                }
+            });
+
+        $scope.searchmorebtn = function () {
+            window.history.go(-1);
+        };
     })

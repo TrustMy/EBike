@@ -50,7 +50,7 @@
 }
 .alarmrecordcontent {
     position: absolute;
-    top:5.6rem;
+    top:5.9rem;
     bottom:2.6rem;
     left:0;
     right:0;
@@ -116,7 +116,123 @@
     position: absolute;
     top:4rem;
     left:0rem;
+    height: 2.3rem;
+    background-color: #1e455c;
 }
+.topInfohandle{
+    position: absolute;
+    top:2.2rem;
+    left:10%;
+    width: 80%;
+    height: 1.4rem;
+    line-height: 1.4rem;
+    border:1px solid #295e7d;
+    -webkit-border-radius:1.2rem;
+    -moz-border-radius:1.2rem;
+    border-radius:1.2rem;
+    overflow: hidden;
+}
+.reportstyle{
+    display: inline-block;
+    width:49.9%;
+    text-align: center;
+    cursor: pointer;
+}
+.checkread{
+    float: left;
+    background-color: #295e7d;
+}
+.checkunread{
+    float: right;
+    background-color: #7d7d7d;
+}
+.checkimg{
+    vertical-align: middle;
+}
+.bottomInfohandle{
+    position:absolute;
+    top: 4rem;
+    color: #1e455c;
+}
+.recordpositionleft {
+    position:absolute;
+    top: 4.5rem;
+    left: 0.5rem;
+    background-color: #1e455c;
+    color: white;
+}
+.recordsearchmore{
+    position:absolute;
+    height: 1.2rem;
+    line-height: 1.2rem;
+    top:4.5rem;
+    left:8.5rem;
+    width: 6rem;
+    text-align: center;
+    background-color: #082f45;
+    color: white;
+    border:0.05rem solid #9fa3a6;
+    -webkit-border-radius:0.4rem;
+    -moz-border-radius:0.4rem;
+    border-radius:0.4rem;
+}
+
+.recordpositionmid{
+    position: absolute;
+    top: 4.5rem;
+    left:3.9rem;
+    height:1.3rem;
+    line-height: 1.3rem;
+    text-align: center;
+    color: white;
+}
+
+.recordpositionright{
+    position: absolute;
+    top: 4.5rem;
+    left:4.6rem;
+    color: white;
+}
+
+.searchrecordtoday{
+    position: absolute;
+    top:4.5rem;
+    left:8.5rem;
+    color: #ffba00 ;
+}
+.searchrecordlastday{
+    position: absolute;
+    top:4.5rem;
+    left:10.5rem;
+    color: #ffba00 ;
+}
+.searchrecordweek{
+    position: absolute;
+    top:4.5rem;
+    left:12.5rem;
+    color: #ffba00 ;
+}
+.datewidthcj {
+     width:3.5rem;
+     color:#000;
+     -webkit-border-radius:0.3rem;
+     -moz-border-radius:0.3rem;
+     border-radius:0.3rem;
+     border:0.05rem solid #000;
+ }
+
+.datewidthcj2 {
+    width:3.5rem;
+    height:1.3rem;
+    line-height: 1.3rem;
+    color:white;
+    outline: none;
+    /*-webkit-border-radius:0.3rem;*/
+    /*-moz-border-radius:0.3rem;*/
+    /*border-radius:0.3rem;*/
+    /*border:0.05rem solid #000;*/
+}
+
 .alarmdateinputstyle {
     width:5rem;
     border:0.05rem solid #9fa3a6;
@@ -135,7 +251,7 @@
     }
     .alarmrecordcontentjianr {
         position: absolute;
-        top:4.2rem;
+        top:5.9rem;
         bottom:2.3rem;
         font-size:0.5rem;
         left:0;

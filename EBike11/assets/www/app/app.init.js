@@ -47,7 +47,15 @@ angular.module("myApp",["ui.router","app.demo.controllers","app.demo.service","a
                 views:{
                     'tab-home':{
                         templateUrl:"app/views/main.home.cartripInformation.html",
-                        controller:"cartripController"
+                        controller:"cartripController",
+                        resolve:{
+                            a:function ($rootScope) {
+                                return $rootScope.tripstartTime
+                            },
+                            b:function ($rootScope) {
+                                return $rootScope.tripoverTime
+                            }
+                        }
                     }
                 }
             })
@@ -66,7 +74,6 @@ angular.module("myApp",["ui.router","app.demo.controllers","app.demo.service","a
                     'tab-home':{
                         templateUrl:"app/views/main.home.vehicleStatus.html",
                         controller:"vehicleStatusController"
-
                     }
                 }
             })
@@ -84,9 +91,28 @@ angular.module("myApp",["ui.router","app.demo.controllers","app.demo.service","a
                 views:{
                     'tab-home':{
                         templateUrl:"app/views/main.home.alarmRecord.html",
-                        controller:"alarmrecordController"
+                        controller:"alarmrecordController",
+                        resolve:{
+                            a:function ($rootScope) {
+                                return $rootScope.alarmstartTime
+                            },
+                            b:function ($rootScope) {
+                                return $rootScope.alarmoverTime
+                            }
+                        }
                     }
                 }
+            })
+            .state("searchmore",{
+                url:"/searchmore",
+                templateUrl:"app/views/main.home.searchmore.html",
+                controller:"searchmoreController"
+                // views:{
+                //     'tab-mine':{
+                //         templateUrl:"app/views/main.home.searchmore.html",
+                //         controller:"searchmoreController"
+                //     }
+                // }
             })
             .state("mains.home.serviceHelp",{
                 url:"/serviceHelp",

@@ -47,6 +47,11 @@
 -keep class okio.**{*;}
 -keep interface okio.**{*;}
 
+#-------不混淆cordova
+-keep class com.phonegap.ebike.MainActivity{*;}
+-keep class org.apache.cordova.** {*;}
+-keep public class org.apache.cordova.** {public private protected *;}
+
 #--------GaoDe
 #3D 地图 V5.0.0之前：
     -keep   class com.amap.api.maps.**{*;}

@@ -289,6 +289,24 @@ baseService.prototype.getdateday = function() {
     return tmpDay;
 };
 
+baseService.prototype.getdateTime = function(num  , type) {
+    var dateTime = ""
+    var dd = new Date();
+    dd.setDate(dd.getDate() + num);//获取num天后的日期
+    var y = dd.getFullYear();
+    var m = dd.getMonth()+1;//获取当前月份的日期
+    var d = dd.getDate();
+    var t = ""
+    if(type == 1 ){
+        t = '00:00:00'
+    }else{
+        t = '23:59:59'
+    }
+    var date = y+"/"+m+"/"+d+" "+ t;
+    dateTime = new Date(date).getTime();
+    return dateTime;
+};
+
 baseService.prototype.carnamef = function(){
     var that= this;
     //obj = that.columnToData(obj,that.mapping[that.name]);
@@ -437,6 +455,7 @@ baseService.prototype.datecommon = function(){
         //startYear: currYear-1, //开始年份
         //endYear: currYear //结束年份
     };
+
 
     $("#appDate").mobiscroll($.extend(opt['date'], opt['default']));
     $("#appDateover").mobiscroll($.extend(opt['date'], opt['default']));
