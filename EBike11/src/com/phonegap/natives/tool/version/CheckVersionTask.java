@@ -71,13 +71,10 @@ public class CheckVersionTask implements Runnable {
 
             if (responseCode == 200)
             {
-
-
                 // 从服务器获得一个输入流
 
                 is = conn.getInputStream();
                 //is = MainActivity.this.getAssets().open("update.xml");
-
             }
             Log.d("CheckVersionTask", "localVersion" + localVersion);
             info = UpdataInfoParser.getUpdataInfo(is);
