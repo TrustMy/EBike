@@ -6022,13 +6022,15 @@ angular.module("app.demo.controllers",[])
             }else{
                 $scope.alarmfirObj = {
                     termId:Number($window.sessionStorage.getItem("UtermId")),
-                    startTime:Number(new Date($("#appDate").val().replace('-',"/").replace('-',"/")+" 00:00:00").getTime()),
-                    endTime:Number(new Date($("#appDateover").val().replace('-',"/").replace('-',"/")+" 23:59:59").getTime()),
+//                    startTime:Number(new Date($("#appDate1").val().replace('-',"/").replace('-',"/")+" 00:00:00").getTime()),
+//                    endTime:Number(new Date($("#appDateover1").val().replace('-',"/").replace('-',"/")+" 23:59:59").getTime()),
+                    startTime:Number(new Date($scope.oalarmstartTime +" 00:00:00").getTime()),
+                    endTime:Number(new Date($scope.alarmoverTime +" 23:59:59").getTime()),
                     pageIndex:$scope.alarmrecordPage,
                     pageSize:6
                 };
             }
-            console.log($scope.alarmfirObj);
+
            //$scope.alarminit();
             $scope.loadapp = {"toggle":true};
             $scope.alarmfirstarttimehs = new Date().getTime();
@@ -6274,7 +6276,8 @@ angular.module("app.demo.controllers",[])
         };
         //重新加载
         $scope.alarmrecordloadnew = function(){
-            $scope.alarmdateyesbtn();
+//            $scope.alarmdateyesbtn();
+              $scope.alarminit();
         };
 
     })
