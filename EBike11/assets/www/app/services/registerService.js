@@ -9,7 +9,7 @@ angular.module("app.demo.service",[])
         // var baseUrl = 'http://180.168.194.98:7888/EBWebServer-2.0';
         // var baseUrl = "https://139.196.229.233:8080/EBWebServer-2.0";
         // var baseUrl = 'http://192.168.1.134:8080';
-        var baseUrl = 'http://139.196.229.233:8081/EBWebServer-2.0';
+        var baseUrl = 'http://139.196.229.233:8080/EBWebServer-2.0';
         //var url="http://192.168.1.31:8080/";180.168.194.98 7888
         var mapping = {
             //登录部分

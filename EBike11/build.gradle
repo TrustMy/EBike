@@ -239,10 +239,10 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
 //          //签名
-            signingConfig signingConfigs.debug
+//            signingConfig signingConfigs.debug
         }
     }
 

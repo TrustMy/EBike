@@ -385,9 +385,9 @@ angular.module("app.demo.controllers",[])
                             //console.log(e.user);
 
                             //console.log($rootScope.mainUsercontent);
-                            //navigator.intent.toPush(
-                            //    {"termId":$window.sessionStorage.getItem("UtermId"),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken"),"pushId": e.content.pushId,"function":e.content.function}
-                            //);
+                            navigator.intent.toPush(
+                                {"termId":$window.sessionStorage.getItem("UtermId"),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken"),"pushId": e.content.pushId,"function":e.content.function}
+                            );
                             if ($scope.noRemember == false){
                                 //存储cookie
                                 registerService.setCookie("CookieUserName", uname);
@@ -2048,15 +2048,10 @@ angular.module("app.demo.controllers",[])
             $scope.searchcarhomedis = true;
             console.log("点击了token:"+$window.sessionStorage.getItem("Utoken"));
             function intent() {
-
-                <!--alert("this is alert");-->
-
-
-
-                <!--navigator.intent.startGPS("  Json");-->
+//
                 navigator.intent.toMap(
                     {"termId":$window.sessionStorage.getItem("UtermId"),"seq":registerService.randomsix(),"userPhone":$window.sessionStorage.getItem("Ucp"),"token":$window.sessionStorage.getItem("Utoken")});
-                <!--navigator.intent.toMap("asdasdasdsads");-->
+
             }
 
             $scope.timesearchtimenottwo = $timeout(function(){
@@ -5346,10 +5341,7 @@ angular.module("app.demo.controllers",[])
         //var lnglatXY=[116.396574, 39.992706];
         //registerService.covertAddress(lnglatXY);
         $scope.to = function() {
-            <!--alert("this is alert");-->
 
-            <!--navigator.intent.startGPS("  Json");-->
-            <!--navigator.intent.startGPS("  Json");-->
             navigator.intent.toHistory(
                 {"termId":$window.sessionStorage.getItem("UtermId"),"token":$window.sessionStorage.getItem("Utoken"),"startTime":$rootScope.starttimee,"endTime":$rootScope.endtimee,"seq":123456,"startName":$rootScope.startaddresse,"endName":$rootScope.endaddresse
                 });
